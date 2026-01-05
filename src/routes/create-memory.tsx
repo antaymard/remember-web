@@ -49,6 +49,7 @@ function RouteComponent() {
       title: "",
       description: "",
       isSecret: false,
+      images: [],
     },
     onSubmit: async (values) => {
       console.log(values);
