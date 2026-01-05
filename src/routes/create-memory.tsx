@@ -6,6 +6,7 @@ import { useForm } from "@tanstack/react-form";
 import CreationSection from "@/components/ui/CreationSection";
 import TextInput from "@/components/form/TextInput";
 import TextArea from "@/components/form/TextArea";
+import TimePicker from "@/components/form/TimePicker";
 import {
   TbBuildingLighthouse,
   TbUserHexagon,
@@ -49,6 +50,13 @@ function RouteComponent() {
       title: "",
       description: "",
       isSecret: false,
+      datetime: {
+        year: new Date().getFullYear(),
+        month: new Date().getMonth() + 1,
+        day: new Date().getDate(),
+        hour: new Date().getHours(),
+        min: new Date().getMinutes(),
+      },
     },
     onSubmit: async (values) => {
       console.log(values);
@@ -123,6 +131,9 @@ function RouteComponent() {
               name="description"
               placeholder="Racontez ce qu'il s'est passé !"
             />
+          </CreationSection>
+          <CreationSection label="Date et heure">
+            <TimePicker form={form} name="datetime" />
           </CreationSection>
           <CreationSection label="Personnes présentes">TODO</CreationSection>
           <CreationSection label="Partage">TODO</CreationSection>
