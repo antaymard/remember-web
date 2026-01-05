@@ -31,7 +31,7 @@ export default function Navbar() {
       iconInactive: <TbPlus size={18} />,
       iconActive: <TbPlus size={28} />,
       label: "",
-      url: "/create",
+      url: "/create-memory",
     },
     {
       iconInactive: <TbSearch />,

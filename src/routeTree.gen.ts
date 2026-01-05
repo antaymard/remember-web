@@ -13,7 +13,7 @@ import { Route as SigninRouteImport } from './routes/signin'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as FeedRouteImport } from './routes/feed'
 import { Route as ExploreRouteImport } from './routes/explore'
-import { Route as CreateRouteImport } from './routes/create'
+import { Route as CreateMemoryRouteImport } from './routes/create-memory'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -37,9 +37,9 @@ const ExploreRoute = ExploreRouteImport.update({
   path: '/explore',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CreateRoute = CreateRouteImport.update({
-  id: '/create',
-  path: '/create',
+const CreateMemoryRoute = CreateMemoryRouteImport.update({
+  id: '/create-memory',
+  path: '/create-memory',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ChatRoute = ChatRouteImport.update({
@@ -56,7 +56,7 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/chat': typeof ChatRoute
-  '/create': typeof CreateRoute
+  '/create-memory': typeof CreateMemoryRoute
   '/explore': typeof ExploreRoute
   '/feed': typeof FeedRoute
   '/search': typeof SearchRoute
@@ -65,7 +65,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/chat': typeof ChatRoute
-  '/create': typeof CreateRoute
+  '/create-memory': typeof CreateMemoryRoute
   '/explore': typeof ExploreRoute
   '/feed': typeof FeedRoute
   '/search': typeof SearchRoute
@@ -75,7 +75,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/chat': typeof ChatRoute
-  '/create': typeof CreateRoute
+  '/create-memory': typeof CreateMemoryRoute
   '/explore': typeof ExploreRoute
   '/feed': typeof FeedRoute
   '/search': typeof SearchRoute
@@ -86,18 +86,25 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/chat'
-    | '/create'
+    | '/create-memory'
     | '/explore'
     | '/feed'
     | '/search'
     | '/signin'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/chat' | '/create' | '/explore' | '/feed' | '/search' | '/signin'
+  to:
+    | '/'
+    | '/chat'
+    | '/create-memory'
+    | '/explore'
+    | '/feed'
+    | '/search'
+    | '/signin'
   id:
     | '__root__'
     | '/'
     | '/chat'
-    | '/create'
+    | '/create-memory'
     | '/explore'
     | '/feed'
     | '/search'
@@ -107,7 +114,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ChatRoute: typeof ChatRoute
-  CreateRoute: typeof CreateRoute
+  CreateMemoryRoute: typeof CreateMemoryRoute
   ExploreRoute: typeof ExploreRoute
   FeedRoute: typeof FeedRoute
   SearchRoute: typeof SearchRoute
@@ -144,11 +151,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExploreRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/create': {
-      id: '/create'
-      path: '/create'
-      fullPath: '/create'
-      preLoaderRoute: typeof CreateRouteImport
+    '/create-memory': {
+      id: '/create-memory'
+      path: '/create-memory'
+      fullPath: '/create-memory'
+      preLoaderRoute: typeof CreateMemoryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/chat': {
@@ -171,7 +178,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ChatRoute: ChatRoute,
-  CreateRoute: CreateRoute,
+  CreateMemoryRoute: CreateMemoryRoute,
   ExploreRoute: ExploreRoute,
   FeedRoute: FeedRoute,
   SearchRoute: SearchRoute,

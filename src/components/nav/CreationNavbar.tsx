@@ -2,7 +2,7 @@ import { TbPlayerPauseFilled } from "react-icons/tb";
 import { ButtonPastel } from "../ui/Button";
 import { useRouter } from "@tanstack/react-router";
 
-export default function CreationNavbar() {
+export default function CreationNavbar({ form }) {
   const router = useRouter();
 
   function goBack() {
@@ -18,7 +18,12 @@ export default function CreationNavbar() {
           label="Terminer + tard"
         />
       </div>
-      <ButtonPastel color="green" icon="check" label="Créer" />
+      <ButtonPastel
+        color="green"
+        icon="check"
+        label="Créer"
+        onClick={form.handleSubmit}
+      />
     </nav>
   );
 }
