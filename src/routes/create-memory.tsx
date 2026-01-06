@@ -49,13 +49,13 @@ function RouteComponent() {
     defaultValues: {
       title: "",
       description: "",
-      isSecret: false,
-      datetime: {
-        year: new Date().getFullYear(),
-        month: new Date().getMonth() + 1,
-        day: new Date().getDate(),
-        hour: new Date().getHours(),
-        min: new Date().getMinutes(),
+      is_secret: false,
+      date_time_in: {
+        year: 0,
+        month: 0,
+        day: 0,
+        hour: 0,
+        min: 0,
       },
     },
     onSubmit: async (values) => {
@@ -132,15 +132,15 @@ function RouteComponent() {
               placeholder="Racontez ce qu'il s'est passé !"
             />
           </CreationSection>
-          <CreationSection label="Date et heure">
-            <TimePicker form={form} name="datetime" />
+          <CreationSection label="heure">
+            <TimePicker form={form} name="date_time_in" />
           </CreationSection>
           <CreationSection label="Personnes présentes">TODO</CreationSection>
           <CreationSection label="Partage">TODO</CreationSection>
           <CreationSection label="Visibilité">
             <Switcher
               form={form}
-              name="isSecret"
+              name="is_secret"
               label="Rendre secret"
               icon={TbLockSquareRoundedFilled}
             />
