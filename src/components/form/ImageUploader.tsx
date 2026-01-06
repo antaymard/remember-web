@@ -8,7 +8,7 @@ import {
 import { useRef, useState, useEffect } from "react";
 import { useUploadFile } from "@/hooks/useUploadFiles";
 import { extractExifData } from "@/lib/extractExifData";
-import type { ImageData, LocalImageState } from "@/types/image";
+import type { MediaData, LocalMediaState } from "@/types/media";
 import toast from "react-hot-toast";
 import {
   Carousel,
@@ -28,17 +28,17 @@ const bigIconSize = 22;
 
 interface ImageUploaderProps {
   form: any;
-  name?: string;
+  name: string;
   maxImages?: number;
 }
 
 export default function ImageUploader({
   form,
-  name = "images",
+  name,
   maxImages = 10,
 }: ImageUploaderProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [localImages, setLocalImages] = useState<LocalImageState[]>([]);
+  const [localImages, setLocalImages] = useState<LocalMediaState[]>([]);
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [currentIndex, setCurrentIndex] = useState(0);
   const { uploadFile } = useUploadFile();
@@ -80,7 +80,7 @@ export default function ImageUploader({
     }
 
     // Create local state for each file
-    const newLocalImages: LocalImageState[] = imageFiles.map((file) => ({
+    const newLocalImages: LocalMediaState[] = imageFiles.map((file) => ({
       id: crypto.randomUUID(),
       file,
       preview: URL.createObjectURL(file),
@@ -102,7 +102,7 @@ export default function ImageUploader({
   };
 
   // Upload a single image
-  const uploadImage = async (localImage: LocalImageState) => {
+  const uploadImage = async (localImage: LocalMediaState) => {
     try {
       // Update status to uploading
       setLocalImages((prev) =>
@@ -118,8 +118,9 @@ export default function ImageUploader({
       const uploadedData = await uploadFile(localImage.file, localImage.id);
 
       // Create complete ImageData
-      const imageData: ImageData = {
+      const mediaData: MediaData = {
         url: uploadedData.url,
+        type: "image",
         upload_date: uploadedData.uploadedAt,
         ...exifData,
       };
@@ -128,13 +129,16 @@ export default function ImageUploader({
       setLocalImages((prev) =>
         prev.map((img) =>
           img.id === localImage.id
-            ? { ...img, ...imageData, status: "done", progress: 100 }
+            ? { ...img, ...mediaData, status: "done", progress: 100 }
             : img
         )
       );
 
       // Update form value
-      form.setFieldValue(name, (prev: ImageData[] = []) => [...prev, imageData]);
+      form.setFieldValue(name, (prev: MediaData[] = []) => [
+        ...prev,
+        mediaData,
+      ]);
     } catch (error) {
       console.error("Upload error:", error);
 
@@ -145,8 +149,7 @@ export default function ImageUploader({
             ? {
                 ...img,
                 status: "error",
-                error:
-                  error instanceof Error ? error.message : "Upload échoué",
+                error: error instanceof Error ? error.message : "Upload échoué",
               }
             : img
         )
@@ -174,7 +177,7 @@ export default function ImageUploader({
     setLocalImages((prev) => prev.filter((img) => img.id !== imageId));
 
     // Remove from form value
-    form.setFieldValue(name, (prev: ImageData[] = []) =>
+    form.setFieldValue(name, (prev: MediaData[] = []) =>
       prev.filter((img) => img.url !== imageToRemove.url)
     );
 
@@ -213,7 +216,7 @@ export default function ImageUploader({
     });
 
     // Update form value with reordered images
-    form.setFieldValue(name, (prev: ImageData[] = []) => {
+    form.setFieldValue(name, (prev: MediaData[] = []) => {
       const newImages = [...prev];
       const [movedImage] = newImages.splice(fromIndex, 1);
       newImages.splice(toIndex, 0, movedImage);
@@ -243,10 +246,10 @@ export default function ImageUploader({
   return (
     <form.Field name={name}>
       {() => (
-        <div className="relative aspect-square w-screen bg-greylight">
+        <div className="relative aspect-square w-screen bg-white">
           {hasImages ? (
-            <Carousel setApi={setCarouselApi} className="w-full h-full">
-              <CarouselContent className="h-full">
+            <Carousel setApi={setCarouselApi} className="w-full aspect-square">
+              <CarouselContent className="h-full items-center">
                 {localImages.map((image) => (
                   <CarouselItem key={image.id} className="h-full">
                     <div className="relative w-full h-full flex items-center justify-center">
@@ -314,8 +317,8 @@ export default function ImageUploader({
                       className={cn(
                         "h-1.5 rounded-full transition-all",
                         idx === currentIndex
-                          ? "w-6 bg-white"
-                          : "w-1.5 bg-white/50",
+                          ? "w-6 bg-green"
+                          : "w-1.5 bg-green/30",
                         image.status === "uploading" && "animate-pulse"
                       )}
                     />

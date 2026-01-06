@@ -50,7 +50,7 @@ function RouteComponent() {
       title: "",
       description: "",
       is_secret: false,
-      images: [],
+      medias: [],
       date_time_in: {
         year: 0,
         month: 0,
@@ -120,7 +120,7 @@ function RouteComponent() {
 
       {/* Content */}
       <div className="py-17.5 bg-bg min-h-screen">
-        <ImageUploader form={form} />
+        <ImageUploader form={form} name="medias" />
 
         <div className="space-y-2.5 pb-32">
           <CreationSection label="Général">

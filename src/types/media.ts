@@ -1,13 +1,14 @@
 /**
  * Image data structure for form submissions
  */
-export interface ImageData {
+export interface MediaData {
   /** Public URL of the uploaded image */
   url: string;
   /** Timestamp when the image was uploaded (milliseconds since epoch) */
   upload_date: number;
   /** Timestamp when the photo was taken, extracted from EXIF (milliseconds since epoch) */
   shot_date?: number;
+  type: "image";
   /** GPS coordinates extracted from EXIF */
   gps_coordinates?: {
     latitude: number;
@@ -27,7 +28,7 @@ export interface ImageData {
 /**
  * Local image state before/during upload
  */
-export interface LocalImageState extends Partial<ImageData> {
+export interface LocalMediaState extends Partial<MediaData> {
   /** Unique ID for tracking upload progress */
   id: string;
   /** Local file object */
