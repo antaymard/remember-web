@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { TbClock } from "react-icons/tb";
+import { TbClockEdit } from "react-icons/tb";
 import {
   Dialog,
   DialogContent,
@@ -71,10 +71,14 @@ export default function TimePicker({
               <button
                 type="button"
                 className={cn(
-                  "h-12.5 px-4 rounded bg-bg placeholder:text-grey w-full focus:ring-2 transition-[color,box-shadow] ring-text outline-0 text-grey flex items-center justify-start gap-2"
+                  "h-12.5 px-4 rounded bg-bg placeholder:text-grey w-full focus:ring-2 transition-[color,box-shadow] ring-text outline-0 flex items-center justify-start gap-2",
+                  field.state?.value?.hour !== undefined &&
+                    field.state?.value?.min !== undefined
+                    ? "text-text"
+                    : "text-grey"
                 )}
               >
-                <TbClock size={24} />
+                <TbClockEdit size={24} />
                 {field.state?.value?.hour !== undefined &&
                 field.state?.value?.min !== undefined
                   ? `${field.state?.value?.hour}h${String(field.state?.value?.min).padStart(2, "0")}`

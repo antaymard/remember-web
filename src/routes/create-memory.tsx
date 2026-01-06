@@ -14,11 +14,13 @@ import {
   TbVinyl,
   TbChevronDown,
   TbLockSquareRoundedFilled,
+  TbClockPin,
 } from "react-icons/tb";
 import { useRef, useState } from "react";
 import { useOnClickOutside } from "@/hooks/useClickOutside";
 import { cn } from "@/lib/utils";
 import Switcher from "@/components/form/Swticher";
+import DatePicker from "@/components/form/DatePicker";
 
 const memoryTypeOptions = [
   { label: "Moment", value: "moment", icon: TbWindmill },
@@ -125,6 +127,26 @@ function RouteComponent() {
         <div className="space-y-2.5 pb-32">
           <CreationSection label="Général">
             <TextInput form={form} name="title" placeholder="Titre" />
+            <div className="grid grid-cols-[1fr_auto_50px] gap-2">
+              <DatePicker form={form} name="date_time_in" placeholder="Date" />
+              <TimePicker form={form} name="date_time_in" placeholder="Heure" />
+              <button
+                type="button"
+                onClick={() => {
+                  const now = new Date();
+                  form.setFieldValue("date_time_in", {
+                    year: now.getFullYear(),
+                    month: now.getMonth() + 1,
+                    day: now.getDate(),
+                    hour: now.getHours(),
+                    min: now.getMinutes(),
+                  });
+                }}
+                className="h-12.5 w-12.5 rounded bg-bg text-grey focus:ring-2 ring-text outline-0 flex items-center justify-center"
+              >
+                <TbClockPin size={24} />
+              </button>
+            </div>
           </CreationSection>
           <CreationSection label="Description">
             <TextArea
@@ -133,9 +155,7 @@ function RouteComponent() {
               placeholder="Racontez ce qu'il s'est passé !"
             />
           </CreationSection>
-          <CreationSection label="heure">
-            <TimePicker form={form} name="date_time_in" />
-          </CreationSection>
+
           <CreationSection label="Personnes présentes">TODO</CreationSection>
           <CreationSection label="Partage">TODO</CreationSection>
           <CreationSection label="Visibilité">

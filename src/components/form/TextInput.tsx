@@ -27,15 +27,13 @@ export default function TextInput({
           <div
             className={cn(
               "relative w-full",
-              field.state.meta.isDefaultValue
-                ? "text-grey"
-                : "text-text font-medium"
+              field.state.value ? "text-text font-medium" : "text-grey"
             )}
           >
             <Icon
               size={24}
               className={cn(
-                "absolute left-3 top-1/2 transform -translate-y-1/2"
+                "absolute left-4 top-1/2 transform -translate-y-1/2"
               )}
             />
             <input
