@@ -10,6 +10,7 @@
 
 import type * as auth from "../auth.js";
 import type * as http from "../http.js";
+import type * as moments from "../moments.js";
 import type * as persons from "../persons.js";
 import type * as uploads from "../uploads.js";
 import type * as utils_r2 from "../utils/r2.js";
@@ -24,6 +25,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   http: typeof http;
+  moments: typeof moments;
   persons: typeof persons;
   uploads: typeof uploads;
   "utils/r2": typeof utils_r2;

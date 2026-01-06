@@ -5,7 +5,6 @@ interface ButtonPastelProps extends React.ButtonHTMLAttributes<HTMLButtonElement
   color: "blue" | "green" | "red" | "grey";
   label?: string;
   icon?: React.ReactNode | "x" | "check" | "trash";
-  type?: "button" | "submit" | "reset";
 }
 
 const classNames = {
@@ -33,14 +32,12 @@ export function ButtonPastel({
   color = "blue",
   label,
   icon,
-  type = "button",
   ...props
 }: ButtonPastelProps) {
   return (
     <button
-      type={type}
       className={cn(
-        "flex items-center gap-2 rounded-full h-10 font-medium",
+        "flex items-center gap-2 rounded-full h-10 font-medium disabled:opacity-50 disabled:cursor-not-allowed",
         classNames[color],
         !label ? "w-10 justify-center" : "px-4"
       )}

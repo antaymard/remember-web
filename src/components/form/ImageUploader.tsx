@@ -8,7 +8,7 @@ import {
 import { useRef, useState, useEffect } from "react";
 import { useUploadFile } from "@/hooks/useUploadFiles";
 import { extractExifData } from "@/lib/extractExifData";
-import type { MediaData, LocalMediaState } from "@/types/media";
+import type { MediaData } from "@/types/shared.types";
 import toast from "react-hot-toast";
 import {
   Carousel,
@@ -25,6 +25,21 @@ const bigButtonClassName = cn(buttonClassName, "h-12.5 w-12.5 rounded-2xl");
 
 const smallIconSize = 20;
 const bigIconSize = 22;
+
+interface LocalMediaState extends Partial<MediaData> {
+  /** Unique ID for tracking upload progress */
+  id: string;
+  /** Local file object */
+  file: File;
+  /** Local preview URL (object URL) */
+  preview: string;
+  /** Upload status */
+  status: "pending" | "uploading" | "done" | "error";
+  /** Upload progress (0-100) */
+  progress: number;
+  /** Error message if upload failed */
+  error?: string;
+}
 
 interface ImageUploaderProps {
   form: any;

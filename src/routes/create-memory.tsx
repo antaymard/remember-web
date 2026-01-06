@@ -1,51 +1,37 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import ImageUploader from "@/components/form/ImageUploader";
 import CreationNavbar from "@/components/nav/CreationNavbar";
 import Header from "@/components/nav/Header";
 import { useForm } from "@tanstack/react-form";
+import type { MomentType } from "@/types/memory.types";
 import CreationSection from "@/components/ui/CreationSection";
 import TextInput from "@/components/form/TextInput";
 import TextArea from "@/components/form/TextArea";
 import TimePicker from "@/components/form/TimePicker";
-import {
-  TbBuildingLighthouse,
-  TbUserHexagon,
-  TbWindmill,
-  TbVinyl,
-  TbChevronDown,
-  TbLockSquareRoundedFilled,
-  TbClockPin,
-} from "react-icons/tb";
-import { useRef, useState } from "react";
-import { useOnClickOutside } from "@/hooks/useClickOutside";
-import { cn } from "@/lib/utils";
+import { TbLockSquareRoundedFilled, TbClockPin } from "react-icons/tb";
+import { useState } from "react";
 import Switcher from "@/components/form/Swticher";
 import DatePicker from "@/components/form/DatePicker";
-
-const memoryTypeOptions = [
-  { label: "Moment", value: "moment", icon: TbWindmill },
-  { label: "Lieu", value: "place", icon: TbBuildingLighthouse },
-  { label: "Personne", value: "person", icon: TbUserHexagon },
-  { label: "Objet", value: "thing", icon: TbVinyl },
-] as const;
+import { useMutation } from "convex/react";
+import { api } from "../../convex/_generated/api";
+import MemoryTypeSelector from "@/components/nav/MemoryTypeSelector";
+import * as z from "zod";
 
 export const Route = createFileRoute("/create-memory")({
   component: RouteComponent,
 });
 
+const memorySchema = z.object({
+  title: z.string().min(1, "Le titre est requis"),
+});
+
 function RouteComponent() {
+  const navigate = useNavigate();
+  const editMoment = useMutation(api.moments.edit);
+
   const [memoryType, setMemoryType] = useState<
     "moment" | "place" | "person" | "thing"
   >("moment");
-  const [memoryTypeSelectorOpen, setMemoryTypeSelectorOpen] =
-    useState<boolean>(false);
-  const memoryTypeSelectorRef = useRef<HTMLDivElement | null>(null);
-
-  useOnClickOutside(
-    memoryTypeSelectorRef,
-    () => setMemoryTypeSelectorOpen(false),
-    memoryTypeSelectorOpen
-  );
 
   const form = useForm({
     defaultValues: {
@@ -60,63 +46,31 @@ function RouteComponent() {
         hour: undefined,
         min: undefined,
       },
+    } as MomentType,
+    onSubmit: async ({ value }) => {
+      try {
+        const momentId = await editMoment(value);
+        console.log("Moment créé:", momentId);
+        // Rediriger vers le feed ou la page de détail après création
+        navigate({ to: "/feed" });
+      } catch (error) {
+        console.error("Erreur lors de la création:", error);
+      }
     },
-    onSubmit: async (values) => {
-      console.log(values);
+    validators: {
+      onSubmit: memorySchema,
     },
   });
-
-  const memoryTypeObject = memoryTypeOptions.find(
-    (option) => option.value === memoryType
-  );
 
   return (
     <div>
       <Header
         title="Créer"
         rightContent={
-          <div className="relative">
-            <button
-              type="button"
-              className="flex items-center gap-1.5 rounded-full h-10 font-medium px-4 bg-green/10 text-green"
-              onClick={(e) => {
-                e.stopPropagation();
-                setMemoryTypeSelectorOpen(!memoryTypeSelectorOpen);
-              }}
-            >
-              {memoryTypeObject && (
-                <memoryTypeObject.icon size={20} className="" />
-              )}
-              <span>{memoryTypeObject?.label}</span>
-              <TbChevronDown size={20} className="path-stroke-2" />
-            </button>
-            {memoryTypeSelectorOpen && (
-              <div
-                ref={memoryTypeSelectorRef}
-                className="absolute right-0 top-full mt-2 w-40 bg-white border border-border rounded shadow-lg z-10 overflow-hidden"
-              >
-                {memoryTypeOptions.map((option) => (
-                  <button
-                    key={option.value}
-                    type="button"
-                    onClick={() => {
-                      setMemoryType(option.value);
-                      setMemoryTypeSelectorOpen(false);
-                    }}
-                    className={cn(
-                      "flex items-center gap-2 w-full px-4 py-2 hover:bg-green/10",
-                      memoryType === option.value
-                        ? "font-medium bg-green/10"
-                        : ""
-                    )}
-                  >
-                    <option.icon size={20} className="" />
-                    <span>{option.label}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          <MemoryTypeSelector
+            memoryType={memoryType}
+            setMemoryType={setMemoryType}
+          />
         }
       />
 
