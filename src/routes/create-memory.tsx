@@ -6,6 +6,7 @@ import { useForm } from "@tanstack/react-form";
 import CreationSection from "@/components/ui/CreationSection";
 import TextInput from "@/components/form/TextInput";
 import TextArea from "@/components/form/TextArea";
+import TimePicker from "@/components/form/TimePicker";
 import {
   TbBuildingLighthouse,
   TbUserHexagon,
@@ -48,8 +49,15 @@ function RouteComponent() {
     defaultValues: {
       title: "",
       description: "",
-      isSecret: false,
+      is_secret: false,
       images: [],
+      date_time_in: {
+        year: 0,
+        month: 0,
+        day: 0,
+        hour: 0,
+        min: 0,
+      },
     },
     onSubmit: async (values) => {
       console.log(values);
@@ -125,12 +133,15 @@ function RouteComponent() {
               placeholder="Racontez ce qu'il s'est passé !"
             />
           </CreationSection>
+          <CreationSection label="heure">
+            <TimePicker form={form} name="date_time_in" />
+          </CreationSection>
           <CreationSection label="Personnes présentes">TODO</CreationSection>
           <CreationSection label="Partage">TODO</CreationSection>
           <CreationSection label="Visibilité">
             <Switcher
               form={form}
-              name="isSecret"
+              name="is_secret"
               label="Rendre secret"
               icon={TbLockSquareRoundedFilled}
             />
