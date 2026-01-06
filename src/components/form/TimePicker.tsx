@@ -59,8 +59,8 @@ export default function TimePicker({
         const handleClear = () => {
           field.handleChange({
             ...field.state.value,
-            hour: 0,
-            min: 0,
+            hour: undefined,
+            min: undefined,
           });
           setOpen(false);
         };
@@ -75,8 +75,9 @@ export default function TimePicker({
                 )}
               >
                 <TbClock size={24} />
-                {field.state?.value?.hour && field.state?.value?.min
-                  ? `${field.state?.value?.hour}h${field.state?.value?.min}`
+                {field.state?.value?.hour !== undefined &&
+                field.state?.value?.min !== undefined
+                  ? `${field.state?.value?.hour}h${String(field.state?.value?.min).padStart(2, "0")}`
                   : placeholder}
               </button>
             </DialogTrigger>

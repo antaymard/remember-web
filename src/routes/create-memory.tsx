@@ -52,11 +52,11 @@ function RouteComponent() {
       is_secret: false,
       medias: [],
       date_time_in: {
-        year: 0,
-        month: 0,
-        day: 0,
-        hour: 0,
-        min: 0,
+        year: undefined,
+        month: undefined,
+        day: undefined,
+        hour: undefined,
+        min: undefined,
       },
     },
     onSubmit: async (values) => {
