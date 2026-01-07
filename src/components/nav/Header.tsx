@@ -4,7 +4,7 @@ import { TbArrowLeft } from "react-icons/tb";
 export default function Header({
   title = "Titre",
   showBackArrow = false,
-  onArrowBackClick = () => {},
+  onArrowBackClick,
   rightContent,
   bottomContent,
 }: {
@@ -24,7 +24,7 @@ export default function Header({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           {showBackArrow && (
-            <button onClick={() => onArrowBackClick()} className="outline-0">
+            <button onClick={() => onArrowBackClick?.()} className="outline-0">
               <TbArrowLeft size={24} className="path-stroke-2" />
             </button>
           )}

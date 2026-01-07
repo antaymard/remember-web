@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils";
-import type { IconType } from "react-icons";
 import {
   Select,
   SelectContent,
@@ -18,14 +17,17 @@ export default function SelectInput({
 }: {
   form: any;
   name: string;
-  icon?: IconType;
   placeholder?: string;
   options: { value: string; label: string }[];
   label?: string;
 }) {
   return (
     <form.Field name={name}>
-      {(field: any) => {
+      {(field: {
+        state: { value: any };
+        handleChange: (value: any) => void;
+        name: string;
+      }) => {
         return (
           <>
             <Select

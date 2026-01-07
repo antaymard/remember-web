@@ -21,7 +21,12 @@ export default function TextInput({
 }) {
   return (
     <form.Field name={name}>
-      {(field: any) => {
+      {(field: {
+        state: { value: any };
+        handleChange: (value: any) => void;
+        handleBlur: () => void;
+        name: string;
+      }) => {
         const Icon = Icons[icon];
         return (
           <div

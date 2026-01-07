@@ -27,7 +27,7 @@ export default function PersonPicker({
     );
   return (
     <form.Field name={name}>
-      {(field: any) => {
+      {(field: { state: { value: any }; handleChange: (value: any) => void; name: string }) => {
         return (
           <>
             {field.state?.value?.length

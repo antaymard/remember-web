@@ -16,7 +16,11 @@ export default function Switcher({
   const Icon = icon;
   return (
     <form.Field name={name}>
-      {(field: any) => {
+      {(field: {
+        state: { value: any };
+        handleChange: (value: any) => void;
+        name: string;
+      }) => {
         return (
           <div className={cn("w-full flex items-center justify-between")}>
             {(Icon || label) && (

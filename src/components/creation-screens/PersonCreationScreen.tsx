@@ -6,7 +6,6 @@ import type { PersonType } from "@/types/memory.types";
 import CreationSection from "@/components/ui/CreationSection";
 import TextInput from "@/components/form/TextInput";
 import TextArea from "@/components/form/TextArea";
-import { TbUser } from "react-icons/tb";
 import ImageUploader from "@/components/form/ImageUploader";
 import CreationNavbar from "@/components/nav/CreationNavbar";
 import * as z from "zod";
@@ -49,7 +48,12 @@ export default function PersonCreationScreen() {
     } as PersonType,
     onSubmit: async ({ value }) => {
       try {
-        await editPerson(value);
+        // Ensure type is set correctly
+        const personData = {
+          ...value,
+          type: value.type || ("human" as "human" | "animal"),
+        };
+        await editPerson(personData);
         console.log("Personne créé:");
         // Rediriger vers le feed ou la page de détail après création
         navigate({ to: "/feed" });
@@ -87,7 +91,6 @@ export default function PersonCreationScreen() {
                 form={form}
                 name="type"
                 placeholder="Type"
-                icon={TbUser}
                 options={[
                   { value: "human", label: "Humain" },
                   { value: "animal", label: "Animal" },
@@ -97,7 +100,6 @@ export default function PersonCreationScreen() {
                 form={form}
                 name="gender"
                 placeholder="Genre"
-                icon={TbUser}
                 options={[
                   { value: "male", label: "Homme" },
                   { value: "female", label: "Femme" },
@@ -111,7 +113,6 @@ export default function PersonCreationScreen() {
               form={form}
               name="relation_type"
               placeholder="Type de relation"
-              icon={TbUser}
               options={[
                 { value: "family", label: "Famille" },
                 { value: "friend", label: "Ami" },

@@ -43,7 +43,12 @@ export default function ThingCreationScreen() {
     } as ThingType,
     onSubmit: async ({ value }) => {
       try {
-        await editThing(value);
+        // Ensure type is set correctly
+        const thingData = {
+          ...value,
+          type: value.type as "physical" | "music" | "film" | "book",
+        };
+        await editThing(thingData);
         console.log("Moment créé:");
         // Rediriger vers le feed ou la page de détail après création
         navigate({ to: "/feed" });

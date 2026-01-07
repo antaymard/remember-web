@@ -8,12 +8,16 @@ export default function TextArea({
 }: {
   form: any;
   name: string;
-  type?: string;
   placeholder?: string;
 }) {
   return (
     <form.Field name={name}>
-      {(field: any) => {
+      {(field: {
+        state: { value: any };
+        handleChange: (value: any) => void;
+        handleBlur: () => void;
+        name: string;
+      }) => {
         return (
           <div
             className={cn(

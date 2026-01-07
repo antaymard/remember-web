@@ -2,7 +2,7 @@ import { v } from "convex/values";
 import { action } from "./_generated/server";
 import { generatePresignedUrl, getPublicUrl } from "./utils/r2";
 import { requireAuth } from "./utils/requireAuth";
-import type { ActionCtx } from "./_generated/server";
+import { type ActionCtx } from "./_generated/server";
 
 // Configuration de validation
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
