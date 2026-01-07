@@ -27,7 +27,7 @@ export default function PersonPicker({
     );
   return (
     <form.Field name={name}>
-      {(field) => {
+      {(field: any) => {
         return (
           <>
             {field.state?.value?.length

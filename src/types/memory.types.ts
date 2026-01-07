@@ -23,7 +23,7 @@ export interface PersonType {
   linked_user_id?: string;
   gender?: string;
   description?: string;
-  type?: "animal" | "human" | "other";
+  type: "animal" | "human";
   relation_type?: string;
   relation_name?: string;
   medias?: MediaData[];
@@ -39,7 +39,7 @@ export interface ThingType {
   title: string;
   description?: string;
   medias?: MediaData[];
-  type: "physical" | "music" | "film" | "book" | "celebrity";
+  type: "physical" | "music" | "film" | "book";
   first_met?: FlexibleDateTime;
   last_seen?: FlexibleDateTime;
 }

@@ -1,5 +1,5 @@
 import exifr from "exifr";
-import type { ImageData } from "@/types/media";
+import type { MediaData as ImageData } from "@/types/shared.types";
 
 /**
  * Loads an image and returns its natural dimensions

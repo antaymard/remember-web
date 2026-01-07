@@ -21,7 +21,7 @@ export default function TextInput({
 }) {
   return (
     <form.Field name={name}>
-      {(field) => {
+      {(field: any) => {
         const Icon = Icons[icon];
         return (
           <div

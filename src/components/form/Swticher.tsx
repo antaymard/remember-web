@@ -11,15 +11,15 @@ export default function Switcher({
   form: any;
   name: string;
   label?: string;
-  icon: IconType;
+  icon?: IconType;
 }) {
   const Icon = icon;
   return (
     <form.Field name={name}>
-      {(field) => {
+      {(field: any) => {
         return (
           <div className={cn("w-full flex items-center justify-between")}>
-            {(icon || label) && (
+            {(Icon || label) && (
               <div className="flex items-center gap-2">
                 {Icon && <Icon size={20} className="text-text" />}
                 {label && (

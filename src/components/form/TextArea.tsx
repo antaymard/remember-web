@@ -4,7 +4,6 @@ import { TbTextCaption } from "react-icons/tb";
 export default function TextArea({
   form,
   name,
-  type,
   placeholder = "",
 }: {
   form: any;
@@ -14,7 +13,7 @@ export default function TextArea({
 }) {
   return (
     <form.Field name={name}>
-      {(field) => {
+      {(field: any) => {
         return (
           <div
             className={cn(

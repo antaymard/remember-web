@@ -8,11 +8,7 @@ import CreationSection from "@/components/ui/CreationSection";
 import TextInput from "@/components/form/TextInput";
 import TextArea from "@/components/form/TextArea";
 import TimePicker from "@/components/form/TimePicker";
-import {
-  TbLockSquareRoundedFilled,
-  TbClockPin,
-  TbUserHeart,
-} from "react-icons/tb";
+import { TbClockPin, TbUserHeart } from "react-icons/tb";
 import ImageUploader from "@/components/form/ImageUploader";
 import CreationNavbar from "@/components/nav/CreationNavbar";
 import * as z from "zod";
@@ -45,7 +41,7 @@ export default function MomentCreationScreen() {
     } as MomentType,
     onSubmit: async ({ value }) => {
       try {
-        const momentId = await editMoment(value);
+        await editMoment(value);
         // Rediriger vers le feed ou la page de détail après création
         navigate({ to: "/feed" });
       } catch (error) {

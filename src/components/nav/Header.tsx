@@ -11,7 +11,7 @@ export default function Header({
   title: string;
   showBackArrow?: boolean;
   rightContent?: React.ReactNode;
-  onArrowBackClick: () => void;
+  onArrowBackClick?: () => void;
   bottomContent?: React.ReactNode;
 }) {
   return (

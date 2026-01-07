@@ -1,5 +1,3 @@
-import Header from "@/components/nav/Header";
-import Navbar from "@/components/nav/Navbar";
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { useConvexAuth } from "convex/react";
 
@@ -11,7 +9,7 @@ function RouteComponent() {
   const { isAuthenticated } = useConvexAuth();
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/signin" />;
   } else {
     return <Navigate to="/feed" />;
   }

@@ -1,7 +1,6 @@
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { requireAuth } from "./utils/requireAuth";
-import { flexibleDateTime } from "./schema";
 
 const item = "places" as const;
 

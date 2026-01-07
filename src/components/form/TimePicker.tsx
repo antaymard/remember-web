@@ -35,7 +35,7 @@ export default function TimePicker({
 
   return (
     <form.Field name={name}>
-      {(field) => {
+      {(field: any) => {
         const handleOpenChange = (newOpen: boolean) => {
           if (newOpen) {
             // Quand on ouvre, initialiser avec la valeur du form
