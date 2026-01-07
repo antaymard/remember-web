@@ -4,7 +4,6 @@ import { ButtonPastel } from "@/components/ui/Button";
 import { useUser } from "@/contexts/userContext";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { api } from "@/../convex/_generated/api";
-import type { Doc } from "convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import {
   TbUsersGroup,

@@ -11,7 +11,11 @@ interface UserContextValue {
 const UserContext = createContext<UserContextValue | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
-  const value = useQuery(api.users.getMe) || {};
+  const result = useQuery(api.users.getMe);
+  const value: UserContextValue = {
+    user: result?.user,
+    unfinishedMemoriesCount: result?.unfinishedMemoriesCount,
+  };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 }

@@ -4,8 +4,6 @@ import {
   TbAirBalloon,
   TbPlus,
   TbSearch,
-  TbMessage,
-  TbMessageFilled,
 } from "react-icons/tb";
 import { Link, useLocation } from "@tanstack/react-router";
 import TbAirBalloonFilled from "@/assets/svg/TbAirBalloonFilled.svg";

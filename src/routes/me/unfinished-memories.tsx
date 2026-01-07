@@ -10,8 +10,6 @@ export const Route = createFileRoute("/me/unfinished-memories")({
 function RouteComponent() {
   const router = useRouter();
 
-  const unfinishedMemories = useQuery(api.memories.listUnfinished) || [];
-
   return (
     <>
       <Header
