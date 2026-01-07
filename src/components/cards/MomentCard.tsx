@@ -1,4 +1,4 @@
-import type { MomentType, PersonType } from "@/types/memory.types";
+import type { MomentWithCreator, PersonType } from "@/types/memory.types";
 import {
   Carousel,
   CarouselContent,
@@ -41,7 +41,7 @@ function renderPresentPersons(presentPersons: PersonType[] | undefined) {
   );
 }
 
-export default function MomentCard({ moment }: { moment: MomentType }) {
+export default function MomentCard({ moment }: { moment: MomentWithCreator }) {
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -66,14 +66,16 @@ export default function MomentCard({ moment }: { moment: MomentType }) {
       {/* Header */}
       <div className="flex px-4 items-center gap-3">
         <img
-          src={moment?.creator_id?.medias[0]?.url}
+          src={moment.creator_id?.medias?.[0]?.url}
           className="w-10 h-10 rounded-full object-cover"
         />
         <div className="flex flex-col">
           <h2 className="font-serif truncate text-xl leading-tight line-clamp-1">
             {moment.title}
           </h2>
-          <p className="leading-tight opacity-80 text-sm">Antoine Aymard</p>
+          <p className="leading-tight opacity-80 text-sm">
+            {moment.creator_id?.firstname} {moment.creator_id?.lastname}
+          </p>
         </div>
       </div>
       <div className="aspect-square w-full relative">

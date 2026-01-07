@@ -18,6 +18,7 @@ const memorySchema = z.object({
   type: z.enum(["physical", "music", "film", "book"], {
     message: "Le type sélectionné n'est pas valide",
   }),
+  status: z.enum(["unfinished", "completed", "archived"]),
 });
 
 const defaultFlexibleDate = {

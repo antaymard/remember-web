@@ -17,6 +17,7 @@ const personSchema = z.object({
   lastname: z.string().min(1, "Le nom de famille est requis"),
   // medias: z.array(z.any()).min(1, "Au moins une image est requise"),
   type: z.enum(["animal", "human"]),
+  status: z.enum(["unfinished", "completed", "archived"]),
 });
 
 const defaultFlexibleDateTime = {

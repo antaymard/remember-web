@@ -3,9 +3,10 @@ import type { Doc, Id } from "@/../convex/_generated/dataModel";
 
 type status = "unfinished" | "completed" | "archived";
 
+// Type de base avec creator_id comme ID
 export interface MomentType {
   _id?: Id<"moments">;
-  creator_id?: string | Doc<"users">;
+  creator_id?: Id<"users">;
   title: string;
   description?: string;
   is_secret?: boolean;
@@ -13,6 +14,11 @@ export interface MomentType {
   date_time_in?: FlexibleDateTime;
   present_persons?: Id<"persons">[] | PersonType[];
   status: status;
+}
+
+// Type avec creator_id populé
+export interface MomentWithCreator extends Omit<MomentType, "creator_id"> {
+  creator_id?: Doc<"users">;
 }
 
 export interface PersonType {
