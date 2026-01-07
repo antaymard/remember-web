@@ -15,21 +15,43 @@ export const list = query({
       .order("desc")
       .collect();
 
-    // Populate present_persons pour chaque moment
-    const momentsWithPersons = await Promise.all(
-      moments.map(async (moment) => {
-        if (moment.present_persons && moment.present_persons.length > 0) {
-          const persons = await Promise.all(
-            moment.present_persons.map((personId) => ctx.db.get(personId))
-          );
-          return {
-            ...moment,
-            present_persons: persons.filter((p) => p !== null),
-          };
-        }
-        return moment;
-      })
-    );
+    // Récupérer tous les IDs uniques de personnes et de créateurs
+    const allPersonIds = new Set<string>();
+    const allCreatorIds = new Set<string>();
+
+    moments.forEach((moment) => {
+      allCreatorIds.add(moment.creator_id);
+      if (moment.present_persons) {
+        moment.present_persons.forEach((personId) =>
+          allPersonIds.add(personId)
+        );
+      }
+    });
+
+    // Charger toutes les personnes et créateurs en une seule fois
+    const [personsMap, creatorsMap] = await Promise.all([
+      Promise.all(
+        Array.from(allPersonIds).map(async (id) => {
+          const person = await ctx.db.get(id as any);
+          return [id, person] as const;
+        })
+      ).then((pairs) => new Map(pairs)),
+      Promise.all(
+        Array.from(allCreatorIds).map(async (id) => {
+          const creator = await ctx.db.get(id as any);
+          return [id, creator] as const;
+        })
+      ).then((pairs) => new Map(pairs)),
+    ]);
+
+    // Mapper les données sur les moments
+    const momentsWithPersons = moments.map((moment) => ({
+      ...moment,
+      creator_id: creatorsMap.get(moment.creator_id),
+      present_persons: moment.present_persons
+        ?.map((personId) => personsMap.get(personId))
+        .filter((p) => p !== null && p !== undefined),
+    }));
 
     return momentsWithPersons;
   },
