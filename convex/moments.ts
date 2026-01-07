@@ -26,16 +26,16 @@ export const read = query({
   handler: async (ctx, { _id }) => {
     const userId = await requireAuth(ctx, true);
 
-    const moments = await ctx.db.get("moments", _id);
+    const moment = await ctx.db.get("moments", _id);
 
-    if (!moments) {
+    if (!moment) {
       throw new ConvexError("Moment non trouvé");
     }
-    if (moments.creator_id !== userId) {
+    if (moment.creator_id !== userId) {
       throw new ConvexError("Accès non autorisé");
     }
 
-    return moments;
+    return moment;
   },
 });
 

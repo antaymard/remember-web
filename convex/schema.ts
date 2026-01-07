@@ -24,17 +24,20 @@ const schema = defineSchema({
   }),
 
   persons: defineTable({
-    first_name: v.string(),
-    last_name: v.string(),
+    firstname: v.string(),
+    lastname: v.string(),
+    type: v.union(v.literal("animal"), v.literal("human")),
     birth_date: v.optional(flexibleDateTime),
     death_date: v.optional(flexibleDateTime),
-    first_seen: v.optional(flexibleDateTime),
+    first_met: v.optional(flexibleDateTime),
     last_seen: v.optional(flexibleDateTime),
     linked_user_id: v.optional(v.id("users")), // Link to the user who this person represents, if any
     creator_id: v.id("users"), // Link to the user who created this person entry
     gender: v.optional(v.string()),
-    notes: v.optional(v.string()),
-    type: v.union(v.literal("animal"), v.literal("human"), v.literal("other")),
+    description: v.optional(v.string()),
+    relation_type: v.optional(v.string()),
+    relation_name: v.optional(v.string()),
+    medias: v.optional(v.any()),
   }),
 });
 
