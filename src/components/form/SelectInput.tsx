@@ -12,7 +12,7 @@ export default function SelectInput({
 }: {
     form: any;
     name: string;
-    icon: IconType;
+    icon?: IconType;
     placeholder?: string;
     options: { value: string; label: string }[];
     label?: string;

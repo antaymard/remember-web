@@ -15,7 +15,7 @@ const schema = defineSchema({
   // Your other tables...
 
   moments: defineTable({
-    title: v.optional(v.string()),
+    title: v.string(),
     description: v.optional(v.string()),
     is_secret: v.optional(v.boolean()),
     medias: v.optional(v.any()), // Assuming MediaData is stored as JSON
@@ -37,6 +37,20 @@ const schema = defineSchema({
     description: v.optional(v.string()),
     relation_type: v.optional(v.string()),
     relation_name: v.optional(v.string()),
+    medias: v.optional(v.any()),
+  }),
+
+  places: defineTable({
+    title: v.string(),
+    description: v.optional(v.string()),
+    creator_id: v.id("users"), // Link to the user who created this person entry
+    medias: v.optional(v.any()),
+  }),
+
+  things: defineTable({
+    title: v.string(),
+    description: v.optional(v.string()),
+    creator_id: v.id("users"), // Link to the user who created this person entry
     medias: v.optional(v.any()),
   }),
 });

@@ -1,7 +1,8 @@
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { requireAuth } from "./utils/requireAuth";
-import { flexibleDateTime } from "./schema";
+
+const item = "things" as const;
 
 // Query pour lister toutes les personnes de l'utilisateur connecté
 export const list = query({
@@ -10,7 +11,7 @@ export const list = query({
     const userId = await requireAuth(ctx, true);
 
     const moments = await ctx.db
-      .query("moments")
+      .query(item)
       .filter((q) => q.eq(q.field("creator_id"), userId))
       .order("desc")
       .collect();
@@ -21,32 +22,30 @@ export const list = query({
 
 export const read = query({
   args: {
-    _id: v.id("moments"),
+    _id: v.id(item),
   },
   handler: async (ctx, { _id }) => {
     const userId = await requireAuth(ctx, true);
 
-    const moment = await ctx.db.get("moments", _id);
+    const place = await ctx.db.get(item, _id);
 
-    if (!moment) {
-      throw new ConvexError("Moment non trouvé");
+    if (!place) {
+      throw new ConvexError("Place non trouvée");
     }
-    if (moment.creator_id !== userId) {
+    if (place.creator_id !== userId) {
       throw new ConvexError("Accès non autorisé");
     }
 
-    return moment;
+    return place;
   },
 });
 
 export const edit = mutation({
   args: {
-    _id: v.optional(v.id("moments")),
+    _id: v.optional(v.id(item)),
     title: v.string(),
     description: v.optional(v.string()),
-    is_secret: v.optional(v.boolean()),
     medias: v.optional(v.any()),
-    date_time_in: v.optional(flexibleDateTime),
   },
   handler: async (ctx, args) => {
     const userId = await requireAuth(ctx, true);
@@ -58,7 +57,7 @@ export const edit = mutation({
       const existing = await ctx.db.get(_id);
 
       if (!existing) {
-        throw new ConvexError("Moment non trouvé");
+        throw new ConvexError("Place non trouvé");
       }
 
       if (existing.creator_id !== userId) {
@@ -70,7 +69,7 @@ export const edit = mutation({
     }
 
     // Sinon, on crée
-    const newId = await ctx.db.insert("moments", {
+    const newId = await ctx.db.insert(item, {
       ...data,
       creator_id: userId,
     });

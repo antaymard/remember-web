@@ -106,7 +106,7 @@ export default function PersonCreationScreen() {
                         <DatePicker form={form} name="birth_date" placeholder="Naissance" />
                         <DatePicker form={form} name="death_date" placeholder="Décès" />
                         <DatePicker form={form} name="first_met" placeholder="Rencontre" />
-                        <DatePicker form={form} name="last_seen" placeholder="Dernier échange" />
+                        <DatePicker form={form} name="last_seen" placeholder="Dernier contact" />
                     </div>
                 </CreationSection>
 

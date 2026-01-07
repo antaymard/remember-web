@@ -28,3 +28,18 @@ export interface PersonType {
   relation_name?: string;
   medias?: MediaData[];
 }
+
+export interface PlaceType {
+  title: string;
+  description?: string;
+  medias?: MediaData[];
+}
+
+export interface ThingType {
+  title: string;
+  description?: string;
+  medias?: MediaData[];
+  type: "physical" | "music" | "film" | "book" | "celebrity";
+  first_met?: FlexibleDateTime;
+  last_seen?: FlexibleDateTime;
+}

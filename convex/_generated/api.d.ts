@@ -12,6 +12,8 @@ import type * as auth from "../auth.js";
 import type * as http from "../http.js";
 import type * as moments from "../moments.js";
 import type * as persons from "../persons.js";
+import type * as places from "../places.js";
+import type * as things from "../things.js";
 import type * as uploads from "../uploads.js";
 import type * as utils_r2 from "../utils/r2.js";
 import type * as utils_requireAuth from "../utils/requireAuth.js";
@@ -27,6 +29,8 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   moments: typeof moments;
   persons: typeof persons;
+  places: typeof places;
+  things: typeof things;
   uploads: typeof uploads;
   "utils/r2": typeof utils_r2;
   "utils/requireAuth": typeof utils_requireAuth;
