@@ -8,7 +8,11 @@ import CreationSection from "@/components/ui/CreationSection";
 import TextInput from "@/components/form/TextInput";
 import TextArea from "@/components/form/TextArea";
 import TimePicker from "@/components/form/TimePicker";
-import { TbLockSquareRoundedFilled, TbClockPin } from "react-icons/tb";
+import {
+  TbLockSquareRoundedFilled,
+  TbClockPin,
+  TbUserHeart,
+} from "react-icons/tb";
 import ImageUploader from "@/components/form/ImageUploader";
 import CreationNavbar from "@/components/nav/CreationNavbar";
 import * as z from "zod";
@@ -41,7 +45,6 @@ export default function MomentCreationScreen() {
     } as MomentType,
     onSubmit: async ({ value }) => {
       try {
-        return console.log(value);
         const momentId = await editMoment(value);
         // Rediriger vers le feed ou la page de détail après création
         navigate({ to: "/feed" });
@@ -94,15 +97,22 @@ export default function MomentCreationScreen() {
           <CreationSection label="Personnes présentes">
             <PersonPicker form={form} name="present_persons" />
           </CreationSection>
-          <CreationSection label="Partage">TODO</CreationSection>
-          <CreationSection label="Visibilité">
+          <CreationSection label="Partage">
+            <Switcher
+              form={form}
+              name="is_shared_with_present_persons"
+              label="Partager avec les personnes présentes"
+              icon={TbUserHeart}
+            />
+          </CreationSection>
+          {/* <CreationSection label="Visibilité">
             <Switcher
               form={form}
               name="is_secret"
               label="Rendre secret"
               icon={TbLockSquareRoundedFilled}
             />
-          </CreationSection>
+          </CreationSection> */}
         </div>
       </div>
       <CreationNavbar form={form} />
