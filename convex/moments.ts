@@ -12,6 +12,7 @@ export const list = query({
     const moments = await ctx.db
       .query("moments")
       .filter((q) => q.eq(q.field("creator_id"), userId))
+      .order("desc")
       .collect();
 
     return moments;
@@ -55,11 +56,11 @@ export const edit = mutation({
     // Si _id existe, on édite
     if (_id) {
       const existing = await ctx.db.get(_id);
-      
+
       if (!existing) {
         throw new ConvexError("Moment non trouvé");
       }
-      
+
       if (existing.creator_id !== userId) {
         throw new ConvexError("Accès non autorisé");
       }
