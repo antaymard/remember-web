@@ -14,7 +14,7 @@ import SelectInput from "../form/SelectInput";
 
 const memorySchema = z.object({
   title: z.string().min(1, "Le titre est requis"),
-  medias: z.array(z.any()).min(1, "Au moins une image est requise"),
+  // medias: z.array(z.any()).min(1, "Au moins une image est requise"),
   type: z.enum(["physical", "music", "film", "book"], {
     message: "Le type sélectionné n'est pas valide",
   }),
@@ -40,6 +40,7 @@ export default function ThingCreationScreen() {
       type: "physical",
       first_met: defaultFlexibleDate,
       last_seen: defaultFlexibleDate,
+      status: "unfinished",
     } as ThingType,
     onSubmit: async ({ value }) => {
       try {

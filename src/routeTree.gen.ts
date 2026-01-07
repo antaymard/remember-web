@@ -17,6 +17,8 @@ import { Route as CreateMemoryRouteImport } from './routes/create-memory'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MeIndexRouteImport } from './routes/me/index'
+import { Route as MeUnfinishedMemoriesRouteImport } from './routes/me/unfinished-memories'
+import { Route as MeEditRouteImport } from './routes/me/edit'
 
 const SigninRoute = SigninRouteImport.update({
   id: '/signin',
@@ -58,6 +60,16 @@ const MeIndexRoute = MeIndexRouteImport.update({
   path: '/me/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MeUnfinishedMemoriesRoute = MeUnfinishedMemoriesRouteImport.update({
+  id: '/me/unfinished-memories',
+  path: '/me/unfinished-memories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeEditRoute = MeEditRouteImport.update({
+  id: '/me/edit',
+  path: '/me/edit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -67,6 +79,8 @@ export interface FileRoutesByFullPath {
   '/feed': typeof FeedRoute
   '/search': typeof SearchRoute
   '/signin': typeof SigninRoute
+  '/me/edit': typeof MeEditRoute
+  '/me/unfinished-memories': typeof MeUnfinishedMemoriesRoute
   '/me': typeof MeIndexRoute
 }
 export interface FileRoutesByTo {
@@ -77,6 +91,8 @@ export interface FileRoutesByTo {
   '/feed': typeof FeedRoute
   '/search': typeof SearchRoute
   '/signin': typeof SigninRoute
+  '/me/edit': typeof MeEditRoute
+  '/me/unfinished-memories': typeof MeUnfinishedMemoriesRoute
   '/me': typeof MeIndexRoute
 }
 export interface FileRoutesById {
@@ -88,6 +104,8 @@ export interface FileRoutesById {
   '/feed': typeof FeedRoute
   '/search': typeof SearchRoute
   '/signin': typeof SigninRoute
+  '/me/edit': typeof MeEditRoute
+  '/me/unfinished-memories': typeof MeUnfinishedMemoriesRoute
   '/me/': typeof MeIndexRoute
 }
 export interface FileRouteTypes {
@@ -100,6 +118,8 @@ export interface FileRouteTypes {
     | '/feed'
     | '/search'
     | '/signin'
+    | '/me/edit'
+    | '/me/unfinished-memories'
     | '/me'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -110,6 +130,8 @@ export interface FileRouteTypes {
     | '/feed'
     | '/search'
     | '/signin'
+    | '/me/edit'
+    | '/me/unfinished-memories'
     | '/me'
   id:
     | '__root__'
@@ -120,6 +142,8 @@ export interface FileRouteTypes {
     | '/feed'
     | '/search'
     | '/signin'
+    | '/me/edit'
+    | '/me/unfinished-memories'
     | '/me/'
   fileRoutesById: FileRoutesById
 }
@@ -131,6 +155,8 @@ export interface RootRouteChildren {
   FeedRoute: typeof FeedRoute
   SearchRoute: typeof SearchRoute
   SigninRoute: typeof SigninRoute
+  MeEditRoute: typeof MeEditRoute
+  MeUnfinishedMemoriesRoute: typeof MeUnfinishedMemoriesRoute
   MeIndexRoute: typeof MeIndexRoute
 }
 
@@ -192,6 +218,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MeIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/me/unfinished-memories': {
+      id: '/me/unfinished-memories'
+      path: '/me/unfinished-memories'
+      fullPath: '/me/unfinished-memories'
+      preLoaderRoute: typeof MeUnfinishedMemoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/me/edit': {
+      id: '/me/edit'
+      path: '/me/edit'
+      fullPath: '/me/edit'
+      preLoaderRoute: typeof MeEditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -203,6 +243,8 @@ const rootRouteChildren: RootRouteChildren = {
   FeedRoute: FeedRoute,
   SearchRoute: SearchRoute,
   SigninRoute: SigninRoute,
+  MeEditRoute: MeEditRoute,
+  MeUnfinishedMemoriesRoute: MeUnfinishedMemoriesRoute,
   MeIndexRoute: MeIndexRoute,
 }
 export const routeTree = rootRouteImport

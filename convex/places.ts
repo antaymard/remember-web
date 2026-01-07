@@ -46,6 +46,11 @@ export const edit = mutation({
     title: v.string(),
     description: v.optional(v.string()),
     medias: v.optional(v.any()),
+    status: v.union(
+      v.literal("unfinished"),
+      v.literal("completed"),
+      v.literal("archived")
+    ),
   },
   handler: async (ctx, args) => {
     const userId = await requireAuth(ctx, true);

@@ -1,6 +1,8 @@
 import type { FlexibleDateTime, MediaData } from "./shared.types";
 import type { Id } from "@/../convex/_generated/dataModel";
 
+type status = "unfinished" | "completed" | "archived";
+
 export interface MomentType {
   _id?: Id<"moments">;
   creator_id?: string;
@@ -10,6 +12,7 @@ export interface MomentType {
   medias?: MediaData[];
   date_time_in?: FlexibleDateTime;
   present_persons?: string[] | object[];
+  status: status;
 }
 
 export interface PersonType {
@@ -28,12 +31,14 @@ export interface PersonType {
   relation_type?: string;
   relation_name?: string;
   medias?: MediaData[];
+  status: status;
 }
 
 export interface PlaceType {
   title: string;
   description?: string;
   medias?: MediaData[];
+  status: status;
 }
 
 export interface ThingType {
@@ -43,4 +48,5 @@ export interface ThingType {
   type: "physical" | "music" | "film" | "book";
   first_met?: FlexibleDateTime;
   last_seen?: FlexibleDateTime;
+  status: status;
 }

@@ -10,6 +10,8 @@ import {
 import { Link, useLocation } from "@tanstack/react-router";
 import TbAirBalloonFilled from "@/assets/svg/TbAirBalloonFilled.svg";
 import TbSearchFilled from "@/assets/svg/TbSearchFilled.svg";
+import { useUser } from "@/contexts/userContext";
+import { cn } from "@/lib/utils";
 
 export default function Navbar() {
   const location = useLocation();
@@ -40,9 +42,9 @@ export default function Navbar() {
       url: "/search",
     },
     {
-      iconInactive: <TbMessage />,
-      iconActive: <TbMessageFilled />,
-      label: "Chat",
+      iconInactive: <ProfilePicture />,
+      iconActive: <ProfilePicture active={true} />,
+      label: "Profil",
       url: "/me",
     },
   ] as const;
@@ -83,5 +85,27 @@ export default function Navbar() {
         );
       })}
     </nav>
+  );
+}
+
+function ProfilePicture({ active = false }: { active?: boolean }) {
+  const { user, unfinishedMemoriesCount } = useUser();
+
+  return (
+    <div className="relative">
+      <img
+        src={user?.medias?.[0]?.url || ""}
+        alt="profile_pic"
+        className={cn(
+          "rounded-full h-6 w-6 object-cover",
+          active && "ring-2 ring-green"
+        )}
+      />
+      {unfinishedMemoriesCount ? (
+        <span className="absolute -top-1 -right-2 bg-red text-white text-xs border-white border-2 rounded-full h-4 w-4 flex items-center justify-center">
+          {unfinishedMemoriesCount}
+        </span>
+      ) : null}
+    </div>
   );
 }

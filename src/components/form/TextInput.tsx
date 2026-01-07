@@ -1,9 +1,10 @@
 import { cn } from "@/lib/utils";
-import { TbTextColor, TbTextRecognition } from "react-icons/tb";
+import { TbTextColor, TbTextRecognition, TbMail } from "react-icons/tb";
 
 const Icons = {
   title: TbTextRecognition,
   text: TbTextColor,
+  mail: TbMail,
 };
 
 export default function TextInput({
@@ -17,7 +18,7 @@ export default function TextInput({
   name: string;
   type?: string;
   placeholder?: string;
-  icon?: "title" | "text";
+  icon?: "title" | "text" | "mail";
 }) {
   return (
     <form.Field name={name}>

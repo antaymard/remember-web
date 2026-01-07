@@ -17,7 +17,7 @@ import PersonPicker from "../form/PersonPicker";
 
 const memorySchema = z.object({
   title: z.string().min(1, "Le titre est requis"),
-  medias: z.array(z.any()).min(1, "Au moins une image est requise"),
+  // medias: z.array(z.any()).min(1, "Au moins une image est requise"),
 });
 
 export default function MomentCreationScreen() {
@@ -38,6 +38,7 @@ export default function MomentCreationScreen() {
         min: undefined,
       },
       present_persons: [],
+      status: "unfinished",
     } as MomentType,
     onSubmit: async ({ value }) => {
       try {

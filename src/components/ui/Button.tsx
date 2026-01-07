@@ -1,10 +1,12 @@
 import { cn } from "@/lib/utils";
-import { TbX, TbCheck, TbTrash, TbPlus } from "react-icons/tb";
+import { TbX, TbCheck, TbTrash, TbPlus, TbAdjustments } from "react-icons/tb";
+
+type icon = React.ReactNode | "x" | "check" | "trash" | "plus" | "settings";
 
 interface ButtonPastelProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  color: "blue" | "green" | "red" | "grey";
+  color?: "blue" | "green" | "red" | "grey";
   label?: string;
-  icon?: React.ReactNode | "x" | "check" | "trash";
+  icon?: icon;
 }
 
 const classNames = {
@@ -14,7 +16,7 @@ const classNames = {
   grey: "bg-grey/10 text-grey",
 };
 
-function renderIcon(icon: React.ReactNode | "x" | "check") {
+function renderIcon(icon: icon) {
   const iconSize = 18;
   switch (icon) {
     case "x":
@@ -25,6 +27,8 @@ function renderIcon(icon: React.ReactNode | "x" | "check") {
       return <TbTrash size={iconSize} className="path-stroke-2" />;
     case "plus":
       return <TbPlus size={iconSize} className="path-stroke-2" />;
+    case "settings":
+      return <TbAdjustments size={iconSize} className="path-stroke-2" />;
     default:
       return icon;
   }

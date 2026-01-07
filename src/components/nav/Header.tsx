@@ -28,7 +28,7 @@ export default function Header({
               <TbArrowLeft size={24} className="path-stroke-2" />
             </button>
           )}
-          <h1 className="text-3xl font-medium">{title}</h1>
+          <h1 className="text-2xl font-medium">{title}</h1>
         </div>
         {rightContent && <>{rightContent}</>}
       </div>

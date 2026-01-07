@@ -29,9 +29,9 @@ const bigIconSize = 22;
 interface LocalMediaState extends Partial<MediaData> {
   /** Unique ID for tracking upload progress */
   id: string;
-  /** Local file object */
-  file: File;
-  /** Local preview URL (object URL) */
+  /** Local file object (only for new uploads) */
+  file?: File;
+  /** Local preview URL (object URL for new uploads, or remote URL for existing images) */
   preview: string;
   /** Upload status */
   status: "pending" | "uploading" | "done" | "error";
@@ -45,18 +45,39 @@ interface ImageUploaderProps {
   form: any;
   name: string;
   maxImages?: number;
+  hideReorderButtons?: boolean;
 }
 
 export default function ImageUploader({
   form,
   name,
   maxImages = 10,
+  hideReorderButtons = false,
 }: ImageUploaderProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [localImages, setLocalImages] = useState<LocalMediaState[]>([]);
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [currentIndex, setCurrentIndex] = useState(0);
   const { uploadFile } = useUploadFile();
+  const isInitialized = useRef(false);
+
+  // Initialize localImages from form value on mount
+  useEffect(() => {
+    if (isInitialized.current) return;
+
+    const formValue = form.getFieldValue(name) as MediaData[] | undefined;
+    if (formValue && formValue.length > 0) {
+      const existingImages: LocalMediaState[] = formValue.map((media) => ({
+        ...media,
+        id: crypto.randomUUID(),
+        preview: media.url, // Use the remote URL as preview
+        status: "done",
+        progress: 100,
+      }));
+      setLocalImages(existingImages);
+      isInitialized.current = true;
+    }
+  }, [form, name]);
 
   // Sync carousel index
   useEffect(() => {
@@ -118,6 +139,11 @@ export default function ImageUploader({
 
   // Upload a single image
   const uploadImage = async (localImage: LocalMediaState) => {
+    if (!localImage.file) {
+      console.error("No file to upload");
+      return;
+    }
+
     try {
       // Update status to uploading
       setLocalImages((prev) =>
@@ -171,7 +197,7 @@ export default function ImageUploader({
       );
 
       // Show toast error
-      toast.error(`Échec de l'upload: ${localImage.file.name}`);
+      toast.error(`Échec de l'upload: ${localImage.file?.name ?? "fichier"}`);
 
       // Remove from local images after a delay
       setTimeout(() => {
@@ -185,8 +211,10 @@ export default function ImageUploader({
     const imageToRemove = localImages.find((img) => img.id === imageId);
     if (!imageToRemove) return;
 
-    // Revoke object URL to free memory
-    URL.revokeObjectURL(imageToRemove.preview);
+    // Revoke object URL to free memory (only for local previews)
+    if (imageToRemove.file && imageToRemove.preview.startsWith("blob:")) {
+      URL.revokeObjectURL(imageToRemove.preview);
+    }
 
     // Remove from local state
     setLocalImages((prev) => prev.filter((img) => img.id !== imageId));
@@ -246,12 +274,16 @@ export default function ImageUploader({
 
   // Cleanup object URLs on unmount
   useEffect(() => {
+    const currentImages = localImages;
     return () => {
-      localImages.forEach((img) => {
-        URL.revokeObjectURL(img.preview);
+      currentImages.forEach((img) => {
+        // Only revoke object URLs (local previews), not remote URLs
+        if (img.file && img.preview.startsWith("blob:")) {
+          URL.revokeObjectURL(img.preview);
+        }
       });
     };
-  }, []);
+  }, [localImages]);
 
   const hasImages = localImages.length > 0;
   const canAddMore = localImages.length < maxImages;
@@ -289,26 +321,28 @@ export default function ImageUploader({
               </CarouselContent>
 
               {/* Reorder buttons - top right */}
-              <div className="absolute flex items-center gap-2 top-4 right-4 z-10">
-                <button
-                  type="button"
-                  className={smallButtonClassName}
-                  onClick={moveImageUp}
-                  disabled={currentIndex === 0 || isUploading}
-                >
-                  <TbArrowMoveLeft size={smallIconSize} />
-                </button>
-                <button
-                  type="button"
-                  className={smallButtonClassName}
-                  onClick={moveImageDown}
-                  disabled={
-                    currentIndex >= localImages.length - 1 || isUploading
-                  }
-                >
-                  <TbArrowMoveRight size={smallIconSize} />
-                </button>
-              </div>
+              {hideReorderButtons ? null : (
+                <div className="absolute flex items-center gap-2 top-4 right-4 z-10">
+                  <button
+                    type="button"
+                    className={smallButtonClassName}
+                    onClick={moveImageUp}
+                    disabled={currentIndex === 0 || isUploading}
+                  >
+                    <TbArrowMoveLeft size={smallIconSize} />
+                  </button>
+                  <button
+                    type="button"
+                    className={smallButtonClassName}
+                    onClick={moveImageDown}
+                    disabled={
+                      currentIndex >= localImages.length - 1 || isUploading
+                    }
+                  >
+                    <TbArrowMoveRight size={smallIconSize} />
+                  </button>
+                </div>
+              )}
 
               {/* Delete button - bottom left */}
               <button

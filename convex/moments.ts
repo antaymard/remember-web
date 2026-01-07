@@ -11,7 +11,12 @@ export const list = query({
 
     const moments = await ctx.db
       .query("moments")
-      .filter((q) => q.eq(q.field("creator_id"), userId))
+      .filter((q) =>
+        q.and(
+          q.eq(q.field("creator_id"), userId),
+          q.eq(q.field("status"), "completed")
+        )
+      )
       .order("desc")
       .collect();
 
@@ -86,6 +91,11 @@ export const edit = mutation({
     medias: v.optional(v.any()),
     date_time_in: v.optional(flexibleDateTime),
     present_persons: v.optional(v.array(v.id("persons"))),
+    status: v.union(
+      v.literal("unfinished"),
+      v.literal("completed"),
+      v.literal("archived")
+    ),
   },
   handler: async (ctx, args) => {
     const userId = await requireAuth(ctx, true);

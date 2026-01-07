@@ -54,6 +54,11 @@ export const edit = mutation({
     death_date: v.optional(flexibleDateTime),
     first_met: v.optional(flexibleDateTime),
     last_seen: v.optional(flexibleDateTime),
+    status: v.union(
+      v.literal("unfinished"),
+      v.literal("completed"),
+      v.literal("archived")
+    ),
   },
   handler: async (ctx, args) => {
     const userId = await requireAuth(ctx, true);

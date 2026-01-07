@@ -10,55 +10,56 @@ import CreationNavbar from "@/components/nav/CreationNavbar";
 import * as z from "zod";
 import { useNavigate } from "@tanstack/react-router";
 
-
 const memorySchema = z.object({
-    title: z.string().min(1, "Le titre est requis"),
-    medias: z.array(z.any()).min(1, "Au moins une image est requise"),
+  title: z.string().min(1, "Le titre est requis"),
+  //   medias: z.array(z.any()).min(1, "Au moins une image est requise"),
 });
 
-
 export default function PlaceCreationScreen() {
-    const navigate = useNavigate();
-    const editMoment = useMutation(api.moments.edit);
+  const navigate = useNavigate();
+  const editMoment = useMutation(api.moments.edit);
 
-    const form = useForm({
-        defaultValues: {
-            title: "",
-            description: "",
-        } as PlaceType,
-        onSubmit: async ({ value }) => {
-            try {
-                const momentId = await editMoment(value);
-                console.log("Moment créé:", momentId);
-                // Rediriger vers le feed ou la page de détail après création
-                navigate({ to: "/feed" });
-            } catch (error) {
-                console.error("Erreur lors de la création:", error);
-            }
-        },
-        validators: {
-            onSubmit: memorySchema,
-        },
-    });
-    return <>
-        {/* Content */}
-        <div className="py-17.5 bg-bg min-h-screen">
-            <ImageUploader form={form} name="medias" />
+  const form = useForm({
+    defaultValues: {
+      title: "",
+      description: "",
+      medias: [],
+      status: "unfinished",
+    } as PlaceType,
+    onSubmit: async ({ value }) => {
+      try {
+        const momentId = await editMoment(value);
+        console.log("Moment créé:", momentId);
+        // Rediriger vers le feed ou la page de détail après création
+        navigate({ to: "/feed" });
+      } catch (error) {
+        console.error("Erreur lors de la création:", error);
+      }
+    },
+    validators: {
+      onSubmit: memorySchema,
+    },
+  });
+  return (
+    <>
+      {/* Content */}
+      <div className="py-17.5 bg-bg min-h-screen">
+        <ImageUploader form={form} name="medias" />
 
-            <div className="space-y-2.5 pb-32">
-                <CreationSection label="Général">
-                    <TextInput form={form} name="title" placeholder="Titre" />
-
-                </CreationSection>
-                <CreationSection label="Description">
-                    <TextArea
-                        form={form}
-                        name="description"
-                        placeholder="Racontez ce qu'il s'est passé !"
-                    />
-                </CreationSection>
-
-            </div>
+        <div className="space-y-2.5 pb-32">
+          <CreationSection label="Général">
+            <TextInput form={form} name="title" placeholder="Titre" />
+          </CreationSection>
+          <CreationSection label="Description">
+            <TextArea
+              form={form}
+              name="description"
+              placeholder="Racontez ce qu'il s'est passé !"
+            />
+          </CreationSection>
         </div>
-        <CreationNavbar form={form} /></>
+      </div>
+      <CreationNavbar form={form} />
+    </>
+  );
 }

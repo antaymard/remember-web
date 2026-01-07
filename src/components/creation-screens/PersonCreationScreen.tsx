@@ -15,7 +15,7 @@ import SelectInput from "../form/SelectInput";
 const personSchema = z.object({
   firstname: z.string().min(1, "Le prénom est requis"),
   lastname: z.string().min(1, "Le nom de famille est requis"),
-  medias: z.array(z.any()).min(1, "Au moins une image est requise"),
+  // medias: z.array(z.any()).min(1, "Au moins une image est requise"),
   type: z.enum(["animal", "human"]),
 });
 
@@ -45,6 +45,7 @@ export default function PersonCreationScreen() {
       death_date: defaultFlexibleDateTime,
       first_met: defaultFlexibleDateTime,
       last_seen: defaultFlexibleDateTime,
+      status: "unfinished",
     } as PersonType,
     onSubmit: async ({ value }) => {
       try {
@@ -101,8 +102,8 @@ export default function PersonCreationScreen() {
                 name="gender"
                 placeholder="Genre"
                 options={[
-                  { value: "male", label: "Homme" },
-                  { value: "female", label: "Femme" },
+                  { value: "male", label: "Masculin" },
+                  { value: "female", label: "Féminin" },
                 ]}
               />
             </div>
