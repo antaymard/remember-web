@@ -21,6 +21,7 @@ const schema = defineSchema({
     medias: v.optional(v.any()), // Assuming MediaData is stored as JSON
     date_time_in: v.optional(flexibleDateTime),
     creator_id: v.id("users"), // Link to the user who created this moment
+    present_persons: v.optional(v.array(v.id("persons"))),
   }),
 
   persons: defineTable({

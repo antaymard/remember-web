@@ -43,7 +43,7 @@ export default function Navbar() {
       iconInactive: <TbMessage />,
       iconActive: <TbMessageFilled />,
       label: "Chat",
-      url: "/chat",
+      url: "/me",
     },
   ] as const;
 

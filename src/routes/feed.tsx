@@ -15,7 +15,7 @@ function RouteComponent() {
   return (
     <div>
       <Header title="Feed" />
-      <div className="py-17.5 flex flex-col">
+      <div className="py-17.5 flex flex-col gap-2.5 bg-bg">
         {moments?.map((moment) => (
           <div key={moment._id} className="">
             <MomentCard moment={moment} />

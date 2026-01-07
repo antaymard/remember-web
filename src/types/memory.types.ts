@@ -9,6 +9,7 @@ export interface MomentType {
   is_secret?: boolean;
   medias?: MediaData[];
   date_time_in?: FlexibleDateTime;
+  present_persons?: string[] | object[];
 }
 
 export interface PersonType {

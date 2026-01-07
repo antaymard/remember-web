@@ -15,7 +15,23 @@ export const list = query({
       .order("desc")
       .collect();
 
-    return moments;
+    // Populate present_persons pour chaque moment
+    const momentsWithPersons = await Promise.all(
+      moments.map(async (moment) => {
+        if (moment.present_persons && moment.present_persons.length > 0) {
+          const persons = await Promise.all(
+            moment.present_persons.map((personId) => ctx.db.get(personId))
+          );
+          return {
+            ...moment,
+            present_persons: persons.filter((p) => p !== null),
+          };
+        }
+        return moment;
+      })
+    );
+
+    return momentsWithPersons;
   },
 });
 
@@ -47,6 +63,7 @@ export const edit = mutation({
     is_secret: v.optional(v.boolean()),
     medias: v.optional(v.any()),
     date_time_in: v.optional(flexibleDateTime),
+    present_persons: v.optional(v.array(v.id("persons"))),
   },
   handler: async (ctx, args) => {
     const userId = await requireAuth(ctx, true);
