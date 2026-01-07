@@ -1,17 +1,17 @@
 import type { FlexibleDateTime, MediaData } from "./shared.types";
-import type { Id } from "@/../convex/_generated/dataModel";
+import type { Doc, Id } from "@/../convex/_generated/dataModel";
 
 type status = "unfinished" | "completed" | "archived";
 
 export interface MomentType {
   _id?: Id<"moments">;
-  creator_id?: string;
+  creator_id?: string | Doc<"users">;
   title: string;
   description?: string;
   is_secret?: boolean;
   medias?: MediaData[];
   date_time_in?: FlexibleDateTime;
-  present_persons?: string[] | object[];
+  present_persons?: Id<"persons">[] | PersonType[];
   status: status;
 }
 
