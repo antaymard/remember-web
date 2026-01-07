@@ -13,94 +13,99 @@ import ImageUploader from "@/components/form/ImageUploader";
 import CreationNavbar from "@/components/nav/CreationNavbar";
 import * as z from "zod";
 import { useNavigate } from "@tanstack/react-router";
-
+import PersonPicker from "../form/PersonPicker";
 
 const memorySchema = z.object({
-    title: z.string().min(1, "Le titre est requis"),
-    medias: z.array(z.any()).min(1, "Au moins une image est requise"),
+  title: z.string().min(1, "Le titre est requis"),
+  medias: z.array(z.any()).min(1, "Au moins une image est requise"),
 });
 
-
 export default function MomentCreationScreen() {
-    const navigate = useNavigate();
-    const editMoment = useMutation(api.moments.edit);
+  const navigate = useNavigate();
+  const editMoment = useMutation(api.moments.edit);
 
-    const form = useForm({
-        defaultValues: {
-            title: "",
-            description: "",
-            is_secret: false,
-            medias: [],
-            date_time_in: {
-                year: undefined,
-                month: undefined,
-                day: undefined,
-                hour: undefined,
-                min: undefined,
-            },
-        } as MomentType,
-        onSubmit: async ({ value }) => {
-            try {
-                const momentId = await editMoment(value);
-                console.log("Moment créé:", momentId);
-                // Rediriger vers le feed ou la page de détail après création
-                navigate({ to: "/feed" });
-            } catch (error) {
-                console.error("Erreur lors de la création:", error);
-            }
-        },
-        validators: {
-            onSubmit: memorySchema,
-        },
-    });
-    return <>
-        {/* Content */}
-        <div className="py-17.5 bg-bg min-h-screen">
-            <ImageUploader form={form} name="medias" />
+  const form = useForm({
+    defaultValues: {
+      title: "",
+      description: "",
+      is_secret: false,
+      medias: [],
+      date_time_in: {
+        year: undefined,
+        month: undefined,
+        day: undefined,
+        hour: undefined,
+        min: undefined,
+      },
+      present_persons: [],
+    } as MomentType,
+    onSubmit: async ({ value }) => {
+      try {
+        return console.log(value);
+        const momentId = await editMoment(value);
+        // Rediriger vers le feed ou la page de détail après création
+        navigate({ to: "/feed" });
+      } catch (error) {
+        console.error("Erreur lors de la création:", error);
+      }
+    },
+    validators: {
+      onSubmit: memorySchema,
+    },
+  });
+  return (
+    <>
+      {/* Content */}
+      <div className="py-17.5 bg-bg min-h-screen">
+        <ImageUploader form={form} name="medias" />
 
-            <div className="space-y-2.5 pb-32">
-                <CreationSection label="Général">
-                    <TextInput form={form} name="title" placeholder="Titre" />
-                    <div className="grid grid-cols-[1fr_auto_50px] gap-2">
-                        <DatePicker form={form} name="date_time_in" placeholder="Date" />
-                        <TimePicker form={form} name="date_time_in" placeholder="Heure" />
-                        <button
-                            type="button"
-                            onClick={() => {
-                                const now = new Date();
-                                form.setFieldValue("date_time_in", {
-                                    year: now.getFullYear(),
-                                    month: now.getMonth() + 1,
-                                    day: now.getDate(),
-                                    hour: now.getHours(),
-                                    min: now.getMinutes(),
-                                });
-                            }}
-                            className="h-12.5 w-12.5 rounded bg-bg text-grey focus:ring-2 ring-text outline-0 flex items-center justify-center"
-                        >
-                            <TbClockPin size={24} />
-                        </button>
-                    </div>
-                </CreationSection>
-                <CreationSection label="Description">
-                    <TextArea
-                        form={form}
-                        name="description"
-                        placeholder="Racontez ce qu'il s'est passé !"
-                    />
-                </CreationSection>
-
-                <CreationSection label="Personnes présentes">TODO</CreationSection>
-                <CreationSection label="Partage">TODO</CreationSection>
-                <CreationSection label="Visibilité">
-                    <Switcher
-                        form={form}
-                        name="is_secret"
-                        label="Rendre secret"
-                        icon={TbLockSquareRoundedFilled}
-                    />
-                </CreationSection>
+        <div className="space-y-2.5 pb-32">
+          <CreationSection label="Général">
+            <TextInput form={form} name="title" placeholder="Titre" />
+            <div className="grid grid-cols-[1fr_auto_50px] gap-2">
+              <DatePicker form={form} name="date_time_in" placeholder="Date" />
+              <TimePicker form={form} name="date_time_in" placeholder="Heure" />
+              <button
+                type="button"
+                onClick={() => {
+                  const now = new Date();
+                  form.setFieldValue("date_time_in", {
+                    year: now.getFullYear(),
+                    month: now.getMonth() + 1,
+                    day: now.getDate(),
+                    hour: now.getHours(),
+                    min: now.getMinutes(),
+                  });
+                }}
+                className="h-12.5 w-12.5 rounded bg-bg text-grey focus:ring-2 ring-text outline-0 flex items-center justify-center"
+              >
+                <TbClockPin size={24} />
+              </button>
             </div>
+          </CreationSection>
+          <CreationSection label="Description">
+            <TextArea
+              form={form}
+              name="description"
+              placeholder="Racontez ce qu'il s'est passé !"
+            />
+          </CreationSection>
+
+          <CreationSection label="Personnes présentes">
+            <PersonPicker form={form} name="present_persons" />
+          </CreationSection>
+          <CreationSection label="Partage">TODO</CreationSection>
+          <CreationSection label="Visibilité">
+            <Switcher
+              form={form}
+              name="is_secret"
+              label="Rendre secret"
+              icon={TbLockSquareRoundedFilled}
+            />
+          </CreationSection>
         </div>
-        <CreationNavbar form={form} /></>
+      </div>
+      <CreationNavbar form={form} />
+    </>
+  );
 }

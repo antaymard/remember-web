@@ -30,6 +30,14 @@
   button {
     cursor: pointer;
   }
+
+  .input {
+    @apply h-12.5 px-4 rounded bg-bg placeholder:text-grey w-full focus:ring-2 transition-[color,box-shadow] ring-text outline-0 flex items-center justify-start gap-2;
+  }
+
+  h3 {
+    @apply font-medium text-sm;
+  }
 }
 
 .path-stroke-2 path {

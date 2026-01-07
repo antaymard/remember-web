@@ -17,7 +17,7 @@ function RouteComponent() {
 
   const [memoryType, setMemoryType] = useState<
     "moment" | "place" | "person" | "thing"
-  >("place");
+  >("moment");
 
 
 

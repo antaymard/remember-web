@@ -52,6 +52,14 @@ const schema = defineSchema({
     description: v.optional(v.string()),
     creator_id: v.id("users"), // Link to the user who created this person entry
     medias: v.optional(v.any()),
+    type: v.union(
+      v.literal("physical"),
+      v.literal("music"),
+      v.literal("film"),
+      v.literal("book")
+    ),
+    first_met: v.optional(flexibleDateTime),
+    last_seen: v.optional(flexibleDateTime),
   }),
 });
 

@@ -1,6 +1,7 @@
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { requireAuth } from "./utils/requireAuth";
+import { flexibleDateTime } from "./schema";
 
 const item = "things" as const;
 
@@ -46,6 +47,14 @@ export const edit = mutation({
     title: v.string(),
     description: v.optional(v.string()),
     medias: v.optional(v.any()),
+    type: v.union(
+      v.literal("physical"),
+      v.literal("music"),
+      v.literal("film"),
+      v.literal("book")
+    ),
+    first_met: v.optional(flexibleDateTime),
+    last_seen: v.optional(flexibleDateTime),
   },
   handler: async (ctx, args) => {
     const userId = await requireAuth(ctx, true);
