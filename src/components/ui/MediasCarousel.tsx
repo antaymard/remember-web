@@ -8,7 +8,6 @@ import {
   type CarouselApi,
 } from "@/components/shadcn/carousel";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-import { TbX } from "react-icons/tb";
 import { ButtonPastel } from "./Button";
 
 interface MediasCarouselProps {

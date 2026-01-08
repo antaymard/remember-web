@@ -13,7 +13,6 @@ import PersonPicker from "../form/PersonPicker";
 import { useCreationForm } from "@/hooks/useCreationForm";
 import CreationScreenLayout from "./CreationScreenLayout";
 import { defaultFlexibleDateTime, statusEnum } from "@/utils/creationConstants";
-import type { Id } from "@/../convex/_generated/dataModel";
 import { useParams } from "@tanstack/react-router";
 
 const memorySchema = z.object({
@@ -31,7 +30,9 @@ export default function MomentCreationScreen({
 }) {
   const editMoment = useMutation(api.moments.edit);
   const trashMoment = useMutation(api.moments.trash);
-  const { _id } = useParams({ from: "/edit-memory/$type/$_id" });
+  const { _id } = useParams({ from: "/edit-memory/$type/$_id" }) as {
+    _id: any;
+  };
 
   const form = useCreationForm({
     defaultValues: {
