@@ -72,7 +72,12 @@ function RouteComponent() {
           </CreationSection>
         </div>
       </div>
-      <CreationNavbar form={form} hideFinishLater submitLabel="OK" />
+      <CreationNavbar
+        form={form}
+        hideFinishLater
+        submitLabel="OK"
+        handleUnfinishedStatus={false}
+      />
     </div>
   );
 }

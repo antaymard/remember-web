@@ -7,12 +7,14 @@ interface CreationNavbarProps {
   form: any; // FormApi from @tanstack/react-form
   hideFinishLater?: boolean;
   submitLabel?: string;
+  handleUnfinishedStatus?: boolean;
 }
 
 export default function CreationNavbar({
   form,
   hideFinishLater,
   submitLabel = "Créer",
+  handleUnfinishedStatus = true,
 }: CreationNavbarProps) {
   const router = useRouter();
 
@@ -37,7 +39,8 @@ export default function CreationNavbar({
                 icon={<TbPlayerPauseFilled size={18} />}
                 label="Terminer + tard"
                 onClick={() => {
-                  form.setFieldValue("status", "unfinished");
+                  if (handleUnfinishedStatus)
+                    form.setFieldValue("status", "unfinished");
                   form.handleSubmit();
                 }}
               />
@@ -49,7 +52,8 @@ export default function CreationNavbar({
             label={submitLabel}
             disabled={!canSubmit || isSubmitting || isPristine}
             onClick={() => {
-              form.setFieldValue("status", "completed");
+              if (handleUnfinishedStatus)
+                form.setFieldValue("status", "completed");
               form.handleSubmit();
             }}
           />
