@@ -1,38 +1,28 @@
 import DatePicker from "@/components/form/DatePicker";
 import { useMutation } from "convex/react";
 import { api } from "@/../convex/_generated/api";
-import { useForm } from "@tanstack/react-form";
 import type { PersonType } from "@/types/memory.types";
 import CreationSection from "@/components/ui/CreationSection";
 import TextInput from "@/components/form/TextInput";
 import TextArea from "@/components/form/TextArea";
-import ImageUploader from "@/components/form/ImageUploader";
-import CreationNavbar from "@/components/nav/CreationNavbar";
 import * as z from "zod";
-import { useNavigate } from "@tanstack/react-router";
 import SelectInput from "../form/SelectInput";
+import { useCreationForm } from "@/hooks/useCreationForm";
+import CreationScreenLayout from "./CreationScreenLayout";
+import { defaultFlexibleDate, statusEnum } from "@/utils/creationConstants";
 
 const personSchema = z.object({
   firstname: z.string().min(1, "Le prénom est requis"),
   lastname: z.string().min(1, "Le nom de famille est requis"),
   // medias: z.array(z.any()).min(1, "Au moins une image est requise"),
   type: z.enum(["animal", "human"]),
-  status: z.enum(["unfinished", "completed", "archived"]),
+  status: statusEnum,
 });
 
-const defaultFlexibleDateTime = {
-  year: 0,
-  month: 0,
-  day: 0,
-  hour: 0,
-  min: 0,
-};
-
 export default function PersonCreationScreen() {
-  const navigate = useNavigate();
   const editPerson = useMutation(api.persons.edit);
 
-  const form = useForm({
+  const form = useCreationForm({
     defaultValues: {
       gender: "",
       type: "human",
@@ -42,124 +32,100 @@ export default function PersonCreationScreen() {
       relation_type: "",
       relation_name: "",
       description: "",
-      birth_date: defaultFlexibleDateTime,
-      death_date: defaultFlexibleDateTime,
-      first_met: defaultFlexibleDateTime,
-      last_seen: defaultFlexibleDateTime,
+      birth_date: defaultFlexibleDate,
+      death_date: defaultFlexibleDate,
+      first_met: defaultFlexibleDate,
+      last_seen: defaultFlexibleDate,
       status: "unfinished",
     } as PersonType,
-    onSubmit: async ({ value }) => {
-      try {
-        // Ensure type is set correctly
-        const personData = {
-          ...value,
-          type: value.type || ("human" as "human" | "animal"),
-        };
-        await editPerson(personData);
-        console.log("Personne créé:");
-        // Rediriger vers le feed ou la page de détail après création
-        navigate({ to: "/feed" });
-      } catch (error) {
-        console.error("Erreur lors de la création:", error);
-      }
+    mutationFn: async (value) => {
+      // Ensure type is set correctly
+      const personData = {
+        ...value,
+        type: value.type || ("human" as "human" | "animal"),
+      };
+      return await editPerson(personData);
     },
-    validators: {
-      onSubmit: personSchema,
-    },
+    schema: personSchema,
   });
+
   return (
-    <>
-      {/* Content */}
-      <div className="py-17.5 bg-bg min-h-screen">
-        <ImageUploader form={form} name="medias" />
+    <CreationScreenLayout form={form}>
+      <CreationSection label="Général">
+        <TextInput
+          form={form}
+          name="firstname"
+          placeholder="Prénom"
+          icon="title"
+        />
+        <TextInput
+          form={form}
+          name="lastname"
+          placeholder="Nom de famille"
+          icon="title"
+        />
 
-        <div className="space-y-2.5 pb-32">
-          <CreationSection label="Général">
-            <TextInput
-              form={form}
-              name="firstname"
-              placeholder="Prénom"
-              icon="title"
-            />
-            <TextInput
-              form={form}
-              name="lastname"
-              placeholder="Nom de famille"
-              icon="title"
-            />
-
-            <div className="grid grid-cols-2 gap-2">
-              <SelectInput
-                form={form}
-                name="type"
-                placeholder="Type"
-                options={[
-                  { value: "human", label: "Humain" },
-                  { value: "animal", label: "Animal" },
-                ]}
-              />
-              <SelectInput
-                form={form}
-                name="gender"
-                placeholder="Genre"
-                options={[
-                  { value: "male", label: "Masculin" },
-                  { value: "female", label: "Féminin" },
-                ]}
-              />
-            </div>
-          </CreationSection>
-
-          <CreationSection label="Lien">
-            <SelectInput
-              form={form}
-              name="relation_type"
-              placeholder="Type de relation"
-              options={[
-                { value: "family", label: "Famille" },
-                { value: "friend", label: "Ami" },
-                { value: "colleague", label: "Collègue" },
-                { value: "acquaintance", label: "Connaissance" },
-                { value: "teacher", label: "Enseignant / Mentor" },
-                { value: "other", label: "Autre" },
-              ]}
-            />
-            <TextInput
-              form={form}
-              name="relation_name"
-              placeholder="Lien précis. Ex : Cousin"
-              icon="text"
-            />
-            <TextArea
-              form={form}
-              name="description"
-              placeholder="Pourquoi cette personne est-elle importante ?"
-            />
-          </CreationSection>
-
-          <CreationSection label="Temporel">
-            <div className="grid grid-cols-2 gap-2">
-              <DatePicker
-                form={form}
-                name="birth_date"
-                placeholder="Naissance"
-              />
-              <DatePicker form={form} name="death_date" placeholder="Décès" />
-              <DatePicker
-                form={form}
-                name="first_met"
-                placeholder="Rencontre"
-              />
-              <DatePicker
-                form={form}
-                name="last_seen"
-                placeholder="Dernier contact"
-              />
-            </div>
-          </CreationSection>
+        <div className="grid grid-cols-2 gap-2">
+          <SelectInput
+            form={form}
+            name="type"
+            placeholder="Type"
+            options={[
+              { value: "human", label: "Humain" },
+              { value: "animal", label: "Animal" },
+            ]}
+          />
+          <SelectInput
+            form={form}
+            name="gender"
+            placeholder="Genre"
+            options={[
+              { value: "male", label: "Masculin" },
+              { value: "female", label: "Féminin" },
+            ]}
+          />
         </div>
-      </div>
-      <CreationNavbar form={form} />
-    </>
+      </CreationSection>
+
+      <CreationSection label="Lien">
+        <SelectInput
+          form={form}
+          name="relation_type"
+          placeholder="Type de relation"
+          options={[
+            { value: "family", label: "Famille" },
+            { value: "friend", label: "Ami" },
+            { value: "colleague", label: "Collègue" },
+            { value: "acquaintance", label: "Connaissance" },
+            { value: "teacher", label: "Enseignant / Mentor" },
+            { value: "other", label: "Autre" },
+          ]}
+        />
+        <TextInput
+          form={form}
+          name="relation_name"
+          placeholder="Lien précis. Ex : Cousin"
+          icon="text"
+        />
+        <TextArea
+          form={form}
+          name="description"
+          placeholder="Pourquoi cette personne est-elle importante ?"
+        />
+      </CreationSection>
+
+      <CreationSection label="Temporel">
+        <div className="grid grid-cols-2 gap-2">
+          <DatePicker form={form} name="birth_date" placeholder="Naissance" />
+          <DatePicker form={form} name="death_date" placeholder="Décès" />
+          <DatePicker form={form} name="first_met" placeholder="Rencontre" />
+          <DatePicker
+            form={form}
+            name="last_seen"
+            placeholder="Dernier contact"
+          />
+        </div>
+      </CreationSection>
+    </CreationScreenLayout>
   );
 }

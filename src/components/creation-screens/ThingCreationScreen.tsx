@@ -1,111 +1,85 @@
 import DatePicker from "@/components/form/DatePicker";
 import { useMutation } from "convex/react";
 import { api } from "@/../convex/_generated/api";
-import { useForm } from "@tanstack/react-form";
 import type { ThingType } from "@/types/memory.types";
 import CreationSection from "@/components/ui/CreationSection";
 import TextInput from "@/components/form/TextInput";
 import TextArea from "@/components/form/TextArea";
-import ImageUploader from "@/components/form/ImageUploader";
-import CreationNavbar from "@/components/nav/CreationNavbar";
 import * as z from "zod";
-import { useNavigate } from "@tanstack/react-router";
 import SelectInput from "../form/SelectInput";
+import { useCreationForm } from "@/hooks/useCreationForm";
+import CreationScreenLayout from "./CreationScreenLayout";
+import { defaultFlexibleDateTime, statusEnum } from "@/utils/creationConstants";
 
-const memorySchema = z.object({
+const thingSchema = z.object({
   title: z.string().min(1, "Le titre est requis"),
   // medias: z.array(z.any()).min(1, "Au moins une image est requise"),
   type: z.enum(["physical", "music", "film", "book"], {
     message: "Le type sélectionné n'est pas valide",
   }),
-  status: z.enum(["unfinished", "completed", "archived"]),
+  status: statusEnum,
 });
 
-const defaultFlexibleDate = {
-  year: undefined,
-  month: undefined,
-  day: undefined,
-  hour: undefined,
-  min: undefined,
-};
-
 export default function ThingCreationScreen() {
-  const navigate = useNavigate();
   const editThing = useMutation(api.things.edit);
 
-  const form = useForm({
+  const form = useCreationForm({
     defaultValues: {
       title: "",
       description: "",
       medias: [],
       type: "physical",
-      first_met: defaultFlexibleDate,
-      last_seen: defaultFlexibleDate,
+      first_met: defaultFlexibleDateTime,
+      last_seen: defaultFlexibleDateTime,
       status: "unfinished",
     } as ThingType,
-    onSubmit: async ({ value }) => {
-      try {
-        // Ensure type is set correctly
-        const thingData = {
-          ...value,
-          type: value.type as "physical" | "music" | "film" | "book",
-        };
-        await editThing(thingData);
-        console.log("Moment créé:");
-        // Rediriger vers le feed ou la page de détail après création
-        navigate({ to: "/feed" });
-      } catch (error) {
-        console.error("Erreur lors de la création:", error);
-      }
+    mutationFn: async (value) => {
+      // Ensure type is set correctly
+      const thingData = {
+        ...value,
+        type: value.type as "physical" | "music" | "film" | "book",
+      };
+      return await editThing(thingData);
     },
-    validators: {
-      onSubmit: memorySchema,
-    },
+    schema: thingSchema,
   });
+
   return (
-    <>
-      {/* Content */}
-      <div className="py-17.5 bg-bg min-h-screen">
-        <ImageUploader form={form} name="medias" />
+    <CreationScreenLayout form={form}>
+      <CreationSection label="Général">
+        <TextInput form={form} name="title" placeholder="Titre" />
+        <SelectInput
+          form={form}
+          name="type"
+          placeholder="Type"
+          options={[
+            { label: "Objet physique", value: "physical" },
+            { label: "Musique", value: "music" },
+            { label: "Film", value: "film" },
+            { label: "Livre", value: "book" },
+          ]}
+        />
+      </CreationSection>
+      <CreationSection label="Description">
+        <TextArea
+          form={form}
+          name="description"
+          placeholder="Racontez ce qu'il s'est passé !"
+        />
+      </CreationSection>
 
-        <div className="space-y-2.5 pb-32">
-          <CreationSection label="Général">
-            <TextInput form={form} name="title" placeholder="Titre" />
-            <SelectInput
-              form={form}
-              name="type"
-              placeholder="Type"
-              options={[
-                { label: "Objet physique", value: "physical" },
-                { label: "Musique", value: "music" },
-                { label: "Film", value: "film" },
-                { label: "Livre", value: "book" },
-              ]}
-            />
-          </CreationSection>
-          <CreationSection label="Description">
-            <TextArea
-              form={form}
-              name="description"
-              placeholder="Racontez ce qu'il s'est passé !"
-            />
-          </CreationSection>
-
-          <CreationSection label="Temporel">
-            <DatePicker
-              form={form}
-              name="first_met"
-              placeholder="Premier contact / acquisition"
-            />
-            <DatePicker
-              form={form}
-              name="last_seen"
-              placeholder="Dernier contact"
-            />
-          </CreationSection>
-        </div>
-      </div>
-      <CreationNavbar form={form} />
-    </>
+      <CreationSection label="Temporel">
+        <DatePicker
+          form={form}
+          name="first_met"
+          placeholder="Premier contact / acquisition"
+        />
+        <DatePicker
+          form={form}
+          name="last_seen"
+          placeholder="Dernier contact"
+        />
+      </CreationSection>
+    </CreationScreenLayout>
   );
 }
