@@ -7,12 +7,14 @@ interface CreationScreenLayoutProps {
   form: any; // FormApi from @tanstack/react-form
   children: ReactNode;
   showImageUploader?: boolean;
+  submitLabel?: string;
 }
 
 export default function CreationScreenLayout({
   form,
   children,
   showImageUploader = true,
+  submitLabel,
 }: CreationScreenLayoutProps) {
   return (
     <>
@@ -20,7 +22,7 @@ export default function CreationScreenLayout({
         {showImageUploader && <ImageUploader form={form} name="medias" />}
         <div className="space-y-2.5 pb-32">{children}</div>
       </div>
-      <CreationNavbar form={form} />
+      <CreationNavbar form={form} submitLabel={submitLabel} />
     </>
   );
 }

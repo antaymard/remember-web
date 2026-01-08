@@ -46,40 +46,61 @@ export const listUnfinished = query({
 
 export const read = query({
   args: {
-    type: v.string(),
+    type: v.union(
+      v.literal("moment"),
+      v.literal("person"),
+      v.literal("thing"),
+      v.literal("place")
+    ),
     _id: v.union(
       v.id("moments"),
       v.id("persons"),
       v.id("things"),
       v.id("places")
     ),
+    populate: v.optional(v.string()),
   },
-  handler: async (ctx, { type, _id }) => {
+  handler: async (ctx, { type, _id, populate }) => {
     const userId = await requireAuth(ctx, true);
 
-    const memory = await ctx.db.get(_id);
+    const table = {
+      moment: "moments",
+      person: "persons",
+      thing: "things",
+      place: "places",
+    } as const;
+
+    const memory = await ctx.db.get(table[type], _id);
 
     if (!memory || memory.creator_id !== userId) {
       throw new Error("Memory not found or access denied");
     }
 
-    // Populate creator
-    const creator = await ctx.db.get(memory.creator_id);
+    const populatedFields: Record<string, any> = {};
 
-    // Populate present_persons if they exist (only for moments)
-    let presentPersons = undefined;
-    if ("present_persons" in memory && memory.present_persons) {
-      presentPersons = await Promise.all(
-        memory.present_persons.map((personId) => ctx.db.get(personId))
-      );
+    if (populate) {
+      const fieldsToPopulate = populate.split(" ");
+
+      if (fieldsToPopulate.includes("creator")) {
+        populatedFields.creator = await ctx.db.get(memory.creator_id);
+      }
+
+      if (
+        fieldsToPopulate.includes("present_persons") &&
+        "present_persons" in memory &&
+        memory.present_persons
+      ) {
+        populatedFields.present_persons = await Promise.all(
+          memory.present_persons.map((personId) => ctx.db.get(personId))
+        );
+      }
     }
 
     return {
       type,
       memory: {
         ...memory,
-        creator,
-        present_persons: presentPersons,
+        ...populatedFields,
       },
     };
   },

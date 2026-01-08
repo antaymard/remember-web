@@ -2,6 +2,8 @@ import MomentViewScreen from "@/components/memory-view/MomentViewScreen";
 import { createFileRoute } from "@tanstack/react-router";
 import { api } from "@/../convex/_generated/api";
 import { useQuery } from "convex/react";
+import type { MomentWithCreator } from "@/types/memory.types";
+import type { Id } from "@/../convex/_generated/dataModel";
 
 export const Route = createFileRoute("/view/$type/$_id")({
   component: RouteComponent,
@@ -10,16 +12,21 @@ export const Route = createFileRoute("/view/$type/$_id")({
 function RouteComponent() {
   const { type, _id } = Route.useParams();
 
-  const { memory }: { memory: any } =
-    useQuery(api.memories.read, { type, _id }) || {};
+  const data = useQuery(api.memories.read, {
+    type: type as "moment" | "person" | "thing" | "place",
+    _id: _id as Id<"moments"> | Id<"persons"> | Id<"things"> | Id<"places">,
+    populate: "creator present_persons",
+  });
 
-  if (!memory) {
+  if (!data) {
     return <div>Loading...</div>;
   }
 
   switch (type) {
-    case "moment":
-      return <MomentViewScreen moment={memory} />;
+    case "moment": {
+      const { memory } = data;
+      return <MomentViewScreen moment={memory as MomentWithCreator} />;
+    }
     case "person":
       return <div>Person View for ID: {_id}</div>;
     case "place":

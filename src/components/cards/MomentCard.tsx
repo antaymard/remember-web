@@ -1,16 +1,9 @@
 import type { MomentWithCreator, PersonType } from "@/types/memory.types";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  type CarouselApi,
-} from "../shadcn/carousel";
 import type { FlexibleDateTime } from "@/types/shared.types";
 import { TbCalendar } from "react-icons/tb";
-import { useState, useEffect } from "react";
-import { cn } from "@/lib/utils";
 import { Link } from "@tanstack/react-router";
 import type { Id } from "@/../convex/_generated/dataModel";
+import MediasCarousel from "@/components/ui/MediasCarousel";
 
 function renderDate(date: FlexibleDateTime | undefined) {
   if (!date) return null;
@@ -44,25 +37,6 @@ function renderPresentPersons(presentPersons: PersonType[] | undefined) {
 }
 
 export default function MomentCard({ moment }: { moment: MomentWithCreator }) {
-  const [carouselApi, setCarouselApi] = useState<CarouselApi>();
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  // Sync carousel index
-  useEffect(() => {
-    if (!carouselApi) return;
-
-    const onSelect = () => {
-      setCurrentIndex(carouselApi.selectedScrollSnap());
-    };
-
-    carouselApi.on("select", onSelect);
-    onSelect();
-
-    return () => {
-      carouselApi.off("select", onSelect);
-    };
-  }, [carouselApi]);
-
   if (!moment) return null;
 
   return (
@@ -90,34 +64,12 @@ export default function MomentCard({ moment }: { moment: MomentWithCreator }) {
           </div>
         </div>
         <div className="aspect-square w-full relative">
-          {renderPresentPersons(moment.present_persons)}
-
-          <Carousel setApi={setCarouselApi} className="w-full aspect-square">
-            <CarouselContent className="h-full aspect-square items-center">
-              {moment.medias?.map((media, index) => (
-                <CarouselItem key={index} className="h-full">
-                  <img src={media.url} className="w-full h-full object-cover" />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-
-            {/* Pagination dots - bottom center */}
-            {moment.medias && moment.medias.length > 1 && (
-              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-1.5 z-10">
-                {moment.medias.map((_, idx) => (
-                  <div
-                    key={idx}
-                    className={cn(
-                      "h-1.5 rounded-full transition-all",
-                      idx === currentIndex
-                        ? "w-6 bg-white"
-                        : "w-1.5 bg-white/40"
-                    )}
-                  />
-                ))}
-              </div>
-            )}
-          </Carousel>
+          {moment.medias && moment.medias.length > 0 && (
+            <>
+              <MediasCarousel medias={moment.medias} aspectSquare />
+              {renderPresentPersons(moment.present_persons)}
+            </>
+          )}
         </div>
         {moment.description && (
           <p className="line-clamp-3 leading-tight opacity-80 px-4">

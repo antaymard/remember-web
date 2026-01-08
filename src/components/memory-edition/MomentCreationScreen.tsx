@@ -20,7 +20,13 @@ const memorySchema = z.object({
   status: statusEnum,
 });
 
-export default function MomentCreationScreen() {
+export default function MomentCreationScreen({
+  defaultValues = {},
+  submitLabel = "Créer",
+}: {
+  defaultValues?: Partial<MomentType>;
+  submitLabel?: string;
+}) {
   const editMoment = useMutation(api.moments.edit);
 
   const form = useCreationForm({
@@ -32,13 +38,14 @@ export default function MomentCreationScreen() {
       date_time_in: defaultFlexibleDateTime,
       present_persons: [],
       status: "unfinished",
+      ...defaultValues,
     } as MomentType,
     mutationFn: editMoment,
     schema: memorySchema,
   });
 
   return (
-    <CreationScreenLayout form={form}>
+    <CreationScreenLayout form={form} submitLabel={submitLabel}>
       <CreationSection label="Général">
         <TextInput form={form} name="title" placeholder="Titre" />
         <div className="grid grid-cols-[1fr_auto_50px] gap-2">

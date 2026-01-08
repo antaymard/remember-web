@@ -20,6 +20,7 @@ import { Route as MeIndexRouteImport } from './routes/me/index'
 import { Route as MeUnfinishedMemoriesRouteImport } from './routes/me/unfinished-memories'
 import { Route as MeEditRouteImport } from './routes/me/edit'
 import { Route as ViewType_idRouteImport } from './routes/view.$type.$_id'
+import { Route as EditMemoryType_idRouteImport } from './routes/edit-memory.$type.$_id'
 
 const SigninRoute = SigninRouteImport.update({
   id: '/signin',
@@ -76,6 +77,11 @@ const ViewType_idRoute = ViewType_idRouteImport.update({
   path: '/view/$type/$_id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EditMemoryType_idRoute = EditMemoryType_idRouteImport.update({
+  id: '/edit-memory/$type/$_id',
+  path: '/edit-memory/$type/$_id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/me/edit': typeof MeEditRoute
   '/me/unfinished-memories': typeof MeUnfinishedMemoriesRoute
   '/me': typeof MeIndexRoute
+  '/edit-memory/$type/$_id': typeof EditMemoryType_idRoute
   '/view/$type/$_id': typeof ViewType_idRoute
 }
 export interface FileRoutesByTo {
@@ -101,6 +108,7 @@ export interface FileRoutesByTo {
   '/me/edit': typeof MeEditRoute
   '/me/unfinished-memories': typeof MeUnfinishedMemoriesRoute
   '/me': typeof MeIndexRoute
+  '/edit-memory/$type/$_id': typeof EditMemoryType_idRoute
   '/view/$type/$_id': typeof ViewType_idRoute
 }
 export interface FileRoutesById {
@@ -115,6 +123,7 @@ export interface FileRoutesById {
   '/me/edit': typeof MeEditRoute
   '/me/unfinished-memories': typeof MeUnfinishedMemoriesRoute
   '/me/': typeof MeIndexRoute
+  '/edit-memory/$type/$_id': typeof EditMemoryType_idRoute
   '/view/$type/$_id': typeof ViewType_idRoute
 }
 export interface FileRouteTypes {
@@ -130,6 +139,7 @@ export interface FileRouteTypes {
     | '/me/edit'
     | '/me/unfinished-memories'
     | '/me'
+    | '/edit-memory/$type/$_id'
     | '/view/$type/$_id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -143,6 +153,7 @@ export interface FileRouteTypes {
     | '/me/edit'
     | '/me/unfinished-memories'
     | '/me'
+    | '/edit-memory/$type/$_id'
     | '/view/$type/$_id'
   id:
     | '__root__'
@@ -156,6 +167,7 @@ export interface FileRouteTypes {
     | '/me/edit'
     | '/me/unfinished-memories'
     | '/me/'
+    | '/edit-memory/$type/$_id'
     | '/view/$type/$_id'
   fileRoutesById: FileRoutesById
 }
@@ -170,6 +182,7 @@ export interface RootRouteChildren {
   MeEditRoute: typeof MeEditRoute
   MeUnfinishedMemoriesRoute: typeof MeUnfinishedMemoriesRoute
   MeIndexRoute: typeof MeIndexRoute
+  EditMemoryType_idRoute: typeof EditMemoryType_idRoute
   ViewType_idRoute: typeof ViewType_idRoute
 }
 
@@ -252,6 +265,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ViewType_idRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/edit-memory/$type/$_id': {
+      id: '/edit-memory/$type/$_id'
+      path: '/edit-memory/$type/$_id'
+      fullPath: '/edit-memory/$type/$_id'
+      preLoaderRoute: typeof EditMemoryType_idRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -266,6 +286,7 @@ const rootRouteChildren: RootRouteChildren = {
   MeEditRoute: MeEditRoute,
   MeUnfinishedMemoriesRoute: MeUnfinishedMemoriesRoute,
   MeIndexRoute: MeIndexRoute,
+  EditMemoryType_idRoute: EditMemoryType_idRoute,
   ViewType_idRoute: ViewType_idRoute,
 }
 export const routeTree = rootRouteImport
