@@ -10,6 +10,7 @@ import SelectInput from "../form/SelectInput";
 import { useCreationForm } from "@/hooks/useCreationForm";
 import CreationScreenLayout from "./CreationScreenLayout";
 import { defaultFlexibleDate, statusEnum } from "@/utils/creationConstants";
+import type { Id } from "@/../convex/_generated/dataModel";
 
 const personSchema = z.object({
   firstname: z.string().min(1, "Le prénom est requis"),
@@ -19,8 +20,17 @@ const personSchema = z.object({
   status: statusEnum,
 });
 
-export default function PersonCreationScreen() {
+export default function PersonEditionScreen({
+  defaultValues = {},
+  action = "create",
+  memoryId = null,
+}: {
+  defaultValues?: Partial<PersonType>;
+  action: "create" | "edit";
+  memoryId?: Id<"persons"> | null;
+}) {
   const editPerson = useMutation(api.persons.edit);
+  const trashMemory = useMutation(api.memories.trash);
 
   const form = useCreationForm({
     defaultValues: {
@@ -37,6 +47,7 @@ export default function PersonCreationScreen() {
       first_met: defaultFlexibleDate,
       last_seen: defaultFlexibleDate,
       status: "unfinished",
+      ...defaultValues,
     } as PersonType,
     mutationFn: async (value) => {
       // Ensure type is set correctly
@@ -44,13 +55,24 @@ export default function PersonCreationScreen() {
         ...value,
         type: value.type || ("human" as "human" | "animal"),
       };
-      return await editPerson(personData);
+      return editPerson(
+        action === "edit" ? { ...personData, _id: memoryId! } : personData
+      );
     },
     schema: personSchema,
   });
 
   return (
-    <CreationScreenLayout form={form}>
+    <CreationScreenLayout
+      form={form}
+      submitLabel={action === "create" ? "Créer" : "Enregistrer"}
+      canDelete={action === "edit"}
+      onDelete={async () => {
+        if (memoryId) {
+          await trashMemory({ type: "person", _id: memoryId });
+        }
+      }}
+    >
       <CreationSection label="Général">
         <TextInput
           form={form}

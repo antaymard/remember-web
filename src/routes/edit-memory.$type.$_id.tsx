@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import Header from "@/components/nav/Header";
-import MomentCreationScreen from "@/components/memory-edition/MomentCreationScreen";
-import PersonCreationScreen from "@/components/memory-edition/PersonCreationScreen";
-import PlaceCreationScreen from "@/components/memory-edition/PlaceCreationScreen";
-import ThingCreationScreen from "@/components/memory-edition/ThingCreationScreen";
+import MomentCreationScreen from "@/components/memory-edition/MomentEditionScreen";
+import PersonCreationScreen from "@/components/memory-edition/PersonEditionScreen";
+import PlaceCreationScreen from "@/components/memory-edition/PlaceEditionScreen";
+import ThingCreationScreen from "@/components/memory-edition/ThingEditionScreen";
 import { useQuery } from "convex/react";
 import { api } from "@/../convex/_generated/api";
 import type { Id } from "@/../convex/_generated/dataModel";
@@ -20,12 +20,14 @@ function RouteComponent() {
     | "person"
     | "thing";
 
+  const memoryId = Route.useParams()._id as
+    | Id<"moments">
+    | Id<"persons">
+    | Id<"places">
+    | Id<"things">;
+
   const data = useQuery(api.memories.read, {
-    _id: Route.useParams()._id as
-      | Id<"moments">
-      | Id<"persons">
-      | Id<"places">
-      | Id<"things">,
+    _id: memoryId,
     type: memoryType,
   });
 
@@ -42,12 +44,28 @@ function RouteComponent() {
       {memoryType === "moment" && (
         <MomentCreationScreen
           defaultValues={memory as MomentType}
-          submitLabel="Modifier"
+          action="edit"
+          memoryId={memoryId as Id<"moments">}
         />
       )}
-      {memoryType === "person" && <PersonCreationScreen />}
-      {memoryType === "place" && <PlaceCreationScreen />}
-      {memoryType === "thing" && <ThingCreationScreen />}
+      {memoryType === "person" && (
+        <PersonCreationScreen
+          action="edit"
+          memoryId={memoryId as Id<"persons">}
+        />
+      )}
+      {memoryType === "place" && (
+        <PlaceCreationScreen
+          action="edit"
+          memoryId={memoryId as Id<"places">}
+        />
+      )}
+      {memoryType === "thing" && (
+        <ThingCreationScreen
+          action="edit"
+          memoryId={memoryId as Id<"things">}
+        />
+      )}
     </div>
   );
 }

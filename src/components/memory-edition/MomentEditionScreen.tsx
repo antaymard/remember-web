@@ -13,7 +13,7 @@ import PersonPicker from "../form/PersonPicker";
 import { useCreationForm } from "@/hooks/useCreationForm";
 import CreationScreenLayout from "./CreationScreenLayout";
 import { defaultFlexibleDateTime, statusEnum } from "@/utils/creationConstants";
-import { useParams } from "@tanstack/react-router";
+import type { Id } from "@/../convex/_generated/dataModel";
 
 const memorySchema = z.object({
   title: z.string().min(1, "Le titre est requis"),
@@ -21,18 +21,17 @@ const memorySchema = z.object({
   status: statusEnum,
 });
 
-export default function MomentCreationScreen({
+export default function MomentEditionScreen({
   defaultValues = {},
-  submitLabel = "Créer",
+  action = "create",
+  memoryId = null,
 }: {
   defaultValues?: Partial<MomentType>;
-  submitLabel?: string;
+  action: "create" | "edit";
+  memoryId?: Id<"moments"> | null;
 }) {
   const editMoment = useMutation(api.moments.edit);
-  const trashMoment = useMutation(api.moments.trash);
-  const { _id } = useParams({ from: "/edit-memory/$type/$_id" }) as {
-    _id: any;
-  };
+  const trashMemory = useMutation(api.memories.trash);
 
   const form = useCreationForm({
     defaultValues: {
@@ -45,17 +44,20 @@ export default function MomentCreationScreen({
       status: "unfinished",
       ...defaultValues,
     } as MomentType,
-    mutationFn: editMoment,
+    mutationFn: (value) =>
+      editMoment(action === "edit" ? { ...value, _id: memoryId! } : value),
     schema: memorySchema,
   });
 
   return (
     <CreationScreenLayout
       form={form}
-      submitLabel={submitLabel}
-      canDelete={true}
+      submitLabel={action === "create" ? "Créer" : "Enregistrer"}
+      canDelete={action === "edit"}
       onDelete={async () => {
-        await trashMoment({ _id });
+        if (memoryId) {
+          await trashMemory({ type: "moment", _id: memoryId });
+        }
       }}
     >
       <CreationSection label="Général">

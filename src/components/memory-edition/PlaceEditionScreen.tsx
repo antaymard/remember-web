@@ -8,6 +8,7 @@ import * as z from "zod";
 import { useCreationForm } from "@/hooks/useCreationForm";
 import CreationScreenLayout from "./CreationScreenLayout";
 import { statusEnum } from "@/utils/creationConstants";
+import type { Id } from "@/../convex/_generated/dataModel";
 
 const placeSchema = z.object({
   title: z.string().min(1, "Le titre est requis"),
@@ -15,8 +16,17 @@ const placeSchema = z.object({
   status: statusEnum,
 });
 
-export default function PlaceCreationScreen() {
+export default function PlaceEditionScreen({
+  defaultValues = {},
+  action = "create",
+  memoryId = null,
+}: {
+  defaultValues?: Partial<PlaceType>;
+  action: "create" | "edit";
+  memoryId?: Id<"places"> | null;
+}) {
   const editPlace = useMutation(api.places.edit);
+  const trashMemory = useMutation(api.memories.trash);
 
   const form = useCreationForm({
     defaultValues: {
@@ -24,13 +34,24 @@ export default function PlaceCreationScreen() {
       description: "",
       medias: [],
       status: "unfinished",
+      ...defaultValues,
     } as PlaceType,
-    mutationFn: editPlace,
+    mutationFn: (value) =>
+      editPlace(action === "edit" ? { ...value, _id: memoryId! } : value),
     schema: placeSchema,
   });
 
   return (
-    <CreationScreenLayout form={form}>
+    <CreationScreenLayout
+      form={form}
+      submitLabel={action === "create" ? "Créer" : "Enregistrer"}
+      canDelete={action === "edit"}
+      onDelete={async () => {
+        if (memoryId) {
+          await trashMemory({ type: "place", _id: memoryId });
+        }
+      }}
+    >
       <CreationSection label="Général">
         <TextInput form={form} name="title" placeholder="Titre" />
       </CreationSection>

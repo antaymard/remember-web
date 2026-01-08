@@ -1,5 +1,5 @@
-import { v } from "convex/values";
-import { query } from "./_generated/server";
+import { ConvexError, v } from "convex/values";
+import { mutation, query } from "./_generated/server";
 import { requireAuth } from "./utils/requireAuth";
 
 export const listUnfinished = query({
@@ -72,8 +72,11 @@ export const read = query({
 
     const memory = await ctx.db.get(table[type], _id);
 
-    if (!memory || memory.creator_id !== userId) {
-      throw new Error("Memory not found or access denied");
+    if (!memory) {
+      throw new ConvexError("Souvenir non trouvé.");
+    }
+    if (memory.creator_id !== userId) {
+      throw new ConvexError("Accès non autorisé au souvenir.");
     }
 
     const populatedFields: Record<string, any> = {};
@@ -103,5 +106,43 @@ export const read = query({
         ...populatedFields,
       },
     };
+  },
+});
+
+export const trash = mutation({
+  args: {
+    type: v.union(
+      v.literal("moment"),
+      v.literal("person"),
+      v.literal("thing"),
+      v.literal("place")
+    ),
+    _id: v.union(
+      v.id("moments"),
+      v.id("persons"),
+      v.id("things"),
+      v.id("places")
+    ),
+  },
+  handler: async (ctx, { type, _id }) => {
+    const userId = await requireAuth(ctx, true);
+
+    const typeMap = {
+      moment: "moments",
+      person: "persons",
+      thing: "things",
+      place: "places",
+    } as const;
+
+    const memory = await ctx.db.get(typeMap[type], _id);
+
+    if (!memory) {
+      throw new ConvexError("Memory non trouvée");
+    }
+    if (memory.creator_id !== userId) {
+      throw new ConvexError("Accès non autorisé");
+    }
+    await ctx.db.delete(_id);
+    return true;
   },
 });

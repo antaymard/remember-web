@@ -23,7 +23,14 @@ export function useCreationForm<T>({
     defaultValues,
     onSubmit: async ({ value }) => {
       try {
-        const result = await mutationFn(value);
+        // Filtrer les champs système de Convex avant l'envoi (retirer creator_id et les champs commençant par _)
+        const cleanValue = Object.fromEntries(
+          Object.entries(value as Record<string, any>).filter(
+            ([key]) => !key.startsWith("_") && key !== "creator_id"
+          )
+        ) as T;
+
+        const result = await mutationFn(cleanValue);
         onSuccess?.(result);
         navigate({ to: redirectTo });
       } catch (error) {

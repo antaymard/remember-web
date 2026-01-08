@@ -10,6 +10,7 @@ import SelectInput from "../form/SelectInput";
 import { useCreationForm } from "@/hooks/useCreationForm";
 import CreationScreenLayout from "./CreationScreenLayout";
 import { defaultFlexibleDateTime, statusEnum } from "@/utils/creationConstants";
+import type { Id } from "node_modules/convex/dist/esm-types/values/value";
 
 const thingSchema = z.object({
   title: z.string().min(1, "Le titre est requis"),
@@ -20,8 +21,17 @@ const thingSchema = z.object({
   status: statusEnum,
 });
 
-export default function ThingCreationScreen() {
+export default function ThingEditionScreen({
+  defaultValues = {},
+  action = "create",
+  memoryId = null,
+}: {
+  defaultValues?: Partial<ThingType>;
+  action: "create" | "edit";
+  memoryId?: Id<"things"> | null;
+}) {
   const editThing = useMutation(api.things.edit);
+  const trashMemory = useMutation(api.memories.trash);
 
   const form = useCreationForm({
     defaultValues: {
@@ -32,6 +42,7 @@ export default function ThingCreationScreen() {
       first_met: defaultFlexibleDateTime,
       last_seen: defaultFlexibleDateTime,
       status: "unfinished",
+      ...defaultValues,
     } as ThingType,
     mutationFn: async (value) => {
       // Ensure type is set correctly
@@ -39,13 +50,24 @@ export default function ThingCreationScreen() {
         ...value,
         type: value.type as "physical" | "music" | "film" | "book",
       };
-      return await editThing(thingData);
+      return await editThing(
+        action === "edit" ? { ...thingData, _id: memoryId! } : thingData
+      );
     },
     schema: thingSchema,
   });
 
   return (
-    <CreationScreenLayout form={form}>
+    <CreationScreenLayout
+      form={form}
+      submitLabel={action === "create" ? "Créer" : "Enregistrer"}
+      canDelete={action === "edit"}
+      onDelete={async () => {
+        if (memoryId) {
+          await trashMemory({ type: "thing", _id: memoryId });
+        }
+      }}
+    >
       <CreationSection label="Général">
         <TextInput form={form} name="title" placeholder="Titre" />
         <SelectInput
