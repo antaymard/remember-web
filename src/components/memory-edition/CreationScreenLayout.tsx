@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import ImageUploader from "@/components/form/ImageUploader";
-import CreationNavbar from "@/components/nav/CreationNavbar";
+import CreationNavbar from "@/components/memory-edition/CreationNavbar";
 
 interface CreationScreenLayoutProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

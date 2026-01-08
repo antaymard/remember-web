@@ -2,12 +2,14 @@ import {
   Outlet,
   createRootRoute,
   useNavigate,
+  Link,
   useLocation,
 } from "@tanstack/react-router";
 // import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { useConvexAuth } from "convex/react";
 import type { ConvexReactClient } from "convex/react";
 import { useEffect } from "react";
+import { TbMoodPuzzled } from "react-icons/tb";
 
 export interface RouterContext {
   convex: ConvexReactClient;
@@ -15,6 +17,17 @@ export interface RouterContext {
 
 export const Route = createRootRoute({
   component: RootComponent,
+  notFoundComponent: () => (
+    <div className="h-screen w-screen flex flex-col gap-5 items-center justify-center">
+      <div className="bg-grey/10 text-text p-4 rounded-xl">
+        <TbMoodPuzzled size={32} />
+      </div>
+      <h2 className="text-xl">Page introuvable...</h2>
+      <Link to="/" className="bg-green text-white p-4 rounded">
+        Retourner à l'accueil
+      </Link>
+    </div>
+  ),
 });
 
 function RootComponent() {

@@ -1,3 +1,4 @@
+import { v } from "convex/values";
 import { query } from "./_generated/server";
 import { requireAuth } from "./utils/requireAuth";
 
@@ -40,5 +41,28 @@ export const listUnfinished = query({
       things,
       places,
     };
+  },
+});
+
+export const read = query({
+  args: {
+    type: v.string(),
+    _id: v.union(
+      v.id("moments"),
+      v.id("persons"),
+      v.id("things"),
+      v.id("places")
+    ),
+  },
+  handler: async (ctx, { type, _id }) => {
+    const userId = await requireAuth(ctx, true);
+
+    const memory = await ctx.db.get(_id);
+
+    if (!memory || memory.creator_id !== userId) {
+      throw new Error("Memory not found or access denied");
+    }
+
+    return { type, memory };
   },
 });

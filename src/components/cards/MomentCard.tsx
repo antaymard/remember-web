@@ -9,6 +9,7 @@ import type { FlexibleDateTime } from "@/types/shared.types";
 import { TbCalendar } from "react-icons/tb";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { Link } from "@tanstack/react-router";
 
 function renderDate(date: FlexibleDateTime | undefined) {
   if (!date) return null;
@@ -61,59 +62,71 @@ export default function MomentCard({ moment }: { moment: MomentWithCreator }) {
     };
   }, [carouselApi]);
 
+  if (!moment) return null;
+
   return (
-    <div className="bg-white py-4 space-y-3">
-      {/* Header */}
-      <div className="flex px-4 items-center gap-3">
-        <img
-          src={moment.creator_id?.medias?.[0]?.url}
-          className="w-10 h-10 rounded-full object-cover"
-        />
-        <div className="flex flex-col">
-          <h2 className="font-serif truncate text-xl leading-tight line-clamp-1">
-            {moment.title}
-          </h2>
-          <p className="leading-tight opacity-80 text-sm">
-            {moment.creator_id?.firstname} {moment.creator_id?.lastname}
+    <Link
+      to="/view/$type/$_id"
+      params={{
+        type: "moment",
+        _id: moment._id!,
+      }}
+    >
+      <div className="bg-white py-4 space-y-3">
+        {/* Header */}
+        <div className="flex px-4 items-center gap-3 w-full">
+          <img
+            src={moment.creator_id?.medias?.[0]?.url}
+            className="w-10 h-10 aspect-square rounded-full object-cover"
+          />
+          <div className="flex flex-col w-full min-w-0">
+            <h2 className="font-serif text-xl leading-tight truncate">
+              {moment.title}
+            </h2>
+            <p className="leading-tight opacity-80 text-sm">
+              {moment.creator_id?.firstname} {moment.creator_id?.lastname}
+            </p>
+          </div>
+        </div>
+        <div className="aspect-square w-full relative">
+          {renderPresentPersons(moment.present_persons)}
+
+          <Carousel setApi={setCarouselApi} className="w-full aspect-square">
+            <CarouselContent className="h-full aspect-square items-center">
+              {moment.medias?.map((media, index) => (
+                <CarouselItem key={index} className="h-full">
+                  <img src={media.url} className="w-full h-full object-cover" />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+
+            {/* Pagination dots - bottom center */}
+            {moment.medias && moment.medias.length > 1 && (
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-1.5 z-10">
+                {moment.medias.map((_, idx) => (
+                  <div
+                    key={idx}
+                    className={cn(
+                      "h-1.5 rounded-full transition-all",
+                      idx === currentIndex
+                        ? "w-6 bg-white"
+                        : "w-1.5 bg-white/40"
+                    )}
+                  />
+                ))}
+              </div>
+            )}
+          </Carousel>
+        </div>
+        {moment.description && (
+          <p className="line-clamp-3 leading-tight opacity-80 px-4">
+            {moment.description}
           </p>
+        )}
+        <div className="flex opacity-80 text-sm px-4">
+          {renderDate(moment?.date_time_in)}
         </div>
       </div>
-      <div className="aspect-square w-full relative">
-        {renderPresentPersons(moment.present_persons)}
-
-        <Carousel setApi={setCarouselApi} className="w-full aspect-square">
-          <CarouselContent className="h-full aspect-square items-center">
-            {moment.medias?.map((media, index) => (
-              <CarouselItem key={index} className="h-full">
-                <img src={media.url} className="w-full h-full object-cover" />
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-
-          {/* Pagination dots - bottom center */}
-          {moment.medias && moment.medias.length > 1 && (
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-1.5 z-10">
-              {moment.medias.map((_, idx) => (
-                <div
-                  key={idx}
-                  className={cn(
-                    "h-1.5 rounded-full transition-all",
-                    idx === currentIndex ? "w-6 bg-white" : "w-1.5 bg-white/40"
-                  )}
-                />
-              ))}
-            </div>
-          )}
-        </Carousel>
-      </div>
-      {moment.description && (
-        <p className="line-clamp-3 leading-tight opacity-80 px-4">
-          {moment.description}
-        </p>
-      )}
-      <div className="flex opacity-80 text-sm px-4">
-        {renderDate(moment?.date_time_in)}
-      </div>
-    </div>
+    </Link>
   );
 }

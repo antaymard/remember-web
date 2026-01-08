@@ -12,6 +12,7 @@ import {
   TbChevronRight,
   TbBooks,
   TbPlayerPauseFilled,
+  TbUserPlus,
 } from "react-icons/tb";
 
 export const Route = createFileRoute("/me/")({
@@ -49,9 +50,10 @@ function RouteComponent() {
       icon: TbPlayerPauseFilled,
       value: unfinishedMemoriesCount || 0,
     },
-    { label: "Amis", to: "/me/friends", icon: TbUsersGroup },
-    { label: "Rêves", to: "/me/dreams", icon: TbAirBalloon },
-    { label: "Chapitres", to: "/me/chapters", icon: TbBooks },
+    { label: "Mes amis", to: "/me/friends", icon: TbUsersGroup },
+    { label: "Inviter des amis", to: "/me/invite-friends", icon: TbUserPlus },
+    { label: "Mes rêves", to: "/me/dreams", icon: TbAirBalloon },
+    { label: "Chapitres de ma vie", to: "/me/chapters", icon: TbBooks },
   ];
 
   return (
