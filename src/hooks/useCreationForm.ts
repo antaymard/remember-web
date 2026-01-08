@@ -31,7 +31,8 @@ export function useCreationForm<T>({
       }
     },
     validators: {
-      onSubmit: schema,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      onSubmit: schema as any,
     },
   });
 }

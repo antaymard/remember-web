@@ -1,19 +1,19 @@
 import type { ReactNode } from "react";
 import ImageUploader from "@/components/form/ImageUploader";
 import CreationNavbar from "@/components/nav/CreationNavbar";
-import type { FormApi } from "@tanstack/react-form";
 
-interface CreationScreenLayoutProps<T> {
-  form: FormApi<T, any>;
+interface CreationScreenLayoutProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  form: any; // FormApi from @tanstack/react-form
   children: ReactNode;
   showImageUploader?: boolean;
 }
 
-export default function CreationScreenLayout<T>({
+export default function CreationScreenLayout({
   form,
   children,
   showImageUploader = true,
-}: CreationScreenLayoutProps<T>) {
+}: CreationScreenLayoutProps) {
   return (
     <>
       <div className="py-17.5 bg-bg min-h-screen">
