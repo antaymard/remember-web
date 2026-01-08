@@ -1,7 +1,21 @@
 import { cn } from "@/lib/utils";
-import { TbX, TbCheck, TbTrash, TbPlus, TbAdjustments } from "react-icons/tb";
+import {
+  TbX,
+  TbCheck,
+  TbTrash,
+  TbPlus,
+  TbAdjustments,
+  TbPencil,
+} from "react-icons/tb";
 
-type icon = React.ReactNode | "x" | "check" | "trash" | "plus" | "settings";
+type icon =
+  | React.ReactNode
+  | "x"
+  | "check"
+  | "trash"
+  | "plus"
+  | "settings"
+  | "pen";
 
 interface ButtonPastelProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   color?: "blue" | "green" | "red" | "grey";
@@ -26,9 +40,13 @@ function renderIcon(icon: icon) {
     case "trash":
       return <TbTrash size={iconSize} className="path-stroke-2" />;
     case "plus":
+    case "add":
       return <TbPlus size={iconSize} className="path-stroke-2" />;
     case "settings":
       return <TbAdjustments size={iconSize} className="path-stroke-2" />;
+    case "pen":
+    case "pencil":
+      return <TbPencil size={iconSize} className="path-stroke-2" />;
     default:
       return icon;
   }

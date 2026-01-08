@@ -63,6 +63,24 @@ export const read = query({
       throw new Error("Memory not found or access denied");
     }
 
-    return { type, memory };
+    // Populate creator
+    const creator = await ctx.db.get(memory.creator_id);
+
+    // Populate present_persons if they exist (only for moments)
+    let presentPersons = undefined;
+    if ("present_persons" in memory && memory.present_persons) {
+      presentPersons = await Promise.all(
+        memory.present_persons.map((personId) => ctx.db.get(personId))
+      );
+    }
+
+    return {
+      type,
+      memory: {
+        ...memory,
+        creator,
+        present_persons: presentPersons,
+      },
+    };
   },
 });

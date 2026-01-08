@@ -6470,6 +6470,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-zoom-pan-pinch@npm:^3.7.0":
+  version: 3.7.0
+  resolution: "react-zoom-pan-pinch@npm:3.7.0"
+  peerDependencies:
+    react: "*"
+    react-dom: "*"
+  checksum: 10c0/96889849800a953128fe7f9e42bed0d5cbc48d03024995b136f5e972146236688efb24d7381d8e6f09598f5512b4897d2420f62d828a665fdf24b745b7d55911
+  languageName: node
+  linkType: hard
+
 "react@npm:^19.2.0":
   version: 19.2.3
   resolution: "react@npm:19.2.3"
@@ -6544,6 +6554,7 @@ __metadata:
     react-dom: "npm:^19.2.0"
     react-hot-toast: "npm:^2.6.0"
     react-icons: "npm:^5.5.0"
+    react-zoom-pan-pinch: "npm:^3.7.0"
     tailwind-merge: "npm:^3.4.0"
     tailwindcss: "npm:^4.1.18"
     tw-animate-css: "npm:^1.4.0"

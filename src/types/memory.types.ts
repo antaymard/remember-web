@@ -17,11 +17,8 @@ export interface MomentType {
 }
 
 // Type avec creator_id populé
-export interface MomentWithCreator extends Omit<
-  MomentType,
-  "creator_id" | "present_persons"
-> {
-  creator_id?: Doc<"users"> | null; // null si l'utilisateur a été supprimé, donc le populate retourne null
+export interface MomentWithCreator extends Omit<MomentType, "present_persons"> {
+  creator?: Doc<"users">;
   present_persons?: PersonType[];
 }
 

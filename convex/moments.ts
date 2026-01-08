@@ -52,7 +52,7 @@ export const list = query({
     // Mapper les données sur les moments
     const momentsWithPersons = moments.map((moment) => ({
       ...moment,
-      creator_id: creatorsMap.get(moment.creator_id),
+      creator: creatorsMap.get(moment.creator_id),
       present_persons: moment.present_persons
         ?.map((personId) => personsMap.get(personId))
         .filter((p) => p !== null && p !== undefined),

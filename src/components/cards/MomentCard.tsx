@@ -10,6 +10,7 @@ import { TbCalendar } from "react-icons/tb";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Link } from "@tanstack/react-router";
+import type { Id } from "@/../convex/_generated/dataModel";
 
 function renderDate(date: FlexibleDateTime | undefined) {
   if (!date) return null;
@@ -69,14 +70,14 @@ export default function MomentCard({ moment }: { moment: MomentWithCreator }) {
       to="/view/$type/$_id"
       params={{
         type: "moment",
-        _id: moment._id!,
+        _id: moment._id as Id<"moments">,
       }}
     >
       <div className="bg-white py-4 space-y-3">
         {/* Header */}
         <div className="flex px-4 items-center gap-3 w-full">
           <img
-            src={moment.creator_id?.medias?.[0]?.url}
+            src={moment.creator?.medias?.[0]?.url}
             className="w-10 h-10 aspect-square rounded-full object-cover"
           />
           <div className="flex flex-col w-full min-w-0">
@@ -84,7 +85,7 @@ export default function MomentCard({ moment }: { moment: MomentWithCreator }) {
               {moment.title}
             </h2>
             <p className="leading-tight opacity-80 text-sm">
-              {moment.creator_id?.firstname} {moment.creator_id?.lastname}
+              {moment.creator?.firstname} {moment.creator?.lastname}
             </p>
           </div>
         </div>
