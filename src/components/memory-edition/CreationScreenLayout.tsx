@@ -9,7 +9,7 @@ interface CreationScreenLayoutProps {
   showImageUploader?: boolean;
   submitLabel?: string;
   canDelete?: boolean;
-  onDelete?: () => void;
+  onDelete?: () => Promise<void>;
 }
 
 export default function CreationScreenLayout({

@@ -18,7 +18,7 @@ interface CreationNavbarProps {
   submitLabel?: string;
   handleUnfinishedStatus?: boolean;
   canDelete?: boolean;
-  onDelete?: () => void;
+  onDelete?: () => Promise<void>;
 }
 
 export default function CreationNavbar({
@@ -36,12 +36,13 @@ export default function CreationNavbar({
     router.history.back();
   }
 
-  function handleDelete() {
+  async function handleDelete() {
     if (onDelete) {
-      onDelete();
+      await onDelete();
     }
     setShowDeleteDialog(false);
-    goBack();
+    // Redirect to feed instead of going back to avoid querying the deleted memory
+    router.navigate({ to: "/feed" });
   }
   return (
     <>
