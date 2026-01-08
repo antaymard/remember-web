@@ -37,7 +37,7 @@ function RouteComponent() {
 
   return (
     <div>
-      <Header title="Modifier" />
+      <Header title="Modifier" showBackArrow />
 
       {memoryType === "moment" && (
         <MomentCreationScreen

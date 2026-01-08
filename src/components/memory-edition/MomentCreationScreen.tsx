@@ -13,6 +13,8 @@ import PersonPicker from "../form/PersonPicker";
 import { useCreationForm } from "@/hooks/useCreationForm";
 import CreationScreenLayout from "./CreationScreenLayout";
 import { defaultFlexibleDateTime, statusEnum } from "@/utils/creationConstants";
+import type { Id } from "@/../convex/_generated/dataModel";
+import { useParams } from "@tanstack/react-router";
 
 const memorySchema = z.object({
   title: z.string().min(1, "Le titre est requis"),
@@ -28,6 +30,8 @@ export default function MomentCreationScreen({
   submitLabel?: string;
 }) {
   const editMoment = useMutation(api.moments.edit);
+  const trashMoment = useMutation(api.moments.trash);
+  const { _id } = useParams({ from: "/edit-memory/$type/$_id" });
 
   const form = useCreationForm({
     defaultValues: {
@@ -45,7 +49,14 @@ export default function MomentCreationScreen({
   });
 
   return (
-    <CreationScreenLayout form={form} submitLabel={submitLabel}>
+    <CreationScreenLayout
+      form={form}
+      submitLabel={submitLabel}
+      canDelete={true}
+      onDelete={async () => {
+        await trashMoment({ _id });
+      }}
+    >
       <CreationSection label="Général">
         <TextInput form={form} name="title" placeholder="Titre" />
         <div className="grid grid-cols-[1fr_auto_50px] gap-2">

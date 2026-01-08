@@ -8,6 +8,8 @@ interface CreationScreenLayoutProps {
   children: ReactNode;
   showImageUploader?: boolean;
   submitLabel?: string;
+  canDelete?: boolean;
+  onDelete?: () => void;
 }
 
 export default function CreationScreenLayout({
@@ -15,6 +17,8 @@ export default function CreationScreenLayout({
   children,
   showImageUploader = true,
   submitLabel,
+  canDelete = false,
+  onDelete,
 }: CreationScreenLayoutProps) {
   return (
     <>
@@ -22,7 +26,12 @@ export default function CreationScreenLayout({
         {showImageUploader && <ImageUploader form={form} name="medias" />}
         <div className="space-y-2.5 pb-32">{children}</div>
       </div>
-      <CreationNavbar form={form} submitLabel={submitLabel} />
+      <CreationNavbar
+        form={form}
+        submitLabel={submitLabel}
+        canDelete={canDelete}
+        onDelete={onDelete}
+      />
     </>
   );
 }

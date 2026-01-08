@@ -1,6 +1,15 @@
 import { TbPlayerPauseFilled } from "react-icons/tb";
 import { ButtonPastel } from "../ui/Button";
 import { useRouter } from "@tanstack/react-router";
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../shadcn/dialog";
 
 interface CreationNavbarProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -8,6 +17,8 @@ interface CreationNavbarProps {
   hideFinishLater?: boolean;
   submitLabel?: string;
   handleUnfinishedStatus?: boolean;
+  canDelete?: boolean;
+  onDelete?: () => void;
 }
 
 export default function CreationNavbar({
@@ -15,50 +26,102 @@ export default function CreationNavbar({
   hideFinishLater,
   submitLabel = "Créer",
   handleUnfinishedStatus = true,
+  canDelete = false,
+  onDelete,
 }: CreationNavbarProps) {
   const router = useRouter();
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   function goBack() {
     router.history.back();
   }
+
+  function handleDelete() {
+    if (onDelete) {
+      onDelete();
+    }
+    setShowDeleteDialog(false);
+    goBack();
+  }
   return (
-    <form.Subscribe
-      selector={(state: {
-        canSubmit: boolean;
-        isSubmitting: boolean;
-        isPristine: boolean;
-      }) => [state.canSubmit, state.isSubmitting, state.isPristine]}
-    >
-      {([canSubmit, isSubmitting, isPristine]: [boolean, boolean, boolean]) => (
-        <nav className="w-full h-20 bg-white px-4 border-t border-gray-200 fixed bottom-0 left-0 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <ButtonPastel color="red" icon="x" onClick={goBack} />
-            {!hideFinishLater && (
+    <>
+      <form.Subscribe
+        selector={(state: {
+          canSubmit: boolean;
+          isSubmitting: boolean;
+          isPristine: boolean;
+        }) => [state.canSubmit, state.isSubmitting, state.isPristine]}
+      >
+        {([canSubmit, isSubmitting, isPristine]: [
+          boolean,
+          boolean,
+          boolean,
+        ]) => (
+          <nav className="w-full h-20 bg-white px-4 border-t border-gray-200 fixed bottom-0 left-0 flex items-center justify-between">
+            <div className="flex items-center gap-2">
               <ButtonPastel
-                color="blue"
-                icon={<TbPlayerPauseFilled size={18} />}
-                label="Terminer + tard"
+                color="red"
+                icon={canDelete ? "trash" : "x"}
                 onClick={() => {
-                  if (handleUnfinishedStatus)
-                    form.setFieldValue("status", "unfinished");
-                  form.handleSubmit();
+                  if (canDelete) {
+                    setShowDeleteDialog(true);
+                  } else {
+                    goBack();
+                  }
                 }}
               />
-            )}
-          </div>
-          <ButtonPastel
-            color="green"
-            icon="check"
-            label={submitLabel}
-            disabled={!canSubmit || isSubmitting || isPristine}
-            onClick={() => {
-              if (handleUnfinishedStatus)
-                form.setFieldValue("status", "completed");
-              form.handleSubmit();
-            }}
-          />
-        </nav>
-      )}
-    </form.Subscribe>
+              {!hideFinishLater && (
+                <ButtonPastel
+                  color="blue"
+                  icon={<TbPlayerPauseFilled size={18} />}
+                  label="Terminer + tard"
+                  onClick={() => {
+                    if (handleUnfinishedStatus)
+                      form.setFieldValue("status", "unfinished");
+                    form.handleSubmit();
+                  }}
+                />
+              )}
+            </div>
+            <ButtonPastel
+              color="green"
+              icon="check"
+              label={submitLabel}
+              disabled={!canSubmit || isSubmitting || isPristine}
+              onClick={() => {
+                if (handleUnfinishedStatus)
+                  form.setFieldValue("status", "completed");
+                form.handleSubmit();
+              }}
+            />
+          </nav>
+        )}
+      </form.Subscribe>
+
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Supprimer le souvenir ?</DialogTitle>
+            <DialogDescription>
+              Cette action est irréversible. Le souvenir sera définitivement
+              supprimé.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <ButtonPastel
+              color="grey"
+              label="Annuler"
+              onClick={() => setShowDeleteDialog(false)}
+            />
+            <ButtonPastel
+              color="red"
+              label="Supprimer"
+              icon="trash"
+              onClick={handleDelete}
+            />
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

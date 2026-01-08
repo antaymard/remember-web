@@ -128,3 +128,22 @@ export const edit = mutation({
     return newId;
   },
 });
+
+export const trash = mutation({
+  args: {
+    _id: v.id("moments"),
+  },
+  handler: async (ctx, { _id }) => {
+    const userId = await requireAuth(ctx, true);
+    const moment = await ctx.db.get("moments", _id);
+
+    if (!moment) {
+      throw new ConvexError("Moment non trouvé");
+    }
+    if (moment.creator_id !== userId) {
+      throw new ConvexError("Accès non autorisé");
+    }
+    await ctx.db.delete(_id);
+    return true;
+  },
+});
