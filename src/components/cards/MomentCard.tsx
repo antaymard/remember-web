@@ -79,7 +79,7 @@ export default function MomentCard({ moment }: { moment: MomentWithCreator }) {
         </div>
       </div>
       <div className="aspect-square w-full relative">
-        {renderPresentPersons(moment.present_persons as PersonType[])}
+        {renderPresentPersons(moment.present_persons)}
 
         <Carousel setApi={setCarouselApi} className="w-full aspect-square">
           <CarouselContent className="h-full aspect-square items-center">

@@ -6,24 +6,28 @@ type status = "unfinished" | "completed" | "archived";
 // Type de base avec creator_id comme ID
 export interface MomentType {
   _id?: Id<"moments">;
-  creator_id: Id<"users">;
+  creator_id?: Id<"users">;
   title: string;
   description?: string;
   is_secret?: boolean;
   medias?: MediaData[];
   date_time_in?: FlexibleDateTime;
-  present_persons?: Id<"persons">[] | PersonType[];
+  present_persons?: Id<"persons">[];
   status: status;
 }
 
 // Type avec creator_id populé
-export interface MomentWithCreator extends Omit<MomentType, "creator_id"> {
+export interface MomentWithCreator extends Omit<
+  MomentType,
+  "creator_id" | "present_persons"
+> {
   creator_id?: Doc<"users"> | null; // null si l'utilisateur a été supprimé, donc le populate retourne null
+  present_persons?: PersonType[];
 }
 
 export interface PersonType {
   _id?: Id<"persons">;
-  creator_id: Id<"users">;
+  creator_id?: Id<"users">;
   firstname: string;
   lastname: string;
   birth_date?: FlexibleDateTime;
