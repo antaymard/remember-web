@@ -49,6 +49,7 @@ export const compressImage = action({
     const variantPromises = missingVariants.map(async (size) => {
       const config = SIZES[size];
       const webpBuffer = await sharp(originalBuffer)
+        .rotate() // Apply EXIF orientation to fix rotation issues
         .resize(config.width, null, {
           fit: "inside",
           withoutEnlargement: true,
