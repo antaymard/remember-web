@@ -14,6 +14,7 @@ import {
   TbPlayerPauseFilled,
   TbUserPlus,
 } from "react-icons/tb";
+import OptimizedImage from "@/components/ui/OptimizedImage";
 
 export const Route = createFileRoute("/me/")({
   component: RouteComponent,
@@ -70,10 +71,15 @@ function RouteComponent() {
       />
       <div className="pt-17.5 pb-5 flex flex-col gap-2.5 bg-bg">
         <div className="flex flex-col items-center justify-center py-4">
-          <img
-            src={user?.medias?.[0]?.url}
-            className="rounded-full object-cover w-32 aspect-square border-2 border-white"
-          />
+          {user?.medias?.[0] ? (
+            <OptimizedImage
+              media={user.medias[0]}
+              size="sm"
+              className="rounded-full object-cover w-32 aspect-square border-2 border-white"
+            />
+          ) : (
+            <div className="rounded-full w-32 aspect-square border-2 border-white bg-gray-200" />
+          )}
           <div className="grid grid-cols-3 gap-5 mt-6">
             {slots.map((slot) => (
               <div

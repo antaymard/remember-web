@@ -9,6 +9,7 @@ import {
 } from "@/components/shadcn/carousel";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { ButtonPastel } from "./Button";
+import OptimizedImage, { type ImageSize } from "./OptimizedImage";
 
 interface MediasCarouselProps {
   /** Array of media to display */
@@ -19,6 +20,10 @@ interface MediasCarouselProps {
   clickableFullscreen?: boolean;
   /** Additional CSS classes for the container */
   className?: string;
+  /** Image size variant to use for carousel images (default: 'lg') */
+  imageSize?: ImageSize;
+  /** Image size variant to use for fullscreen images (default: 'hd') */
+  fullscreenImageSize?: ImageSize;
 }
 
 export default function MediasCarousel({
@@ -26,6 +31,8 @@ export default function MediasCarousel({
   aspectSquare = false,
   clickableFullscreen = true,
   className,
+  imageSize = 'lg',
+  fullscreenImageSize = 'hd',
 }: MediasCarouselProps) {
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -77,8 +84,9 @@ export default function MediasCarousel({
             {medias.map((media, index) => (
               <CarouselItem key={`${media.url}-${index}`} className="h-full">
                 <div className="relative w-full h-full flex items-center justify-center">
-                  <img
-                    src={media.url}
+                  <OptimizedImage
+                    media={media}
+                    size={imageSize}
                     alt={`Media ${index + 1}`}
                     className={cn(
                       "w-full h-full object-cover",
@@ -130,8 +138,9 @@ export default function MediasCarousel({
               wrapperClass="w-full h-full"
               contentClass="w-full h-full flex items-center justify-center"
             >
-              <img
-                src={medias[fullscreenIndex].url}
+              <OptimizedImage
+                media={medias[fullscreenIndex]}
+                size={fullscreenImageSize}
                 alt={`Media ${fullscreenIndex + 1}`}
                 className="w-screen h-screen object-contain"
               />
