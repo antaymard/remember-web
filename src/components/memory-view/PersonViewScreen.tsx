@@ -32,7 +32,6 @@ export default function PersonViewScreen({
           `${person?.firstname} ${person?.lastname}` || "Personne sans nom"
         }
         showBackArrow
-        onArrowBackClick={() => window.history.back()}
         rightContent={
           person.creator_id === user?._id && (
             <ButtonPastel

@@ -25,7 +25,6 @@ export default function MomentViewScreen({
 }: {
   moment: MomentWithCreator;
 }) {
-  const router = useRouter();
   const { user } = useUser();
   const navigate = useNavigate();
 
@@ -34,7 +33,6 @@ export default function MomentViewScreen({
       <Header
         title={moment.title || "Untitled Moment"}
         showBackArrow
-        onArrowBackClick={() => router.history.back()}
         rightContent={
           moment.creator_id === user?._id && (
             <ButtonPastel
