@@ -1,8 +1,7 @@
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { requireAuth } from "./utils/requireAuth";
-import { stat } from "fs";
-import { Id } from "./_generated/dataModel";
+import type { Id } from "./_generated/dataModel";
 
 export const listUnfinished = query({
   args: {},

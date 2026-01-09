@@ -1,6 +1,6 @@
 import type { MomentWithCreator, PersonType } from "@/types/memory.types";
 import Header from "../nav/Header";
-import { useNavigate, useRouter } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { ButtonPastel } from "../ui/Button";
 import { useUser } from "@/contexts/userContext";
 import MediasCarousel from "../ui/MediasCarousel";
