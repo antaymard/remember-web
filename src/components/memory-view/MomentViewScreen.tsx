@@ -1,6 +1,6 @@
 import type { MomentWithCreator, PersonType } from "@/types/memory.types";
 import Header from "../nav/Header";
-import { useNavigate, useRouter } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { ButtonPastel } from "../ui/Button";
 import { useUser } from "@/contexts/userContext";
 import MediasCarousel from "../ui/MediasCarousel";
@@ -25,7 +25,6 @@ export default function MomentViewScreen({
 }: {
   moment: MomentWithCreator;
 }) {
-  const router = useRouter();
   const { user } = useUser();
   const navigate = useNavigate();
 
@@ -34,7 +33,6 @@ export default function MomentViewScreen({
       <Header
         title={moment.title || "Untitled Moment"}
         showBackArrow
-        onArrowBackClick={() => router.history.back()}
         rightContent={
           moment.creator_id === user?._id && (
             <ButtonPastel

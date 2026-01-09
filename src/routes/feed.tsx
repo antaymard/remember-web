@@ -1,20 +1,31 @@
 import Header from "@/components/nav/Header";
 import Navbar from "@/components/nav/Navbar";
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "convex/react";
+import { useQuery } from "convex-helpers/react/cache/hooks";
 import { api } from "../../convex/_generated/api";
 import MomentMemoryCard from "@/components/cards/MomentMemoryCard";
-import type { MomentWithCreator } from "@/types/memory.types";
+import type {
+  MomentWithCreator,
+  PersonWithCreator,
+} from "@/types/memory.types";
 import PersonMemoryCard from "@/components/cards/PersonMemoryCard";
+import { useScrollRestoration } from "@/hooks/useScrollRestoration";
 
 export const Route = createFileRoute("/feed")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  // Préserver la position de scroll entre navigations
+  useScrollRestoration();
+
+  // useQuery avec cache automatique - pas de loading state sur navigation retour
   const memories = useQuery(api.memories.list, {
     type: ["moment", "person"],
     populate: "creator_id present_persons",
+    filter: {
+      status: "completed",
+    },
   });
 
   return (
@@ -31,7 +42,12 @@ function RouteComponent() {
                 />
               );
             if (memory._memory_type === "person")
-              return <PersonMemoryCard key={memory._id} person={memory} />;
+              return (
+                <PersonMemoryCard
+                  key={memory._id}
+                  person={memory as PersonWithCreator}
+                />
+              );
           })
         ) : (
           <div>Aucun souvenir à afficher</div>

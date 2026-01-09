@@ -1,41 +1,8 @@
 import type { PersonWithCreator } from "@/types/memory.types";
-import type { FlexibleDateTime } from "@/types/shared.types";
-import { TbCalendar } from "react-icons/tb";
 import { Link } from "@tanstack/react-router";
 import type { Id } from "@/../convex/_generated/dataModel";
 import MediasCarousel from "@/components/ui/MediasCarousel";
 import MemoryTypeIndicator from "./MemoryTypeIndicator";
-
-function renderDate(date: FlexibleDateTime | undefined) {
-  if (!date) return null;
-  if (!date.day || !date.month || !date.year) return null;
-  const time = date.hour && date.min ? `${date.hour}:${date.min}` : "";
-  return (
-    <div className="flex gap-2 items-center">
-      <TbCalendar size={20} />
-      {date.day}/{date.month}/{date.year} {time}
-    </div>
-  );
-}
-
-function renderPresentPersons(presentPersons: PersonType[] | undefined) {
-  if (!presentPersons || presentPersons.length === 0) return null;
-  return (
-    <div className="absolute bottom-8 right-4 flex flex-col -gap-2 z-10">
-      {presentPersons.map((person, i) => (
-        <div
-          key={i}
-          className="w-12 h-12 rounded-full border-2 border-white overflow-hidden -mb-2"
-        >
-          <img
-            src={person?.medias?.[0]?.url}
-            className="w-full h-full object-cover"
-          />
-        </div>
-      ))}
-    </div>
-  );
-}
 
 export default function PersonMemoryCard({
   person,
