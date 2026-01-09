@@ -22,6 +22,7 @@ export interface UploadedFileData {
 export const useUploadFile = () => {
   const generateUploadUrl = useAction(api.uploads.generateUploadUrl);
   const generateUploadUrls = useAction(api.uploads.generateUploadUrls);
+  const compressImage = useAction(api.utils.images.compressImage);
 
   // Map de fileId -> progress
   const [uploads, setUploads] = useState<Record<string, FileUploadProgress>>(
@@ -87,7 +88,14 @@ export const useUploadFile = () => {
             [fileId]: { ...prev[fileId], status: "done", progress: 100 },
           }));
 
-          // 4. Retourner les données du fichier
+          // 4. Trigger compression (fire-and-forget, non-blocking)
+          if (file.type.startsWith("image/")) {
+            compressImage({ publicUrl })
+              .then(() => console.log(`[Compression] Started for ${file.name}`))
+              .catch((err) => console.error(`[Compression] Failed for ${file.name}:`, err));
+          }
+
+          // 5. Retourner les données du fichier
           const fileData: UploadedFileData = {
             url: publicUrl,
             filename: file.name,
@@ -184,6 +192,13 @@ export const useUploadFile = () => {
             ...prev,
             [fileId]: { ...prev[fileId], status: "done", progress: 100 },
           }));
+
+          // Trigger compression (fire-and-forget, non-blocking)
+          if (file.type.startsWith("image/")) {
+            compressImage({ publicUrl })
+              .then(() => console.log(`[Compression] Started for ${file.name}`))
+              .catch((err) => console.error(`[Compression] Failed for ${file.name}:`, err));
+          }
 
           return {
             url: publicUrl,

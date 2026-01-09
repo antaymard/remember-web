@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import type { Id } from "@/../convex/_generated/dataModel";
 import MediasCarousel from "@/components/ui/MediasCarousel";
 import MemoryTypeIndicator from "./MemoryTypeIndicator";
+import OptimizedImage from "@/components/ui/OptimizedImage";
 
 export default function PersonMemoryCard({
   person,
@@ -22,10 +23,13 @@ export default function PersonMemoryCard({
       <div className="bg-white py-4 space-y-3">
         {/* Header */}
         <div className="flex px-4 items-center gap-3 w-full">
-          <img
-            src={person.creator?.medias?.[0]?.url}
-            className="w-10 h-10 aspect-square rounded-full object-cover"
-          />
+          {person.creator?.medias?.[0] && (
+            <OptimizedImage
+              media={person.creator.medias[0]}
+              size="sm"
+              className="w-10 h-10 aspect-square rounded-full object-cover"
+            />
+          )}
           <div className="flex flex-col w-full min-w-0">
             <h2 className="font-serif text-xl leading-tight truncate">
               {person.firstname} {person.lastname}
