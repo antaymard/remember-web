@@ -2,6 +2,7 @@ import DatePicker from "@/components/form/DatePicker";
 import { useMutation } from "convex/react";
 import { api } from "@/../convex/_generated/api";
 import type { ThingType } from "@/types/memory.types";
+import { thingTypes } from "@/types/memory.types";
 import CreationSection from "@/components/ui/CreationSection";
 import TextInput from "@/components/form/TextInput";
 import TextArea from "@/components/form/TextArea";
@@ -15,7 +16,7 @@ import type { Id } from "node_modules/convex/dist/esm-types/values/value";
 const thingSchema = z.object({
   title: z.string().min(1, "Le titre est requis"),
   // medias: z.array(z.any()).min(1, "Au moins une image est requise"),
-  type: z.enum(["physical", "music", "film", "book"], {
+  type: z.enum(thingTypes, {
     message: "Le type sélectionné n'est pas valide",
   }),
   status: statusEnum,
@@ -46,12 +47,9 @@ export default function ThingEditionScreen({
     } as ThingType,
     mutationFn: async (value) => {
       // Ensure type is set correctly
-      const thingData = {
-        ...value,
-        type: value.type as "physical" | "music" | "film" | "book",
-      };
+
       return await editThing(
-        action === "edit" ? { ...thingData, _id: memoryId! } : thingData
+        action === "edit" ? { ...value, _id: memoryId! } : value
       );
     },
     schema: thingSchema,

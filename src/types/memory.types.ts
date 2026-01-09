@@ -53,12 +53,24 @@ export interface PlaceType {
   creator_id?: Id<"users">;
 }
 
+export const thingTypes = [
+  "physical",
+  "music",
+  "film",
+  "book",
+  "game",
+  "interest",
+  "personality",
+] as const;
+
+export type ThingTypeValue = (typeof thingTypes)[number];
+
 export interface ThingType {
   title: string;
   creator_id?: Id<"users">;
   description?: string;
   medias?: MediaData[];
-  type: "physical" | "music" | "film" | "book";
+  type: ThingTypeValue;
   first_met?: FlexibleDateTime;
   last_seen?: FlexibleDateTime;
   status: status;

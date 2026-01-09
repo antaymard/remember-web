@@ -46,7 +46,7 @@ export default function MomentViewScreen({
         }
       />
 
-      <MediasCarousel medias={moment.medias || []} />
+      <MediasCarousel medias={moment.medias || []} aspectSquare />
       <div className="space-y-2.5">
         <Section title="Description">
           {moment.description ? (

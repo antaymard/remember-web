@@ -49,7 +49,7 @@ export default function Navbar() {
   ] as const;
 
   return (
-    <nav className="w-full h-20 bg-white px-4 border-t border-gray-200 fixed bottom-0 left-0 flex items-center justify-between">
+    <nav className="w-full z-10 h-20 bg-white px-4 border-t border-gray-200 fixed bottom-0 left-0 flex items-center justify-between">
       {options.map((option, i) => {
         const isActive = location.pathname === option.url;
 
