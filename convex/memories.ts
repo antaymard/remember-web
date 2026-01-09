@@ -1,6 +1,8 @@
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { requireAuth } from "./utils/requireAuth";
+import { stat } from "fs";
+import { Id } from "./_generated/dataModel";
 
 export const listUnfinished = query({
   args: {},
@@ -144,5 +146,143 @@ export const trash = mutation({
     }
     await ctx.db.delete(_id);
     return true;
+  },
+});
+
+export const list = query({
+  args: {
+    type: v.array(
+      v.union(
+        v.literal("moment"),
+        v.literal("person"),
+        v.literal("thing"),
+        v.literal("place")
+      )
+    ),
+    populate: v.optional(v.string()),
+    filter: v.optional(
+      v.object({
+        status: v.optional(
+          v.union(
+            v.literal("unfinished"),
+            v.literal("completed"),
+            v.literal("archived")
+          )
+        ),
+      })
+    ),
+  },
+  handler: async (ctx, { type, populate, filter }) => {
+    const userId = await requireAuth(ctx, true);
+
+    // Mapping des types vers les noms de tables
+    const tableMap = {
+      moment: "moments",
+      person: "persons",
+      thing: "things",
+      place: "places",
+    } as const;
+
+    // Lancer les queries en parallèle uniquement pour les types demandés
+    const queryPromises = type.map(async (memoryType) => {
+      const tableName = tableMap[memoryType];
+
+      // Si un status est spécifié, utiliser l'index by_creator_and_status pour meilleures perfs
+      let results;
+      if (filter?.status) {
+        results = await ctx.db
+          .query(tableName)
+          .withIndex("by_creator_and_status", (q) =>
+            q.eq("creator_id", userId).eq("status", filter.status!)
+          )
+          .collect();
+      } else {
+        // Sinon, utiliser l'index by_creator simple
+        results = await ctx.db
+          .query(tableName)
+          .withIndex("by_creator", (q) => q.eq("creator_id", userId))
+          .collect();
+      }
+
+      // Ajouter la propriété _memory_type à chaque résultat
+      return results.map((item) => ({
+        ...item,
+        _memory_type: memoryType,
+      }));
+    });
+
+    // Attendre toutes les queries
+    const allResults = await Promise.all(queryPromises);
+
+    // Fusionner tous les tableaux en un seul
+    const mergedResults = allResults.flat();
+
+    // Trier par _creationTime décroissant (plus récent en premier)
+    mergedResults.sort((a, b) => b._creationTime - a._creationTime);
+
+    // Si pas de populate, retourner les résultats directement
+    if (!populate) {
+      return mergedResults;
+    }
+
+    // Parse les champs à populer
+    const fieldsToPopulate = populate.split(" ");
+
+    // Collecter tous les IDs uniques
+    const allCreatorIds = new Set<string>();
+    const allPersonIds = new Set<string>();
+
+    mergedResults.forEach((memory) => {
+      allCreatorIds.add(memory.creator_id);
+
+      // Collecter les present_persons uniquement pour les moments
+      if (
+        "present_persons" in memory &&
+        memory.present_persons &&
+        Array.isArray(memory.present_persons)
+      ) {
+        memory.present_persons.forEach((personId) => {
+          allPersonIds.add(personId);
+        });
+      }
+    });
+
+    // Charger tous les creators et persons en batch
+    const [creatorsMap, personsMap] = await Promise.all([
+      // Charger les creators (users)
+      Promise.all(
+        Array.from(allCreatorIds).map(async (id) => {
+          const creator = await ctx.db.get(id as Id<"users">);
+          return [id, creator] as const;
+        })
+      ).then((pairs) => new Map(pairs)),
+      // Charger les persons
+      Promise.all(
+        Array.from(allPersonIds).map(async (id) => {
+          const person = await ctx.db.get(id as Id<"persons">);
+          return [id, person] as const;
+        })
+      ).then((pairs) => new Map(pairs)),
+    ]);
+
+    // Dispatcher les données populées
+    const populatedResults = mergedResults.map((memory) => {
+      return {
+        ...memory,
+        ...(fieldsToPopulate.includes("creator_id") && {
+          creator: creatorsMap.get(memory.creator_id),
+        }),
+        ...(fieldsToPopulate.includes("present_persons") &&
+          "present_persons" in memory &&
+          memory.present_persons &&
+          Array.isArray(memory.present_persons) && {
+            present_persons: memory.present_persons
+              .map((personId) => personsMap.get(personId))
+              .filter((p) => p !== null && p !== undefined),
+          }),
+      };
+    });
+
+    return populatedResults;
   },
 });

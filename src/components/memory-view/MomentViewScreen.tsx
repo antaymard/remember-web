@@ -4,7 +4,7 @@ import { useNavigate, useRouter } from "@tanstack/react-router";
 import { ButtonPastel } from "../ui/Button";
 import { useUser } from "@/contexts/userContext";
 import MediasCarousel from "../ui/MediasCarousel";
-import PersonCard from "../cards/PersonCard";
+import PersonItemCard from "../cards/PersonItemCard";
 import type { FlexibleDateTime } from "@/types/shared.types";
 import { TbCalendar } from "react-icons/tb";
 
@@ -63,7 +63,7 @@ export default function MomentViewScreen({
         <Section title="Personnes présentes">
           {moment.present_persons && moment?.present_persons?.length > 0 ? (
             moment.present_persons.map((person: PersonType) => (
-              <PersonCard key={person._id} person={person} />
+              <PersonItemCard key={person._id} person={person} />
             ))
           ) : (
             <p className="opacity-60">

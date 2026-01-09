@@ -1,9 +1,10 @@
-import type { MomentWithCreator, PersonType } from "@/types/memory.types";
+import type { PersonWithCreator } from "@/types/memory.types";
 import type { FlexibleDateTime } from "@/types/shared.types";
 import { TbCalendar } from "react-icons/tb";
 import { Link } from "@tanstack/react-router";
 import type { Id } from "@/../convex/_generated/dataModel";
 import MediasCarousel from "@/components/ui/MediasCarousel";
+import MemoryTypeIndicator from "./MemoryTypeIndicator";
 
 function renderDate(date: FlexibleDateTime | undefined) {
   if (!date) return null;
@@ -36,49 +37,50 @@ function renderPresentPersons(presentPersons: PersonType[] | undefined) {
   );
 }
 
-export default function MomentCard({ moment }: { moment: MomentWithCreator }) {
-  if (!moment) return null;
+export default function PersonMemoryCard({
+  person,
+}: {
+  person: PersonWithCreator;
+}) {
+  if (!person) return null;
 
   return (
     <Link
       to="/view/$type/$_id"
       params={{
-        type: "moment",
-        _id: moment._id as Id<"moments">,
+        type: "person",
+        _id: person._id as Id<"persons">,
       }}
     >
       <div className="bg-white py-4 space-y-3">
         {/* Header */}
         <div className="flex px-4 items-center gap-3 w-full">
           <img
-            src={moment.creator?.medias?.[0]?.url}
+            src={person.creator?.medias?.[0]?.url}
             className="w-10 h-10 aspect-square rounded-full object-cover"
           />
           <div className="flex flex-col w-full min-w-0">
             <h2 className="font-serif text-xl leading-tight truncate">
-              {moment.title}
+              {person.firstname} {person.lastname}
             </h2>
             <p className="leading-tight opacity-80 text-sm">
-              {moment.creator?.firstname} {moment.creator?.lastname}
+              {person.creator?.firstname} {person.creator?.lastname}
             </p>
           </div>
+          <MemoryTypeIndicator memoryType="person" />
         </div>
         <div className="aspect-square w-full relative">
-          {moment.medias && moment.medias.length > 0 && (
+          {person.medias && person.medias.length > 0 && (
             <>
-              <MediasCarousel medias={moment.medias} aspectSquare />
-              {renderPresentPersons(moment.present_persons)}
+              <MediasCarousel medias={person.medias} aspectSquare />
             </>
           )}
         </div>
-        {moment.description && (
+        {person.description && (
           <p className="line-clamp-3 leading-tight opacity-80 px-4">
-            {moment.description}
+            {person.description}
           </p>
         )}
-        <div className="flex opacity-80 text-sm px-4">
-          {renderDate(moment?.date_time_in)}
-        </div>
       </div>
     </Link>
   );

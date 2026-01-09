@@ -41,6 +41,10 @@ export interface PersonType {
   status: status;
 }
 
+export interface PersonWithCreator extends PersonType {
+  creator?: Doc<"users">;
+}
+
 export interface PlaceType {
   title: string;
   description?: string;
