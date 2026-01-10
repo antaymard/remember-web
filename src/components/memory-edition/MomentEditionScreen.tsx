@@ -7,7 +7,7 @@ import CreationSection from "@/components/ui/CreationSection";
 import TextInput from "@/components/form/TextInput";
 import TextArea from "@/components/form/TextArea";
 import TimePicker from "@/components/form/TimePicker";
-import { TbClockPin, TbLockSquareRoundedFilled, TbUserHeart } from "react-icons/tb";
+import { TbClockPin, TbUserHeart } from "react-icons/tb";
 import * as z from "zod";
 import PersonPicker from "../form/PersonPicker";
 import UserPicker from "../form/UserPicker";
