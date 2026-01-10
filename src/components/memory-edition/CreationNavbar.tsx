@@ -108,7 +108,7 @@ export default function CreationNavbar({
               supprimé.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter>
+          <DialogFooter className="flex flex-row items-center justify-between">
             <ButtonPastel
               color="grey"
               label="Annuler"
