@@ -58,6 +58,7 @@ export const edit = mutation({
     ),
     first_met: v.optional(flexibleDateTime),
     last_seen: v.optional(flexibleDateTime),
+    shared_with_users: v.optional(v.array(v.id("users"))),
     status: v.union(
       v.literal("unfinished"),
       v.literal("completed"),

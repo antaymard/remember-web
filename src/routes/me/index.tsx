@@ -5,6 +5,7 @@ import { useUser } from "@/contexts/userContext";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { api } from "@/../convex/_generated/api";
 import { useQuery } from "convex/react";
+import { useAuthActions } from "@convex-dev/auth/react";
 import {
   TbUsersGroup,
   TbAirBalloon,
@@ -13,6 +14,7 @@ import {
   TbBooks,
   TbPlayerPauseFilled,
   TbUserPlus,
+  TbLogout,
 } from "react-icons/tb";
 import OptimizedImage from "@/components/ui/OptimizedImage";
 
@@ -23,6 +25,7 @@ export const Route = createFileRoute("/me/")({
 function RouteComponent() {
   const navigate = useNavigate();
   const { user, unfinishedMemoriesCount } = useUser();
+  const { signOut } = useAuthActions();
 
   const { momentsCount } = useQuery(api.users.getMyStats) || {};
 
@@ -56,6 +59,11 @@ function RouteComponent() {
     { label: "Mes rêves", to: "/me/dreams", icon: TbAirBalloon },
     { label: "Chapitres de ma vie", to: "/me/chapters", icon: TbBooks },
   ];
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate({ to: "/signin" });
+  };
 
   return (
     <>
@@ -116,6 +124,16 @@ function RouteComponent() {
               <TbChevronRight size={20} />
             </div>
           ))}
+          <div
+            className="flex items-center justify-between py-3 cursor-pointer px-4 text-red"
+            onClick={handleLogout}
+          >
+            <div className="flex items-center gap-2">
+              <TbLogout size={20} />
+              <div className="font-medium">Se déconnecter</div>
+            </div>
+            <TbChevronRight size={20} />
+          </div>
         </div>
       </div>
       <Navbar />

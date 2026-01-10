@@ -10,6 +10,7 @@ import TimePicker from "@/components/form/TimePicker";
 import { TbClockPin, TbUserHeart } from "react-icons/tb";
 import * as z from "zod";
 import PersonPicker from "../form/PersonPicker";
+import UserPicker from "../form/UserPicker";
 import { useCreationForm } from "@/hooks/useCreationForm";
 import CreationScreenLayout from "./CreationScreenLayout";
 import { defaultFlexibleDateTime, statusEnum } from "@/utils/creationConstants";
@@ -41,6 +42,7 @@ export default function MomentEditionScreen({
       medias: [],
       date_time_in: defaultFlexibleDateTime,
       present_persons: [],
+      shared_with_users: [],
       status: "unfinished",
       ...defaultValues,
     } as MomentType,
@@ -101,6 +103,7 @@ export default function MomentEditionScreen({
           label="Partager avec les personnes présentes"
           icon={TbUserHeart}
         />
+        <UserPicker form={form} name="shared_with_users" />
       </CreationSection>
       {/* <CreationSection label="Visibilité">
         <Switcher

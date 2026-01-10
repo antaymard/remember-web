@@ -13,6 +13,7 @@ export interface MomentType {
   medias?: MediaData[];
   date_time_in?: FlexibleDateTime;
   present_persons?: Id<"persons">[];
+  shared_with_users?: Id<"users">[];
   status: status;
 }
 
@@ -38,6 +39,7 @@ export interface PersonType {
   relation_type?: string;
   relation_name?: string;
   medias?: MediaData[];
+  shared_with_users?: Id<"users">[];
   status: status;
 }
 
@@ -49,6 +51,7 @@ export interface PlaceType {
   title: string;
   description?: string;
   medias?: MediaData[];
+  shared_with_users?: Id<"users">[];
   status: status;
   creator_id?: Id<"users">;
 }
@@ -73,5 +76,6 @@ export interface ThingType {
   type: ThingTypeValue;
   first_met?: FlexibleDateTime;
   last_seen?: FlexibleDateTime;
+  shared_with_users?: Id<"users">[];
   status: status;
 }

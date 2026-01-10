@@ -27,6 +27,8 @@ export const status = v.union(
   v.literal("archived")
 );
 
+export const shared_with_users = v.optional(v.array(v.id("users")));
+
 const schema = defineSchema({
   ...authTables,
   // Your other tables...
@@ -47,6 +49,7 @@ const schema = defineSchema({
     lastname: v.optional(v.string()),
     gender: v.optional(v.string()),
     medias: v.optional(v.array(media)),
+    friends: v.optional(v.array(v.id("users"))),
   })
     .index("email", ["email"])
     .index("phone", ["phone"]),
@@ -61,6 +64,7 @@ const schema = defineSchema({
     present_persons: v.optional(v.array(v.id("persons"))),
     status: status,
     is_shared_with_present_persons: v.optional(v.boolean()),
+    shared_with_users,
   })
     .index("by_creator", ["creator_id"])
     .index("by_creator_and_status", ["creator_id", "status"]),
@@ -82,6 +86,7 @@ const schema = defineSchema({
     medias: v.optional(v.array(media)),
     status: status,
     is_shared_with_present_persons: v.optional(v.boolean()),
+    shared_with_users,
   })
     .index("by_creator", ["creator_id"])
     .index("by_creator_and_status", ["creator_id", "status"]),
@@ -115,6 +120,7 @@ const schema = defineSchema({
     last_seen: v.optional(flexibleDateTime),
     status: status,
     is_shared_with_present_persons: v.optional(v.boolean()),
+    shared_with_users,
   })
     .index("by_creator", ["creator_id"])
     .index("by_creator_and_status", ["creator_id", "status"]),

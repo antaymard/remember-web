@@ -91,6 +91,7 @@ export const edit = mutation({
     medias: v.optional(v.any()),
     date_time_in: v.optional(flexibleDateTime),
     present_persons: v.optional(v.array(v.id("persons"))),
+    shared_with_users: v.optional(v.array(v.id("users"))),
     is_shared_with_present_persons: v.optional(v.boolean()),
     status: v.union(
       v.literal("unfinished"),
