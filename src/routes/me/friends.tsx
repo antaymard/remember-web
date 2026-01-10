@@ -4,37 +4,47 @@ import { useQuery, useMutation } from "convex/react";
 import { useState, useEffect } from "react";
 import { TbUserHeart, TbX } from "react-icons/tb";
 import Header from "@/components/nav/Header";
-import { ButtonPastel } from "../ui/Button";
+import Navbar from "@/components/nav/Navbar";
+import { ButtonPastel } from "@/components/ui/Button";
+import { createFileRoute } from "@tanstack/react-router";
 import type { Id } from "@/../convex/_generated/dataModel";
 import type { UserType } from "@/types/user.types";
 
-export default function FriendPicker() {
+export const Route = createFileRoute("/me/friends")({
+  component: RouteComponent,
+});
+
+function RouteComponent() {
   const [open, setOpen] = useState(false);
   const myFriends = useQuery(api.users.listMyFriends);
 
   return (
-    <>
-      <div className="space-y-4">
-        {myFriends && myFriends.length > 0 && (
-          <div className="space-y-2">
-            <h3>Mes amis</h3>
-            {myFriends.map((friend) => {
-              if (!friend) return null;
-              return <FriendItem key={friend._id} user={friend} hideButton />;
-            })}
-          </div>
-        )}
-        <button
-          type="button"
-          className={cn("input", "text-text")}
-          onClick={() => setOpen(true)}
-        >
-          <TbUserHeart size={24} />
-          Rechercher et ajouter des amis
-        </button>
+    <div>
+      <Header title="Amis" showBackArrow />
+      <div className="py-17.5 px-4">
+        <div className="space-y-4">
+          <button
+            type="button"
+            className={cn("input", "text-text")}
+            onClick={() => setOpen(true)}
+          >
+            <TbUserHeart size={24} />
+            Rechercher et ajouter des amis
+          </button>
+          {myFriends && myFriends.length > 0 && (
+            <div className="space-y-2">
+              <h3>Mes amis</h3>
+              {myFriends.map((friend) => {
+                if (!friend) return null;
+                return <FriendItem key={friend._id} user={friend} hideButton />;
+              })}
+            </div>
+          )}
+        </div>
+        {open && <PickerScreen setOpen={setOpen} />}
       </div>
-      {open && <PickerScreen setOpen={setOpen} />}
-    </>
+      <Navbar />
+    </div>
   );
 }
 

@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SigninRouteImport } from './routes/signin'
 import { Route as SearchRouteImport } from './routes/search'
-import { Route as FriendsRouteImport } from './routes/friends'
 import { Route as FeedRouteImport } from './routes/feed'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as CreateMemoryRouteImport } from './routes/create-memory'
@@ -19,6 +18,7 @@ import { Route as ChatRouteImport } from './routes/chat'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MeIndexRouteImport } from './routes/me/index'
 import { Route as MeUnfinishedMemoriesRouteImport } from './routes/me/unfinished-memories'
+import { Route as MeFriendsRouteImport } from './routes/me/friends'
 import { Route as MeEditRouteImport } from './routes/me/edit'
 import { Route as ViewType_idRouteImport } from './routes/view.$type.$_id'
 import { Route as EditMemoryType_idRouteImport } from './routes/edit-memory.$type.$_id'
@@ -31,11 +31,6 @@ const SigninRoute = SigninRouteImport.update({
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FriendsRoute = FriendsRouteImport.update({
-  id: '/friends',
-  path: '/friends',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FeedRoute = FeedRouteImport.update({
@@ -73,6 +68,11 @@ const MeUnfinishedMemoriesRoute = MeUnfinishedMemoriesRouteImport.update({
   path: '/me/unfinished-memories',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MeFriendsRoute = MeFriendsRouteImport.update({
+  id: '/me/friends',
+  path: '/me/friends',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MeEditRoute = MeEditRouteImport.update({
   id: '/me/edit',
   path: '/me/edit',
@@ -95,10 +95,10 @@ export interface FileRoutesByFullPath {
   '/create-memory': typeof CreateMemoryRoute
   '/explore': typeof ExploreRoute
   '/feed': typeof FeedRoute
-  '/friends': typeof FriendsRoute
   '/search': typeof SearchRoute
   '/signin': typeof SigninRoute
   '/me/edit': typeof MeEditRoute
+  '/me/friends': typeof MeFriendsRoute
   '/me/unfinished-memories': typeof MeUnfinishedMemoriesRoute
   '/me': typeof MeIndexRoute
   '/edit-memory/$type/$_id': typeof EditMemoryType_idRoute
@@ -110,10 +110,10 @@ export interface FileRoutesByTo {
   '/create-memory': typeof CreateMemoryRoute
   '/explore': typeof ExploreRoute
   '/feed': typeof FeedRoute
-  '/friends': typeof FriendsRoute
   '/search': typeof SearchRoute
   '/signin': typeof SigninRoute
   '/me/edit': typeof MeEditRoute
+  '/me/friends': typeof MeFriendsRoute
   '/me/unfinished-memories': typeof MeUnfinishedMemoriesRoute
   '/me': typeof MeIndexRoute
   '/edit-memory/$type/$_id': typeof EditMemoryType_idRoute
@@ -126,10 +126,10 @@ export interface FileRoutesById {
   '/create-memory': typeof CreateMemoryRoute
   '/explore': typeof ExploreRoute
   '/feed': typeof FeedRoute
-  '/friends': typeof FriendsRoute
   '/search': typeof SearchRoute
   '/signin': typeof SigninRoute
   '/me/edit': typeof MeEditRoute
+  '/me/friends': typeof MeFriendsRoute
   '/me/unfinished-memories': typeof MeUnfinishedMemoriesRoute
   '/me/': typeof MeIndexRoute
   '/edit-memory/$type/$_id': typeof EditMemoryType_idRoute
@@ -143,10 +143,10 @@ export interface FileRouteTypes {
     | '/create-memory'
     | '/explore'
     | '/feed'
-    | '/friends'
     | '/search'
     | '/signin'
     | '/me/edit'
+    | '/me/friends'
     | '/me/unfinished-memories'
     | '/me'
     | '/edit-memory/$type/$_id'
@@ -158,10 +158,10 @@ export interface FileRouteTypes {
     | '/create-memory'
     | '/explore'
     | '/feed'
-    | '/friends'
     | '/search'
     | '/signin'
     | '/me/edit'
+    | '/me/friends'
     | '/me/unfinished-memories'
     | '/me'
     | '/edit-memory/$type/$_id'
@@ -173,10 +173,10 @@ export interface FileRouteTypes {
     | '/create-memory'
     | '/explore'
     | '/feed'
-    | '/friends'
     | '/search'
     | '/signin'
     | '/me/edit'
+    | '/me/friends'
     | '/me/unfinished-memories'
     | '/me/'
     | '/edit-memory/$type/$_id'
@@ -189,10 +189,10 @@ export interface RootRouteChildren {
   CreateMemoryRoute: typeof CreateMemoryRoute
   ExploreRoute: typeof ExploreRoute
   FeedRoute: typeof FeedRoute
-  FriendsRoute: typeof FriendsRoute
   SearchRoute: typeof SearchRoute
   SigninRoute: typeof SigninRoute
   MeEditRoute: typeof MeEditRoute
+  MeFriendsRoute: typeof MeFriendsRoute
   MeUnfinishedMemoriesRoute: typeof MeUnfinishedMemoriesRoute
   MeIndexRoute: typeof MeIndexRoute
   EditMemoryType_idRoute: typeof EditMemoryType_idRoute
@@ -213,13 +213,6 @@ declare module '@tanstack/react-router' {
       path: '/search'
       fullPath: '/search'
       preLoaderRoute: typeof SearchRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/friends': {
-      id: '/friends'
-      path: '/friends'
-      fullPath: '/friends'
-      preLoaderRoute: typeof FriendsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/feed': {
@@ -271,6 +264,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MeUnfinishedMemoriesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/me/friends': {
+      id: '/me/friends'
+      path: '/me/friends'
+      fullPath: '/me/friends'
+      preLoaderRoute: typeof MeFriendsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/me/edit': {
       id: '/me/edit'
       path: '/me/edit'
@@ -301,10 +301,10 @@ const rootRouteChildren: RootRouteChildren = {
   CreateMemoryRoute: CreateMemoryRoute,
   ExploreRoute: ExploreRoute,
   FeedRoute: FeedRoute,
-  FriendsRoute: FriendsRoute,
   SearchRoute: SearchRoute,
   SigninRoute: SigninRoute,
   MeEditRoute: MeEditRoute,
+  MeFriendsRoute: MeFriendsRoute,
   MeUnfinishedMemoriesRoute: MeUnfinishedMemoriesRoute,
   MeIndexRoute: MeIndexRoute,
   EditMemoryType_idRoute: EditMemoryType_idRoute,

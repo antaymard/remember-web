@@ -159,6 +159,7 @@ export const list = query({
       )
     ),
     populate: v.optional(v.string()),
+    list_only_mine: v.optional(v.boolean()),
     filter: v.optional(
       v.object({
         status: v.optional(
@@ -171,7 +172,7 @@ export const list = query({
       })
     ),
   },
-  handler: async (ctx, { type, populate, filter }) => {
+  handler: async (ctx, { type, populate, list_only_mine, filter }) => {
     const userId = await requireAuth(ctx, true);
 
     // Mapping des types vers les noms de tables
@@ -201,6 +202,37 @@ export const list = query({
           .query(tableName)
           .withIndex("by_creator", (q) => q.eq("creator_id", userId))
           .collect();
+      }
+
+      // Si list_only_mine est false, ajouter les souvenirs partagés avec l'utilisateur
+      if (list_only_mine === false) {
+        let sharedResults;
+        if (filter?.status) {
+          sharedResults = await ctx.db
+            .query(tableName)
+            .filter((q) =>
+              q.and(
+                q.neq(q.field("creator_id"), userId),
+                q.eq(q.field("status"), filter.status!)
+              )
+            )
+            .collect();
+        } else {
+          sharedResults = await ctx.db
+            .query(tableName)
+            .filter((q) => q.neq(q.field("creator_id"), userId))
+            .collect();
+        }
+
+        // Filtrer seulement ceux qui sont partagés avec l'utilisateur
+        const sharedWithMe = sharedResults.filter((item) => {
+          const sharedWith = "shared_with_users" in item ? item.shared_with_users : undefined;
+          if (!sharedWith || !Array.isArray(sharedWith)) return false;
+          return sharedWith.some((id: Id<"users">) => id === userId);
+        });
+
+        // Combiner les résultats
+        results = [...results, ...sharedWithMe];
       }
 
       // Ajouter la propriété _memory_type à chaque résultat

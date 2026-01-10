@@ -27,7 +27,9 @@ export default function Header({
         <div className="flex items-center gap-2">
           {showBackArrow && (
             <button
-              onClick={() => onArrowBackClick?.() || router.history.back()}
+              onClick={() =>
+                onArrowBackClick ? onArrowBackClick() : router.history.back()
+              }
               className="outline-0"
             >
               <TbArrowLeft size={24} className="path-stroke-2" />

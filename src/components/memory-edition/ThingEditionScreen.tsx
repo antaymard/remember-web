@@ -6,6 +6,7 @@ import { thingTypes } from "@/types/memory.types";
 import CreationSection from "@/components/ui/CreationSection";
 import TextInput from "@/components/form/TextInput";
 import TextArea from "@/components/form/TextArea";
+import UserPicker from "../form/UserPicker";
 import * as z from "zod";
 import SelectInput from "../form/SelectInput";
 import { useCreationForm } from "@/hooks/useCreationForm";
@@ -42,6 +43,7 @@ export default function ThingEditionScreen({
       type: "physical",
       first_met: defaultFlexibleDateTime,
       last_seen: defaultFlexibleDateTime,
+      shared_with_users: [],
       status: "unfinished",
       ...defaultValues,
     } as ThingType,
@@ -99,6 +101,10 @@ export default function ThingEditionScreen({
           name="last_seen"
           placeholder="Dernier contact"
         />
+      </CreationSection>
+
+      <CreationSection label="Partage">
+        <UserPicker form={form} name="shared_with_users" />
       </CreationSection>
     </CreationScreenLayout>
   );

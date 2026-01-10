@@ -7,6 +7,7 @@ import TextInput from "@/components/form/TextInput";
 import TextArea from "@/components/form/TextArea";
 import * as z from "zod";
 import SelectInput from "../form/SelectInput";
+import UserPicker from "../form/UserPicker";
 import { useCreationForm } from "@/hooks/useCreationForm";
 import CreationScreenLayout from "./CreationScreenLayout";
 import { defaultFlexibleDate, statusEnum } from "@/utils/creationConstants";
@@ -46,6 +47,7 @@ export default function PersonEditionScreen({
       death_date: defaultFlexibleDate,
       first_met: defaultFlexibleDate,
       last_seen: defaultFlexibleDate,
+      shared_with_users: [],
       status: "unfinished",
       ...defaultValues,
     } as PersonType,
@@ -147,6 +149,10 @@ export default function PersonEditionScreen({
             placeholder="Dernier contact"
           />
         </div>
+      </CreationSection>
+
+      <CreationSection label="Partage">
+        <UserPicker form={form} name="shared_with_users" />
       </CreationSection>
     </CreationScreenLayout>
   );

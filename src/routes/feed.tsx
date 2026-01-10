@@ -23,6 +23,7 @@ function RouteComponent() {
   const memories = useQuery(api.memories.list, {
     type: ["moment", "person"],
     populate: "creator_id present_persons",
+    list_only_mine: false,
     filter: {
       status: "completed",
     },
