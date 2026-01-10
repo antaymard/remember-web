@@ -76,7 +76,16 @@ export const read = query({
     if (!memory) {
       throw new ConvexError("Souvenir non trouvé.");
     }
-    if (memory.creator_id !== userId) {
+
+    // Vérifier si l'utilisateur est le créateur OU si le souvenir est partagé avec lui
+    const isCreator = memory.creator_id === userId;
+    const isSharedWith =
+      "shared_with_users" in memory &&
+      memory.shared_with_users &&
+      Array.isArray(memory.shared_with_users) &&
+      memory.shared_with_users.some((id: Id<"users">) => id === userId);
+
+    if (!isCreator && !isSharedWith) {
       throw new ConvexError("Accès non autorisé au souvenir.");
     }
 
@@ -226,7 +235,8 @@ export const list = query({
 
         // Filtrer seulement ceux qui sont partagés avec l'utilisateur
         const sharedWithMe = sharedResults.filter((item) => {
-          const sharedWith = "shared_with_users" in item ? item.shared_with_users : undefined;
+          const sharedWith =
+            "shared_with_users" in item ? item.shared_with_users : undefined;
           if (!sharedWith || !Array.isArray(sharedWith)) return false;
           return sharedWith.some((id: Id<"users">) => id === userId);
         });
