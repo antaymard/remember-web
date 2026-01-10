@@ -47,6 +47,7 @@ const schema = defineSchema({
     lastname: v.optional(v.string()),
     gender: v.optional(v.string()),
     medias: v.optional(v.array(media)),
+    friends: v.optional(v.array(v.id("users"))),
   })
     .index("email", ["email"])
     .index("phone", ["phone"]),

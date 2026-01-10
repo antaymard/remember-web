@@ -85,3 +85,105 @@ export const getMyStats = query({
     };
   },
 });
+
+// Query pour lister tous les utilisateurs (pour recherche d'amis)
+export const listAllUsers = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await requireAuth(ctx);
+    if (!userId) {
+      throw new Error("User not authenticated");
+    }
+
+    // Récupérer tous les utilisateurs sauf l'utilisateur actuel
+    const allUsers = await ctx.db.query("users").collect();
+    const otherUsers = allUsers.filter((user) => user._id !== userId);
+
+    return otherUsers;
+  },
+});
+
+// Query pour lister ses amis
+export const listMyFriends = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await requireAuth(ctx);
+    if (!userId) {
+      throw new Error("User not authenticated");
+    }
+
+    const user = await ctx.db.get(userId);
+    if (!user?.friends || user.friends.length === 0) {
+      return [];
+    }
+
+    // Récupérer les informations de chaque ami
+    const friends = await Promise.all(
+      user.friends.map((friendId) => ctx.db.get(friendId))
+    );
+
+    return friends.filter((friend) => friend !== null);
+  },
+});
+
+// Mutation pour ajouter un ami
+export const addFriend = mutation({
+  args: {
+    friendId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await requireAuth(ctx, true);
+
+    const user = await ctx.db.get(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Vérifier que l'ami existe
+    const friend = await ctx.db.get(args.friendId);
+    if (!friend) {
+      throw new Error("Friend not found");
+    }
+
+    // Vérifier qu'on n'ajoute pas soi-même
+    if (userId === args.friendId) {
+      throw new Error("Cannot add yourself as a friend");
+    }
+
+    // Vérifier que l'ami n'est pas déjà dans la liste
+    if (user.friends?.includes(args.friendId)) {
+      return { success: true, message: "Already friends" };
+    }
+
+    // Ajouter l'ami
+    const currentFriends = user.friends || [];
+    await ctx.db.patch(userId, {
+      friends: [...currentFriends, args.friendId],
+    });
+
+    return { success: true };
+  },
+});
+
+// Mutation pour retirer un ami
+export const removeFriend = mutation({
+  args: {
+    friendId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await requireAuth(ctx, true);
+
+    const user = await ctx.db.get(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Retirer l'ami de la liste
+    const currentFriends = user.friends || [];
+    await ctx.db.patch(userId, {
+      friends: currentFriends.filter((id) => id !== args.friendId),
+    });
+
+    return { success: true };
+  },
+});
