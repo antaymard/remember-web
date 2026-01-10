@@ -6,20 +6,7 @@ import { TbUserHeart, TbX } from "react-icons/tb";
 import Header from "@/components/nav/Header";
 import { ButtonPastel } from "../ui/Button";
 import type { Id } from "@/../convex/_generated/dataModel";
-
-interface User {
-  _id: Id<"users">;
-  _creationTime: number;
-  firstname?: string;
-  lastname?: string;
-  email?: string;
-  medias?: Array<{
-    url: string;
-    type: "image";
-    upload_date: number;
-  }>;
-  friends?: Array<Id<"users">>;
-}
+import type { UserType } from "@/types/user.types";
 
 export default function FriendPicker() {
   const [open, setOpen] = useState(false);
@@ -210,7 +197,7 @@ function FriendItem({
   onAction,
   hideButton = false,
 }: {
-  user: User;
+  user: UserType;
   action?: "add" | "remove";
   onAction?: (userId: Id<"users">) => void;
   hideButton?: boolean;
