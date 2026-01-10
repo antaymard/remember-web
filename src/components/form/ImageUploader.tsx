@@ -51,7 +51,7 @@ interface ImageUploaderProps {
 export default function ImageUploader({
   form,
   name,
-  maxImages = 10,
+  maxImages = 20,
   hideReorderButtons = false,
 }: ImageUploaderProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);

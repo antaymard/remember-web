@@ -23,14 +23,14 @@ export default function Header({
         bottomContent ? "pb-4" : "h-17.5"
       )}
     >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2 flex-1 min-w-0">
           {showBackArrow && (
             <button
               onClick={() =>
                 onArrowBackClick ? onArrowBackClick() : router.history.back()
               }
-              className="outline-0"
+              className="outline-0 flex-shrink-0"
             >
               <TbArrowLeft size={24} className="path-stroke-2" />
             </button>
@@ -39,7 +39,7 @@ export default function Header({
             {title}
           </h1>
         </div>
-        {rightContent && <>{rightContent}</>}
+        {rightContent && <div className="flex-shrink-0">{rightContent}</div>}
       </div>
       {bottomContent && <div className="">{bottomContent}</div>}
     </header>
