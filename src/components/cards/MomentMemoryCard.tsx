@@ -56,6 +56,9 @@ export default function MomentMemoryCard({
         type: "moment",
         _id: moment._id as Id<"moments">,
       }}
+      state={{
+        optimisticData: moment,
+      }}
     >
       <div className="bg-white py-4 space-y-3">
         {/* Header */}
