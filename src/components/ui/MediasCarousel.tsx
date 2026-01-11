@@ -5,8 +5,6 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselPrevious,
-  CarouselNext,
   type CarouselApi,
 } from "@/components/shadcn/carousel";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
@@ -66,6 +64,18 @@ export default function MediasCarousel({
     setFullscreenIndex(null);
   };
 
+  const goToPreviousImage = () => {
+    if (fullscreenIndex !== null && fullscreenIndex > 0) {
+      setFullscreenIndex(fullscreenIndex - 1);
+    }
+  };
+
+  const goToNextImage = () => {
+    if (fullscreenIndex !== null && fullscreenIndex < medias.length - 1) {
+      setFullscreenIndex(fullscreenIndex + 1);
+    }
+  };
+
   if (medias.length === 0) {
     return null;
   }
@@ -115,14 +125,6 @@ export default function MediasCarousel({
               ))}
             </div>
           )}
-
-          {/* Navigation buttons - left and right */}
-          {medias.length > 1 && (
-            <>
-              <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center" />
-              <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center" />
-            </>
-          )}
         </Carousel>
       </div>
 
@@ -133,9 +135,34 @@ export default function MediasCarousel({
             onClick={closeFullscreen}
             className="fixed top-4 right-4 z-100"
             icon="x"
-            color="green"
-            variant="solid"
+            color="white"
+            variant="pastel"
           />
+
+          {/* Navigation buttons in fullscreen */}
+          {medias.length > 1 && (
+            <>
+              {fullscreenIndex > 0 && (
+                <ButtonPastel
+                  onClick={goToPreviousImage}
+                  className="fixed left-4 top-1/2 -translate-y-1/2 z-100"
+                  icon="chevron-left"
+                  color="white"
+                  variant="pastel"
+                />
+              )}
+              {fullscreenIndex < medias.length - 1 && (
+                <ButtonPastel
+                  onClick={goToNextImage}
+                  className="fixed right-4 top-1/2 -translate-y-1/2 z-100"
+                  icon="chevron-right"
+                  color="white"
+                  variant="pastel"
+                />
+              )}
+            </>
+          )}
+
           <TransformWrapper
             initialScale={1}
             minScale={1}

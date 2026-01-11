@@ -6,6 +6,8 @@ import {
   TbPlus,
   TbAdjustments,
   TbPencil,
+  TbChevronLeft,
+  TbChevronRight,
 } from "react-icons/tb";
 
 type icon =
@@ -15,10 +17,12 @@ type icon =
   | "trash"
   | "plus"
   | "settings"
-  | "pen";
+  | "pen"
+  | "chevron-left"
+  | "chevron-right";
 
 interface ButtonPastelProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  color?: "blue" | "green" | "red" | "grey";
+  color?: "blue" | "green" | "red" | "grey" | "white";
   label?: string;
   icon?: icon;
   variant?: "solid" | "pastel";
@@ -30,12 +34,14 @@ const classNames = {
     green: "bg-green/10 text-green",
     red: "bg-red/10 text-red",
     grey: "bg-grey/10 text-grey",
+    white: "bg-white/10 text-white",
   },
   solid: {
     blue: "bg-blue text-white hover:bg-blue/90",
     green: "bg-green text-white hover:bg-green/90",
     red: "bg-red text-white hover:bg-red/90",
     grey: "bg-grey text-white hover:bg-grey/90",
+    white: "bg-white text-black hover:bg-white/90",
   },
 };
 
@@ -56,6 +62,10 @@ function renderIcon(icon: icon) {
     case "pen":
     case "pencil":
       return <TbPencil size={iconSize} className="path-stroke-2" />;
+    case "chevron-left":
+      return <TbChevronLeft size={iconSize} className="path-stroke-2" />;
+    case "chevron-right":
+      return <TbChevronRight size={iconSize} className="path-stroke-2" />;
     default:
       return icon;
   }
