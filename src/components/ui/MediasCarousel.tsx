@@ -5,6 +5,8 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
   type CarouselApi,
 } from "@/components/shadcn/carousel";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
@@ -112,6 +114,14 @@ export default function MediasCarousel({
                 />
               ))}
             </div>
+          )}
+
+          {/* Navigation buttons - left and right */}
+          {medias.length > 1 && (
+            <>
+              <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center" />
+              <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center" />
+            </>
           )}
         </Carousel>
       </div>
