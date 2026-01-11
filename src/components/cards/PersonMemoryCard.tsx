@@ -19,6 +19,9 @@ export default function PersonMemoryCard({
         type: "person",
         _id: person._id as Id<"persons">,
       }}
+      state={{
+        optimisticData: person,
+      }}
     >
       <div className="bg-white py-4 space-y-3">
         {/* Header */}
