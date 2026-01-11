@@ -48,6 +48,7 @@ export default function TextInput({
               id={field.name}
               name={field.name}
               type={type}
+              autoComplete="off"
               onBlur={field.handleBlur}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}

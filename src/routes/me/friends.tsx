@@ -175,6 +175,7 @@ function PickerScreen({ setOpen }: { setOpen: (open: boolean) => void }) {
             <input
               className="input"
               placeholder="Rechercher des amis"
+              autoComplete="off"
               autoFocus
               value={search}
               onChange={(e) => setSearch(e.target.value)}

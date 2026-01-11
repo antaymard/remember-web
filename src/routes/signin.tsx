@@ -59,7 +59,7 @@ function RouteComponent() {
                 id="email"
                 name="email"
                 type="email"
-                autoComplete="email"
+                autoComplete="off"
                 required
                 className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                 placeholder="Email"
@@ -74,7 +74,7 @@ function RouteComponent() {
                 id="password"
                 name="password"
                 type="password"
-                autoComplete={step === "signIn" ? "current-password" : "new-password"}
+                autoComplete="off"
                 required
                 className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                 placeholder="Mot de passe"
