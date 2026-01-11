@@ -135,8 +135,8 @@ export default function MediasCarousel({
             onClick={closeFullscreen}
             className="fixed top-4 right-4 z-100"
             icon="x"
-            color="green"
-            variant="solid"
+            color="white"
+            variant="pastel"
           />
 
           {/* Navigation buttons in fullscreen */}
@@ -147,8 +147,8 @@ export default function MediasCarousel({
                   onClick={goToPreviousImage}
                   className="fixed left-4 top-1/2 -translate-y-1/2 z-100"
                   icon="chevron-left"
-                  color="green"
-                  variant="solid"
+                  color="white"
+                  variant="pastel"
                 />
               )}
               {fullscreenIndex < medias.length - 1 && (
@@ -156,8 +156,8 @@ export default function MediasCarousel({
                   onClick={goToNextImage}
                   className="fixed right-4 top-1/2 -translate-y-1/2 z-100"
                   icon="chevron-right"
-                  color="green"
-                  variant="solid"
+                  color="white"
+                  variant="pastel"
                 />
               )}
             </>
