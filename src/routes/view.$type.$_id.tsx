@@ -5,6 +5,8 @@ import { useQuery } from "convex/react";
 import type {
   MomentWithCreator,
   PersonWithCreator,
+  PlaceWithCreator,
+  ThingWithCreator,
 } from "@/types/memory.types";
 import type { Id } from "@/../convex/_generated/dataModel";
 import PersonViewScreen from "@/components/memory-view/PersonViewScreen";
@@ -21,6 +23,8 @@ function RouteComponent() {
   const optimisticData = routerState.location.state?.optimisticData as
     | MomentWithCreator
     | PersonWithCreator
+    | PlaceWithCreator
+    | ThingWithCreator
     | undefined;
 
   // Lancer la query en parallèle pour avoir des données fraîches
