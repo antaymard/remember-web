@@ -2,6 +2,7 @@ import { TbPlayerPauseFilled } from "react-icons/tb";
 import { ButtonPastel } from "../ui/Button";
 import { useRouter } from "@tanstack/react-router";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import {
   Dialog,
   DialogContent,
@@ -19,6 +20,7 @@ interface CreationNavbarProps {
   handleUnfinishedStatus?: boolean;
   canDelete?: boolean;
   onDelete?: () => Promise<void>;
+  hasUploadingImages?: boolean;
 }
 
 export default function CreationNavbar({
@@ -28,6 +30,7 @@ export default function CreationNavbar({
   handleUnfinishedStatus = true,
   canDelete = false,
   onDelete,
+  hasUploadingImages = false,
 }: CreationNavbarProps) {
   const router = useRouter();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -43,6 +46,28 @@ export default function CreationNavbar({
     setShowDeleteDialog(false);
     // Redirect to feed instead of going back to avoid querying the deleted memory
     router.navigate({ to: "/feed" });
+  }
+
+  function handleFinishLaterClick() {
+    if (hasUploadingImages) {
+      toast.error(
+        "Veuillez attendre la fin de l'upload des images avant de terminer plus tard"
+      );
+      return;
+    }
+    if (handleUnfinishedStatus) form.setFieldValue("status", "unfinished");
+    form.handleSubmit();
+  }
+
+  function handleValidateClick() {
+    if (hasUploadingImages) {
+      toast.error(
+        "Veuillez attendre la fin de l'upload des images avant de valider"
+      );
+      return;
+    }
+    if (handleUnfinishedStatus) form.setFieldValue("status", "completed");
+    form.handleSubmit();
   }
   return (
     <>
@@ -76,11 +101,8 @@ export default function CreationNavbar({
                   color="blue"
                   icon={<TbPlayerPauseFilled size={18} />}
                   label="Terminer + tard"
-                  onClick={() => {
-                    if (handleUnfinishedStatus)
-                      form.setFieldValue("status", "unfinished");
-                    form.handleSubmit();
-                  }}
+                  onClick={handleFinishLaterClick}
+                  disabled={hasUploadingImages}
                 />
               )}
             </div>
@@ -88,12 +110,8 @@ export default function CreationNavbar({
               color="green"
               icon="check"
               label={submitLabel}
-              disabled={!canSubmit || isSubmitting || isPristine}
-              onClick={() => {
-                if (handleUnfinishedStatus)
-                  form.setFieldValue("status", "completed");
-                form.handleSubmit();
-              }}
+              disabled={!canSubmit || isSubmitting || isPristine || hasUploadingImages}
+              onClick={handleValidateClick}
             />
           </nav>
         )}

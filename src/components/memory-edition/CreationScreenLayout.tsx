@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useState, useCallback } from "react";
 import ImageUploader from "@/components/form/ImageUploader";
 import CreationNavbar from "@/components/memory-edition/CreationNavbar";
 
@@ -20,10 +21,22 @@ export default function CreationScreenLayout({
   canDelete = false,
   onDelete,
 }: CreationScreenLayoutProps) {
+  const [hasUploadingImages, setHasUploadingImages] = useState(false);
+
+  const handleUploadingChange = useCallback((isUploading: boolean) => {
+    setHasUploadingImages(isUploading);
+  }, []);
+
   return (
     <>
       <div className="py-17.5 bg-bg min-h-screen">
-        {showImageUploader && <ImageUploader form={form} name="medias" />}
+        {showImageUploader && (
+          <ImageUploader
+            form={form}
+            name="medias"
+            onUploadingChange={handleUploadingChange}
+          />
+        )}
         <div className="space-y-2.5 pb-32">{children}</div>
       </div>
       <CreationNavbar
@@ -31,6 +44,7 @@ export default function CreationScreenLayout({
         submitLabel={submitLabel}
         canDelete={canDelete}
         onDelete={onDelete}
+        hasUploadingImages={hasUploadingImages}
       />
     </>
   );

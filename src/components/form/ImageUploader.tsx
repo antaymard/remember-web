@@ -46,6 +46,7 @@ interface ImageUploaderProps {
   name: string;
   maxImages?: number;
   hideReorderButtons?: boolean;
+  onUploadingChange?: (isUploading: boolean) => void;
 }
 
 export default function ImageUploader({
@@ -53,6 +54,7 @@ export default function ImageUploader({
   name,
   maxImages = 20,
   hideReorderButtons = false,
+  onUploadingChange,
 }: ImageUploaderProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [localImages, setLocalImages] = useState<LocalMediaState[]>([]);
@@ -284,6 +286,16 @@ export default function ImageUploader({
       });
     };
   }, [localImages]);
+
+  // Notify parent of uploading status
+  useEffect(() => {
+    if (onUploadingChange) {
+      const hasUploading = localImages.some(
+        (img) => img.status === "uploading" || img.status === "pending"
+      );
+      onUploadingChange(hasUploading);
+    }
+  }, [localImages, onUploadingChange]);
 
   const hasImages = localImages.length > 0;
   const canAddMore = localImages.length < maxImages;
