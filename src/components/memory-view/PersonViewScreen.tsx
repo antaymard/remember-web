@@ -43,7 +43,7 @@ export default function PersonViewScreen({
   const navigate = useNavigate();
 
   return (
-    <div className="bg-bg">
+    <div className="bg-bg pt-17.5">
       <Header
         title={
           person?.firstname || person?.lastname

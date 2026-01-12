@@ -29,7 +29,7 @@ export default function MomentViewScreen({
   const navigate = useNavigate();
 
   return (
-    <div className="bg-bg">
+    <div className="bg-bg pt-17.5">
       <Header
         title={moment.title || "Untitled Moment"}
         showBackArrow
@@ -45,7 +45,6 @@ export default function MomentViewScreen({
           )
         }
       />
-
       <MediasCarousel medias={moment.medias || []} aspectSquare />
       <div className="space-y-2.5">
         <Section title="Description">
