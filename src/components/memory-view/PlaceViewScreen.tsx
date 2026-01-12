@@ -24,7 +24,13 @@ export default function PlaceViewScreen({
               icon="pen"
               color="green"
               onClick={() =>
-                navigate({ to: `/edit-memory/place/${place._id}` })
+                navigate({
+                  to: "/edit-memory/$type/$_id",
+                  params: {
+                    type: "place",
+                    _id: place._id!,
+                  },
+                })
               }
             />
           )

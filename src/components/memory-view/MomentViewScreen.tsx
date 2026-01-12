@@ -39,7 +39,13 @@ export default function MomentViewScreen({
               icon="pen"
               color="green"
               onClick={() =>
-                navigate({ to: `/edit-memory/moment/${moment._id}` })
+                navigate({
+                  to: "/edit-memory/$type/$_id",
+                  params: {
+                    type: "moment",
+                    _id: moment._id!,
+                  },
+                })
               }
             />
           )
