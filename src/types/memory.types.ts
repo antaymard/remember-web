@@ -48,12 +48,17 @@ export interface PersonWithCreator extends PersonType {
 }
 
 export interface PlaceType {
+  _id?: Id<"places">;
   title: string;
   description?: string;
   medias?: MediaData[];
   shared_with_users?: Id<"users">[];
   status: status;
   creator_id?: Id<"users">;
+}
+
+export interface PlaceWithCreator extends PlaceType {
+  creator?: Doc<"users">;
 }
 
 export const thingTypes = [

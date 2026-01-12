@@ -98,6 +98,7 @@ const schema = defineSchema({
     medias: v.optional(v.array(media)),
     status: status,
     is_shared_with_present_persons: v.optional(v.boolean()),
+    shared_with_users,
   })
     .index("by_creator", ["creator_id"])
     .index("by_creator_and_status", ["creator_id", "status"]),
