@@ -57,7 +57,13 @@ export default function PersonViewScreen({
               icon="pen"
               color="green"
               onClick={() =>
-                navigate({ to: `/edit-memory/person/${person._id}` })
+                navigate({
+                  to: "/edit-memory/$type/$_id",
+                  params: {
+                    type: "person",
+                    _id: person._id!,
+                  },
+                })
               }
             />
           )
