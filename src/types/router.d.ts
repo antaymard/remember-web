@@ -3,6 +3,7 @@ import type {
   MomentWithCreator,
   PersonWithCreator,
   PlaceWithCreator,
+  ThingWithCreator,
 } from "./memory.types";
 
 declare module "@tanstack/react-router" {
@@ -11,6 +12,7 @@ declare module "@tanstack/react-router" {
       | MomentWithCreator
       | PersonWithCreator
       | PlaceWithCreator
+      | ThingWithCreator
       | Record<string, unknown>;
   }
 }
