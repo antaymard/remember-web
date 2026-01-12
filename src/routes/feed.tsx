@@ -7,8 +7,12 @@ import MomentMemoryCard from "@/components/cards/MomentMemoryCard";
 import type {
   MomentWithCreator,
   PersonWithCreator,
+  PlaceWithCreator,
+  ThingWithCreator,
 } from "@/types/memory.types";
 import PersonMemoryCard from "@/components/cards/PersonMemoryCard";
+import PlaceMemoryCard from "@/components/cards/PlaceMemoryCard";
+import ThingMemoryCard from "@/components/cards/ThingMemoryCard";
 import { useScrollRestoration } from "@/hooks/useScrollRestoration";
 
 export const Route = createFileRoute("/feed")({
@@ -21,7 +25,7 @@ function RouteComponent() {
 
   // useQuery avec cache automatique - pas de loading state sur navigation retour
   const memories = useQuery(api.memories.list, {
-    type: ["moment", "person"],
+    type: ["moment", "person", "place", "thing"],
     populate: "creator_id present_persons",
     list_only_mine: false,
     filter: {
@@ -47,6 +51,20 @@ function RouteComponent() {
                 <PersonMemoryCard
                   key={memory._id}
                   person={memory as PersonWithCreator}
+                />
+              );
+            if (memory._memory_type === "place")
+              return (
+                <PlaceMemoryCard
+                  key={memory._id}
+                  place={memory as PlaceWithCreator}
+                />
+              );
+            if (memory._memory_type === "thing")
+              return (
+                <ThingMemoryCard
+                  key={memory._id}
+                  thing={memory as ThingWithCreator}
                 />
               );
           })

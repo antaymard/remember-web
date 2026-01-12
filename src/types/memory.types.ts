@@ -74,6 +74,7 @@ export const thingTypes = [
 export type ThingTypeValue = (typeof thingTypes)[number];
 
 export interface ThingType {
+  _id?: Id<"things">;
   title: string;
   creator_id?: Id<"users">;
   description?: string;
@@ -83,4 +84,8 @@ export interface ThingType {
   last_seen?: FlexibleDateTime;
   shared_with_users?: Id<"users">[];
   status: status;
+}
+
+export interface ThingWithCreator extends ThingType {
+  creator?: Doc<"users">;
 }
