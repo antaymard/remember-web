@@ -11,6 +11,7 @@ import type {
 import type { Id } from "@/../convex/_generated/dataModel";
 import PersonViewScreen from "@/components/memory-view/PersonViewScreen";
 import PlaceViewScreen from "@/components/memory-view/PlaceViewScreen";
+import ThingViewScreen from "@/components/memory-view/ThingViewScreen";
 
 export const Route = createFileRoute("/view/$type/$_id")({
   component: RouteComponent,
@@ -52,8 +53,9 @@ function RouteComponent() {
     case "place": {
       return <PlaceViewScreen place={memory as PlaceWithCreator} />;
     }
-    case "thing":
-      return <div>Thing View for ID: {_id}</div>;
+    case "thing": {
+      return <ThingViewScreen thing={memory as ThingWithCreator} />;
+    }
     default:
       return <div>Unknown type: {type}</div>;
   }

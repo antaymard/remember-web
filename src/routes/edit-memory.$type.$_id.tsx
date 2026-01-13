@@ -7,7 +7,12 @@ import ThingCreationScreen from "@/components/memory-edition/ThingEditionScreen"
 import { useQuery } from "convex/react";
 import { api } from "@/../convex/_generated/api";
 import type { Id } from "@/../convex/_generated/dataModel";
-import type { MomentType, PersonType, PlaceType } from "@/types/memory.types";
+import type {
+  MomentType,
+  PersonType,
+  PlaceType,
+  ThingType,
+} from "@/types/memory.types";
 
 export const Route = createFileRoute("/edit-memory/$type/$_id")({
   component: RouteComponent,
@@ -64,6 +69,7 @@ function RouteComponent() {
       )}
       {memoryType === "thing" && (
         <ThingCreationScreen
+          defaultValues={memory as ThingType}
           action="edit"
           memoryId={memoryId as Id<"things">}
         />
