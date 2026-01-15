@@ -41,15 +41,19 @@ export default function ThingMemoryCard({
           </div>
           <MemoryTypeIndicator memoryType="thing" />
         </div>
-        <div className="aspect-square w-full relative">
-          {thing.medias && thing.medias.length > 0 && (
-            <>
-              <MediasCarousel medias={thing.medias} aspectSquare />
-            </>
-          )}
-        </div>
+        {thing.medias && thing.medias.length > 0 && (
+          <div className="aspect-square w-full relative">
+            <MediasCarousel medias={thing.medias} aspectSquare />
+          </div>
+        )}
         {thing.description && (
-          <p className="line-clamp-3 leading-tight opacity-80 px-4">
+          <p
+            className={`leading-tight opacity-80 px-4 ${
+              thing.medias && thing.medias.length > 0
+                ? "line-clamp-3"
+                : "line-clamp-6"
+            }`}
+          >
             {thing.description}
           </p>
         )}

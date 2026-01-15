@@ -43,15 +43,19 @@ export default function PersonMemoryCard({
           </div>
           <MemoryTypeIndicator memoryType="person" />
         </div>
-        <div className="aspect-square w-full relative">
-          {person.medias && person.medias.length > 0 && (
-            <>
-              <MediasCarousel medias={person.medias} aspectSquare />
-            </>
-          )}
-        </div>
+        {person.medias && person.medias.length > 0 && (
+          <div className="aspect-square w-full relative">
+            <MediasCarousel medias={person.medias} aspectSquare />
+          </div>
+        )}
         {person.description && (
-          <p className="line-clamp-3 leading-tight opacity-80 px-4">
+          <p
+            className={`leading-tight opacity-80 px-4 ${
+              person.medias && person.medias.length > 0
+                ? "line-clamp-3"
+                : "line-clamp-6"
+            }`}
+          >
             {person.description}
           </p>
         )}

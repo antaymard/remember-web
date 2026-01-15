@@ -41,15 +41,19 @@ export default function PlaceMemoryCard({
           </div>
           <MemoryTypeIndicator memoryType="place" />
         </div>
-        <div className="aspect-square w-full relative">
-          {place.medias && place.medias.length > 0 && (
-            <>
-              <MediasCarousel medias={place.medias} aspectSquare />
-            </>
-          )}
-        </div>
+        {place.medias && place.medias.length > 0 && (
+          <div className="aspect-square w-full relative">
+            <MediasCarousel medias={place.medias} aspectSquare />
+          </div>
+        )}
         {place.description && (
-          <p className="line-clamp-3 leading-tight opacity-80 px-4">
+          <p
+            className={`leading-tight opacity-80 px-4 ${
+              place.medias && place.medias.length > 0
+                ? "line-clamp-3"
+                : "line-clamp-6"
+            }`}
+          >
             {place.description}
           </p>
         )}
