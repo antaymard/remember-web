@@ -65,9 +65,11 @@ const schema = defineSchema({
     status: status,
     is_shared_with_present_persons: v.optional(v.boolean()),
     shared_with_users,
+    updated_at: v.optional(v.number()), // Timestamp de la dernière modification
   })
     .index("by_creator", ["creator_id"])
-    .index("by_creator_and_status", ["creator_id", "status"]),
+    .index("by_creator_and_status", ["creator_id", "status"])
+    .index("by_updated_at", ["updated_at"]),
 
   persons: defineTable({
     firstname: v.string(),
@@ -87,9 +89,11 @@ const schema = defineSchema({
     status: status,
     is_shared_with_present_persons: v.optional(v.boolean()),
     shared_with_users,
+    updated_at: v.optional(v.number()), // Timestamp de la dernière modification
   })
     .index("by_creator", ["creator_id"])
-    .index("by_creator_and_status", ["creator_id", "status"]),
+    .index("by_creator_and_status", ["creator_id", "status"])
+    .index("by_updated_at", ["updated_at"]),
 
   places: defineTable({
     title: v.string(),
@@ -99,9 +103,11 @@ const schema = defineSchema({
     status: status,
     is_shared_with_present_persons: v.optional(v.boolean()),
     shared_with_users,
+    updated_at: v.optional(v.number()), // Timestamp de la dernière modification
   })
     .index("by_creator", ["creator_id"])
-    .index("by_creator_and_status", ["creator_id", "status"]),
+    .index("by_creator_and_status", ["creator_id", "status"])
+    .index("by_updated_at", ["updated_at"]),
 
   things: defineTable({
     title: v.string(),
@@ -122,9 +128,11 @@ const schema = defineSchema({
     status: status,
     is_shared_with_present_persons: v.optional(v.boolean()),
     shared_with_users,
+    updated_at: v.optional(v.number()), // Timestamp de la dernière modification
   })
     .index("by_creator", ["creator_id"])
-    .index("by_creator_and_status", ["creator_id", "status"]),
+    .index("by_creator_and_status", ["creator_id", "status"])
+    .index("by_updated_at", ["updated_at"]),
 });
 
 export default schema;
