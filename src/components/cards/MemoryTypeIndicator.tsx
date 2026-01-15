@@ -4,6 +4,7 @@ import {
   TbBuildingLighthouse,
   TbUserHexagon,
   TbWindmill,
+  TbVinyl,
 } from "react-icons/tb";
 
 const className =
@@ -32,8 +33,13 @@ export default function MemoryTypeIndicator({
         <div className={cn(className, "bg-yellow-500/10 text-yellow-500")}>
           <TbUserHexagon size={20} />
         </div>
-      ); // case "thing":
-    //     return ()
+      );
+    case "thing":
+      return (
+        <div className={cn(className, "bg-green-500/10 text-green-500")}>
+          <TbVinyl size={20} />
+        </div>
+      );
     default:
       return null;
   }
