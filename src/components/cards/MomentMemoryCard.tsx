@@ -80,16 +80,20 @@ export default function MomentMemoryCard({
           </div>
           <MemoryTypeIndicator memoryType="moment" />
         </div>
-        <div className="aspect-square w-full relative">
-          {moment.medias && moment.medias.length > 0 && (
-            <>
-              <MediasCarousel medias={moment.medias} aspectSquare />
-              {renderPresentPersons(moment.present_persons)}
-            </>
-          )}
-        </div>
+        {moment.medias && moment.medias.length > 0 && (
+          <div className="aspect-square w-full relative">
+            <MediasCarousel medias={moment.medias} aspectSquare />
+            {renderPresentPersons(moment.present_persons)}
+          </div>
+        )}
         {moment.description && (
-          <p className="line-clamp-3 leading-tight opacity-80 px-4">
+          <p
+            className={`leading-tight opacity-80 px-4 ${
+              moment.medias && moment.medias.length > 0
+                ? "line-clamp-3"
+                : "line-clamp-6"
+            }`}
+          >
             {moment.description}
           </p>
         )}
