@@ -10,6 +10,7 @@ import TbAirBalloonFilled from "@/assets/svg/TbAirBalloonFilled.svg";
 import TbSearchFilled from "@/assets/svg/TbSearchFilled.svg";
 import { useUser } from "@/contexts/userContext";
 import { cn } from "@/lib/utils";
+import OptimizedImage from "@/components/ui/OptimizedImage";
 
 export default function Navbar() {
   const location = useLocation();
@@ -48,7 +49,7 @@ export default function Navbar() {
   ] as const;
 
   return (
-    <nav className="w-full h-20 bg-white px-4 border-t border-gray-200 fixed bottom-0 left-0 flex items-center justify-between">
+    <nav className="w-full z-10 h-20 bg-white px-4 border-t border-gray-200 fixed bottom-0 left-0 flex items-center justify-between">
       {options.map((option, i) => {
         const isActive = location.pathname === option.url;
 
@@ -91,14 +92,19 @@ function ProfilePicture({ active = false }: { active?: boolean }) {
 
   return (
     <div className="relative">
-      <img
-        src={user?.medias?.[0]?.url || ""}
-        alt="profile_pic"
-        className={cn(
-          "rounded-full h-6 w-6 object-cover",
-          active && "ring-2 ring-green"
-        )}
-      />
+      {user?.medias?.[0] ? (
+        <OptimizedImage
+          media={user.medias[0]}
+          size="xs"
+          alt="profile_pic"
+          className={cn(
+            "rounded-full h-6 w-6 object-cover",
+            active && "ring-2 ring-green"
+          )}
+        />
+      ) : (
+        <div className="rounded-full h-6 w-6 bg-gray-200" />
+      )}
       {unfinishedMemoriesCount ? (
         <span className="absolute -top-1 -right-2 bg-red text-white text-xs border-white border-2 rounded-full h-4 w-4 flex items-center justify-center">
           {unfinishedMemoriesCount}

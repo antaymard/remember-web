@@ -52,7 +52,7 @@ export const list = query({
     // Mapper les données sur les moments
     const momentsWithPersons = moments.map((moment) => ({
       ...moment,
-      creator_id: creatorsMap.get(moment.creator_id),
+      creator: creatorsMap.get(moment.creator_id),
       present_persons: moment.present_persons
         ?.map((personId) => personsMap.get(personId))
         .filter((p) => p !== null && p !== undefined),
@@ -91,6 +91,8 @@ export const edit = mutation({
     medias: v.optional(v.any()),
     date_time_in: v.optional(flexibleDateTime),
     present_persons: v.optional(v.array(v.id("persons"))),
+    shared_with_users: v.optional(v.array(v.id("users"))),
+    is_shared_with_present_persons: v.optional(v.boolean()),
     status: v.union(
       v.literal("unfinished"),
       v.literal("completed"),

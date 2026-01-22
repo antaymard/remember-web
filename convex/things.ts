@@ -51,10 +51,14 @@ export const edit = mutation({
       v.literal("physical"),
       v.literal("music"),
       v.literal("film"),
-      v.literal("book")
+      v.literal("book"),
+      v.literal("game"),
+      v.literal("interest"),
+      v.literal("personality")
     ),
     first_met: v.optional(flexibleDateTime),
     last_seen: v.optional(flexibleDateTime),
+    shared_with_users: v.optional(v.array(v.id("users"))),
     status: v.union(
       v.literal("unfinished"),
       v.literal("completed"),

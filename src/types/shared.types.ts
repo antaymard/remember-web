@@ -32,3 +32,5 @@ export interface FlexibleDateTime {
   hour?: number;
   min?: number;
 }
+
+export type MemoryType = "moment" | "place" | "person" | "thing";

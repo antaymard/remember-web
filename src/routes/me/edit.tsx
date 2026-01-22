@@ -1,7 +1,7 @@
 import ImageUploader from "@/components/form/ImageUploader";
 import SelectInput from "@/components/form/SelectInput";
 import TextInput from "@/components/form/TextInput";
-import CreationNavbar from "@/components/nav/CreationNavbar";
+import CreationNavbar from "@/components/memory-edition/CreationNavbar";
 import Header from "@/components/nav/Header";
 import CreationSection from "@/components/ui/CreationSection";
 import { useUser } from "@/contexts/userContext";

@@ -13,15 +13,13 @@ export interface MomentType {
   medias?: MediaData[];
   date_time_in?: FlexibleDateTime;
   present_persons?: Id<"persons">[];
+  shared_with_users?: Id<"users">[];
   status: status;
 }
 
 // Type avec creator_id populé
-export interface MomentWithCreator extends Omit<
-  MomentType,
-  "creator_id" | "present_persons"
-> {
-  creator_id?: Doc<"users"> | null; // null si l'utilisateur a été supprimé, donc le populate retourne null
+export interface MomentWithCreator extends Omit<MomentType, "present_persons"> {
+  creator?: Doc<"users">;
   present_persons?: PersonType[];
 }
 
@@ -41,24 +39,53 @@ export interface PersonType {
   relation_type?: string;
   relation_name?: string;
   medias?: MediaData[];
+  shared_with_users?: Id<"users">[];
   status: status;
+}
+
+export interface PersonWithCreator extends PersonType {
+  creator?: Doc<"users">;
 }
 
 export interface PlaceType {
+  _id?: Id<"places">;
   title: string;
   description?: string;
   medias?: MediaData[];
+  shared_with_users?: Id<"users">[];
   status: status;
   creator_id?: Id<"users">;
 }
 
+export interface PlaceWithCreator extends PlaceType {
+  creator?: Doc<"users">;
+}
+
+export const thingTypes = [
+  "physical",
+  "music",
+  "film",
+  "book",
+  "game",
+  "interest",
+  "personality",
+] as const;
+
+export type ThingTypeValue = (typeof thingTypes)[number];
+
 export interface ThingType {
+  _id?: Id<"things">;
   title: string;
   creator_id?: Id<"users">;
   description?: string;
   medias?: MediaData[];
-  type: "physical" | "music" | "film" | "book";
+  type: ThingTypeValue;
   first_met?: FlexibleDateTime;
   last_seen?: FlexibleDateTime;
+  shared_with_users?: Id<"users">[];
   status: status;
+}
+
+export interface ThingWithCreator extends ThingType {
+  creator?: Doc<"users">;
 }

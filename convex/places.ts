@@ -46,6 +46,7 @@ export const edit = mutation({
     title: v.string(),
     description: v.optional(v.string()),
     medias: v.optional(v.any()),
+    shared_with_users: v.optional(v.array(v.id("users"))),
     status: v.union(
       v.literal("unfinished"),
       v.literal("completed"),

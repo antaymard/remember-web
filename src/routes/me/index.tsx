@@ -5,6 +5,7 @@ import { useUser } from "@/contexts/userContext";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { api } from "@/../convex/_generated/api";
 import { useQuery } from "convex/react";
+import { useAuthActions } from "@convex-dev/auth/react";
 import {
   TbUsersGroup,
   TbAirBalloon,
@@ -12,7 +13,10 @@ import {
   TbChevronRight,
   TbBooks,
   TbPlayerPauseFilled,
+  TbUserPlus,
+  TbLogout,
 } from "react-icons/tb";
+import OptimizedImage from "@/components/ui/OptimizedImage";
 
 export const Route = createFileRoute("/me/")({
   component: RouteComponent,
@@ -21,6 +25,7 @@ export const Route = createFileRoute("/me/")({
 function RouteComponent() {
   const navigate = useNavigate();
   const { user, unfinishedMemoriesCount } = useUser();
+  const { signOut } = useAuthActions();
 
   const { momentsCount } = useQuery(api.users.getMyStats) || {};
 
@@ -49,10 +54,16 @@ function RouteComponent() {
       icon: TbPlayerPauseFilled,
       value: unfinishedMemoriesCount || 0,
     },
-    { label: "Amis", to: "/me/friends", icon: TbUsersGroup },
-    { label: "Rêves", to: "/me/dreams", icon: TbAirBalloon },
-    { label: "Chapitres", to: "/me/chapters", icon: TbBooks },
+    { label: "Mes amis", to: "/me/friends", icon: TbUsersGroup },
+    { label: "Inviter des amis", to: "/me/invite-friends", icon: TbUserPlus },
+    { label: "Mes rêves", to: "/me/dreams", icon: TbAirBalloon },
+    { label: "Chapitres de ma vie", to: "/me/chapters", icon: TbBooks },
   ];
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate({ to: "/signin" });
+  };
 
   return (
     <>
@@ -68,10 +79,15 @@ function RouteComponent() {
       />
       <div className="pt-17.5 pb-5 flex flex-col gap-2.5 bg-bg">
         <div className="flex flex-col items-center justify-center py-4">
-          <img
-            src={user?.medias?.[0]?.url}
-            className="rounded-full object-cover w-32 aspect-square border-2 border-white"
-          />
+          {user?.medias?.[0] ? (
+            <OptimizedImage
+              media={user.medias[0]}
+              size="sm"
+              className="rounded-full object-cover w-32 aspect-square border-2 border-white"
+            />
+          ) : (
+            <div className="rounded-full w-32 aspect-square border-2 border-white bg-gray-200" />
+          )}
           <div className="grid grid-cols-3 gap-5 mt-6">
             {slots.map((slot) => (
               <div
@@ -108,6 +124,16 @@ function RouteComponent() {
               <TbChevronRight size={20} />
             </div>
           ))}
+          <div
+            className="flex items-center justify-between py-3 cursor-pointer px-4 text-red"
+            onClick={handleLogout}
+          >
+            <div className="flex items-center gap-2">
+              <TbLogout size={20} />
+              <div className="font-medium">Se déconnecter</div>
+            </div>
+            <TbChevronRight size={20} />
+          </div>
         </div>
       </div>
       <Navbar />

@@ -4,6 +4,7 @@ import "./index.css";
 import App from "./App.tsx";
 import { ConvexReactClient } from "convex/react";
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
+import { ConvexQueryCacheProvider } from "convex-helpers/react/cache";
 import { Toaster } from "react-hot-toast";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
@@ -11,8 +12,10 @@ const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ConvexAuthProvider client={convex}>
-      <App />
-      <Toaster position="top-center" />
+      <ConvexQueryCacheProvider>
+        <App />
+        <Toaster position="top-center" />
+      </ConvexQueryCacheProvider>
     </ConvexAuthProvider>
   </StrictMode>
 );

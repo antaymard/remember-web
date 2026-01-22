@@ -3,23 +3,19 @@ import Header from "@/components/nav/Header";
 import { useState } from "react";
 
 import MemoryTypeSelector from "@/components/nav/MemoryTypeSelector";
-import MomentCreationScreen from "@/components/creation-screens/MomentCreationScreen";
-import PersonCreationScreen from "@/components/creation-screens/PersonCreationScreen";
-import PlaceCreationScreen from "@/components/creation-screens/PlaceCreationScreen";
-import ThingCreationScreen from "@/components/creation-screens/ThingCreationScreen";
+import MomentEditionScreen from "@/components/memory-edition/MomentEditionScreen";
+import PersonCreationScreen from "@/components/memory-edition/PersonEditionScreen";
+import PlaceCreationScreen from "@/components/memory-edition/PlaceEditionScreen";
+import ThingCreationScreen from "@/components/memory-edition/ThingEditionScreen";
 
 export const Route = createFileRoute("/create-memory")({
   component: RouteComponent,
 });
 
-
 function RouteComponent() {
-
   const [memoryType, setMemoryType] = useState<
     "moment" | "place" | "person" | "thing"
   >("moment");
-
-
 
   return (
     <div>
@@ -33,11 +29,10 @@ function RouteComponent() {
         }
       />
 
-      {memoryType === "moment" && <MomentCreationScreen />}
-      {memoryType === "person" && <PersonCreationScreen />}
-      {memoryType === "place" && <PlaceCreationScreen />}
-      {memoryType === "thing" && <ThingCreationScreen />}
-
+      {memoryType === "moment" && <MomentEditionScreen action="create" />}
+      {memoryType === "person" && <PersonCreationScreen action="create" />}
+      {memoryType === "place" && <PlaceCreationScreen action="create" />}
+      {memoryType === "thing" && <ThingCreationScreen action="create" />}
     </div>
   );
 }

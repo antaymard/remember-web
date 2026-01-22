@@ -34,6 +34,11 @@ const r2Client = new S3Client({
   },
 });
 
+// Export pour utilisation dans d'autres modules (image compression)
+export { r2Client };
+export { BUCKET_NAME };
+export { PUBLIC_URL };
+
 export async function generatePresignedUrl(
   key: string,
   mimeType: string
