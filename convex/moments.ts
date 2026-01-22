@@ -96,6 +96,7 @@ export const edit = mutation({
       v.literal("completed"),
       v.literal("archived")
     ),
+    is_shared_with_present_persons: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     const userId = await requireAuth(ctx, true);

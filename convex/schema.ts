@@ -60,6 +60,7 @@ const schema = defineSchema({
     creator_id: v.id("users"), // Link to the user who created this moment
     present_persons: v.optional(v.array(v.id("persons"))),
     status: status,
+    is_shared_with_present_persons: v.optional(v.boolean()),
   })
     .index("by_creator", ["creator_id"])
     .index("by_creator_and_status", ["creator_id", "status"]),
