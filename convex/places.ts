@@ -1,6 +1,7 @@
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { requireAuth } from "./utils/requireAuth";
+import { titledMemoryFields } from "./validators";
 
 const item = "places" as const;
 
@@ -43,20 +44,13 @@ export const read = query({
 export const edit = mutation({
   args: {
     _id: v.optional(v.id(item)),
-    title: v.string(),
-    description: v.optional(v.string()),
-    medias: v.optional(v.any()),
-    shared_with_users: v.optional(v.array(v.id("users"))),
-    status: v.union(
-      v.literal("unfinished"),
-      v.literal("completed"),
-      v.literal("archived")
-    ),
+    ...titledMemoryFields,
   },
   handler: async (ctx, args) => {
     const userId = await requireAuth(ctx, true);
 
     const { _id, ...data } = args;
+    const now = Date.now();
 
     // Si _id existe, on édite
     if (_id) {
@@ -70,7 +64,7 @@ export const edit = mutation({
         throw new ConvexError("Accès non autorisé");
       }
 
-      await ctx.db.patch(_id, data);
+      await ctx.db.patch(_id, { ...data, updated_at: now });
       return _id;
     }
 
@@ -78,6 +72,7 @@ export const edit = mutation({
     const newId = await ctx.db.insert(item, {
       ...data,
       creator_id: userId,
+      updated_at: now,
     });
 
     return newId;
