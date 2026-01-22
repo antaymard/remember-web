@@ -24,7 +24,7 @@ export const media = v.object({
 export const status = v.union(
   v.literal("unfinished"),
   v.literal("completed"),
-  v.literal("archived")
+  v.literal("archived"),
 );
 
 export const shared_with_users = v.optional(v.array(v.id("users")));
@@ -121,7 +121,7 @@ const schema = defineSchema({
       v.literal("book"),
       v.literal("game"),
       v.literal("interest"),
-      v.literal("personality")
+      v.literal("personality"),
     ),
     first_met: v.optional(flexibleDateTime),
     last_seen: v.optional(flexibleDateTime),
