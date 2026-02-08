@@ -1,23 +1,11 @@
 import type { MomentWithCreator, PersonType } from "@/types/memory.types";
-import type { FlexibleDateTime } from "@/types/shared.types";
 import { TbCalendar } from "react-icons/tb";
 import { Link } from "@tanstack/react-router";
 import type { Id } from "@/../convex/_generated/dataModel";
 import MediasCarousel from "@/components/ui/MediasCarousel";
 import MemoryTypeIndicator from "./MemoryTypeIndicator";
 import OptimizedImage from "@/components/ui/OptimizedImage";
-
-function renderDate(date: FlexibleDateTime | undefined) {
-  if (!date) return null;
-  if (!date.day || !date.month || !date.year) return null;
-  const time = date.hour && date.min ? `${date.hour}:${date.min}` : "";
-  return (
-    <div className="flex gap-2 items-center">
-      <TbCalendar size={20} />
-      {date.day}/{date.month}/{date.year} {time}
-    </div>
-  );
-}
+import { formatFlexibleDate } from "@/utils/formatDate";
 
 function renderPresentPersons(presentPersons: PersonType[] | undefined) {
   if (!presentPersons || presentPersons.length === 0) return null;
@@ -97,9 +85,12 @@ export default function MomentMemoryCard({
             {moment.description}
           </p>
         )}
-        <div className="flex opacity-80 text-sm px-4">
-          {renderDate(moment?.date_time_in)}
-        </div>
+        {formatFlexibleDate(moment?.date_time_in) && (
+          <div className="flex gap-2 items-center opacity-80 text-sm px-4">
+            <TbCalendar size={16} />
+            {formatFlexibleDate(moment?.date_time_in)}
+          </div>
+        )}
       </div>
     </Link>
   );
