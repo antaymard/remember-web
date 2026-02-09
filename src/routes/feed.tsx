@@ -1,5 +1,6 @@
 import Header from "@/components/nav/Header";
 import Navbar from "@/components/nav/Navbar";
+import { NotificationBanner } from "@/components/ui/NotificationBanner";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "convex-helpers/react/cache/hooks";
 import { api } from "../../convex/_generated/api";
@@ -37,6 +38,7 @@ function RouteComponent() {
     <div>
       <Header title="Feed" />
       <div className="py-17.5 flex flex-col gap-2.5 bg-bg">
+        <NotificationBanner />
         {memories && memories.length > 0 ? (
           memories.map((memory) => {
             if (memory._memory_type === "moment")

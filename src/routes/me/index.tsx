@@ -17,6 +17,7 @@ import {
   TbLogout,
 } from "react-icons/tb";
 import OptimizedImage from "@/components/ui/OptimizedImage";
+import { NotificationSettings } from "@/components/ui/NotificationSettings";
 
 export const Route = createFileRoute("/me/")({
   component: RouteComponent,
@@ -104,8 +105,9 @@ function RouteComponent() {
         </div>
       </div>
       <div className="bg-white py-4 ">
-        <h3 className="px-4 mb-2">Plus d'infos</h3>
+        <h3 className="px-4 mb-2">Paramètres</h3>
         <div className="flex flex-col">
+          <NotificationSettings />
           {links.map((link) => (
             <div
               key={link.label}

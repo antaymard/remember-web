@@ -133,6 +133,19 @@ const schema = defineSchema({
     .index("by_creator", ["creator_id"])
     .index("by_creator_and_status", ["creator_id", "status"])
     .index("by_updated_at", ["updated_at"]),
+
+  pushSubscriptions: defineTable({
+    userId: v.id("users"),
+    fcmToken: v.string(),
+    createdAt: v.number(),
+    // Device info
+    platform: v.union(v.literal("web"), v.literal("ios"), v.literal("android")),
+    deviceName: v.optional(v.string()), // ex: "Chrome 120 - Windows"
+    userAgent: v.optional(v.string()),
+  })
+    .index("by_userId", ["userId"])
+    .index("by_fcmToken", ["fcmToken"])
+    .index("by_userId_and_platform", ["userId", "platform"]),
 });
 
 export default schema;
