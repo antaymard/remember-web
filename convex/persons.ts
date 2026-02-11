@@ -54,6 +54,7 @@ export const edit = mutation({
     death_date: v.optional(flexibleDateTime),
     first_met: v.optional(flexibleDateTime),
     last_seen: v.optional(flexibleDateTime),
+    updated_at: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const userId = await requireAuth(ctx, true);

@@ -53,10 +53,11 @@ export const edit = mutation({
       v.literal("book"),
       v.literal("game"),
       v.literal("interest"),
-      v.literal("personality")
+      v.literal("personality"),
     ),
     first_met: v.optional(flexibleDateTime),
     last_seen: v.optional(flexibleDateTime),
+    updated_at: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const userId = await requireAuth(ctx, true);
