@@ -1,62 +1,60 @@
-import type { PersonWithCreator } from "@/types/memory.types";
+import type { ThingWithCreator } from "@/types/memory.types";
+import OptimizedImage from "@/components/ui/OptimizedImage";
+import MemoryTypeIndicator from "./MemoryTypeIndicator";
+import MediasCarousel from "../ui/MediasCarousel";
 import { Link } from "@tanstack/react-router";
 import type { Id } from "@/../convex/_generated/dataModel";
-import MediasCarousel from "@/components/ui/MediasCarousel";
-import MemoryTypeIndicator from "./MemoryTypeIndicator";
-import OptimizedImage from "@/components/ui/OptimizedImage";
 
-export default function PersonMemoryCard({
-  person,
+export default function ThingMemoryCard({
+  thing,
 }: {
-  person: PersonWithCreator;
+  thing: ThingWithCreator;
 }) {
-  if (!person) return null;
-
   return (
     <Link
       to="/view/$type/$_id"
       params={{
-        type: "person",
-        _id: person._id as Id<"persons">,
+        type: "thing",
+        _id: thing._id as Id<"things">,
       }}
       state={{
-        optimisticData: person,
+        optimisticData: thing,
       }}
     >
       <div className="bg-white py-4 space-y-3">
         {/* Header */}
         <div className="flex px-4 items-center gap-3 w-full">
-          {person.creator?.medias?.[0] && (
+          {thing.creator?.medias?.[0] && (
             <OptimizedImage
-              media={person.creator.medias[0]}
+              media={thing.creator.medias[0]}
               size="sm"
               className="w-10 h-10 aspect-square rounded-full object-cover"
             />
           )}
           <div className="flex flex-col w-full min-w-0">
             <h2 className="font-serif text-xl leading-tight truncate">
-              {person.firstname} {person.lastname}
+              {thing.title}
             </h2>
             <p className="leading-tight opacity-80 text-sm">
-              {person.creator?.firstname} {person.creator?.lastname}
+              {thing.creator?.firstname} {thing.creator?.lastname}
             </p>
           </div>
-          <MemoryTypeIndicator memoryType="person" />
+          <MemoryTypeIndicator memoryType="thing" />
         </div>
-        {person.medias && person.medias.length > 0 && (
+        {thing.medias && thing.medias.length > 0 && (
           <div className="aspect-square w-full relative">
-            <MediasCarousel medias={person.medias} aspectSquare />
+            <MediasCarousel medias={thing.medias} aspectSquare />
           </div>
         )}
-        {person.description && (
+        {thing.description && (
           <p
             className={`leading-tight opacity-80 px-4 ${
-              person.medias && person.medias.length > 0
+              thing.medias && thing.medias.length > 0
                 ? "line-clamp-3"
                 : "line-clamp-6"
             }`}
           >
-            {person.description}
+            {thing.description}
           </p>
         )}
       </div>

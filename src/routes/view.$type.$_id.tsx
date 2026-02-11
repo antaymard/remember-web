@@ -5,9 +5,13 @@ import { useQuery } from "convex/react";
 import type {
   MomentWithCreator,
   PersonWithCreator,
+  PlaceWithCreator,
+  ThingWithCreator,
 } from "@/types/memory.types";
 import type { Id } from "@/../convex/_generated/dataModel";
 import PersonViewScreen from "@/components/memory-view/PersonViewScreen";
+import PlaceViewScreen from "@/components/memory-view/PlaceViewScreen";
+import ThingViewScreen from "@/components/memory-view/ThingViewScreen";
 
 export const Route = createFileRoute("/view/$type/$_id")({
   component: RouteComponent,
@@ -21,6 +25,8 @@ function RouteComponent() {
   const optimisticData = routerState.location.state?.optimisticData as
     | MomentWithCreator
     | PersonWithCreator
+    | PlaceWithCreator
+    | ThingWithCreator
     | undefined;
 
   // Lancer la query en parallèle pour avoir des données fraîches
@@ -44,10 +50,12 @@ function RouteComponent() {
     case "person": {
       return <PersonViewScreen person={memory as PersonWithCreator} />;
     }
-    case "place":
-      return <div>Place View for ID: {_id}</div>;
-    case "thing":
-      return <div>Thing View for ID: {_id}</div>;
+    case "place": {
+      return <PlaceViewScreen place={memory as PlaceWithCreator} />;
+    }
+    case "thing": {
+      return <ThingViewScreen thing={memory as ThingWithCreator} />;
+    }
     default:
       return <div>Unknown type: {type}</div>;
   }

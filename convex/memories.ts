@@ -258,8 +258,13 @@ export const list = query({
     // Fusionner tous les tableaux en un seul
     const mergedResults = allResults.flat();
 
-    // Trier par _creationTime décroissant (plus récent en premier)
-    mergedResults.sort((a, b) => b._creationTime - a._creationTime);
+    // Trier par updated_at décroissant (plus récent en premier)
+    // Fallback sur _creationTime pour les anciennes données
+    mergedResults.sort((a, b) => {
+      const aTime = a.updated_at ?? a._creationTime;
+      const bTime = b.updated_at ?? b._creationTime;
+      return bTime - aTime;
+    });
 
     // Si pas de populate, retourner les résultats directement
     if (!populate) {

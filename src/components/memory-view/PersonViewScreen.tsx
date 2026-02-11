@@ -4,13 +4,7 @@ import type { PersonWithCreator } from "@/types/memory.types";
 import { useNavigate } from "@tanstack/react-router";
 import { ButtonPastel } from "../ui/Button";
 import MediasCarousel from "../ui/MediasCarousel";
-import type { FlexibleDateTime } from "@/types/shared.types";
-
-function renderDate(date: FlexibleDateTime | undefined) {
-  if (!date) return null;
-  if (!date.day || !date.month || !date.year) return null;
-  return `${date.day}/${date.month}/${date.year}`;
-}
+import { formatFlexibleDate } from "@/utils/formatDate";
 
 function getGenderLabel(gender: string | undefined) {
   if (gender === "male") return "Masculin";
@@ -57,7 +51,13 @@ export default function PersonViewScreen({
               icon="pen"
               color="green"
               onClick={() =>
-                navigate({ to: `/edit-memory/person/${person._id}` })
+                navigate({
+                  to: "/edit-memory/$type/$_id",
+                  params: {
+                    type: "person",
+                    _id: person._id!,
+                  },
+                })
               }
             />
           )
@@ -100,25 +100,25 @@ export default function PersonViewScreen({
 
         <Section title="Temporel">
           <div className="space-y-1">
-            {renderDate(person.birth_date) && (
+            {formatFlexibleDate(person.birth_date) && (
               <p>
-                <strong>Naissance :</strong> {renderDate(person.birth_date)}
+                <strong>Naissance :</strong> {formatFlexibleDate(person.birth_date)}
               </p>
             )}
-            {renderDate(person.death_date) && (
+            {formatFlexibleDate(person.death_date) && (
               <p>
-                <strong>Décès :</strong> {renderDate(person.death_date)}
+                <strong>Décès :</strong> {formatFlexibleDate(person.death_date)}
               </p>
             )}
-            {renderDate(person.first_met) && (
+            {formatFlexibleDate(person.first_met) && (
               <p>
-                <strong>Rencontre :</strong> {renderDate(person.first_met)}
+                <strong>Rencontre :</strong> {formatFlexibleDate(person.first_met)}
               </p>
             )}
-            {renderDate(person.last_seen) && (
+            {formatFlexibleDate(person.last_seen) && (
               <p>
                 <strong>Dernier contact :</strong>{" "}
-                {renderDate(person.last_seen)}
+                {formatFlexibleDate(person.last_seen)}
               </p>
             )}
           </div>
