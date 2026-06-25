@@ -12,6 +12,36 @@ dist
 dist-ssr
 *.local
 
+# Use Yarn Classic, not npm — never commit an npm lockfile
+package-lock.json
+
+# Build / generated output
+**/dist
+**/.output
+**/.turbo
+**/*.tsbuildinfo
+
+# Web PWA dev output & TanStack Router cache
+dev-dist
+.tanstack
+
+# Expo / React Native (apps/mobile)
+.expo
+**/.expo
+**/.expo-shared
+*.orig.*
+web-build
+expo-env.d.ts
+
+# Native build artifacts
+apps/mobile/ios
+apps/mobile/android
+*.keystore
+
+# Env
+.env
+.env*.local
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

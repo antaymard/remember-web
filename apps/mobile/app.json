@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "Remember",
+    "slug": "remember",
+    "scheme": "remember",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.remember.app"
+    },
+    "android": {
+      "package": "com.remember.app"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

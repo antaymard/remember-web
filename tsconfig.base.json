@@ -1,0 +1,11 @@
+{
+  "$comment": "Shared compiler options for all workspaces. App-specific settings (module, target, jsx, paths) live in each package's tsconfig.",
+  "compilerOptions": {
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  }
+}

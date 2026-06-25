@@ -207,17 +207,21 @@ C'est le journal intime du 21ème siècle : visuel, intelligent, et profondémen
 ## Architecture
 
 ```
-remember-web/
-├── src/              # Frontend React + TypeScript
-│   ├── routes/       # Routes TanStack Router
-│   ├── hooks/        # Custom React hooks
-│   └── assets/       # Assets statiques
-├── convex/           # Backend Convex
-│   ├── auth.ts       # Configuration authentification
-│   ├── schema.ts     # Schéma de base de données
-│   ├── persons.ts    # API persons
-│   └── utils/        # Utilitaires backend
-└── public/           # Fichiers statiques publics
+remember-web/                 # Racine monorepo (Yarn workspaces + Turborepo)
+├── apps/
+│   ├── web/                  # Frontend web (Vite + React + TanStack Router + Tailwind v4, PWA)
+│   │   ├── src/routes/       # Routes TanStack Router
+│   │   ├── src/hooks/        # Custom React hooks
+│   │   └── public/           # Fichiers statiques publics
+│   └── mobile/               # App native Expo (Expo Router + NativeWind)
+│       ├── app/              # Routes expo-router
+│       └── src/              # Écrans + lib (convex client, secureStorage)
+├── packages/
+│   └── backend/              # Backend Convex partagé → package @remember/backend
+│       └── convex/           # auth.ts, schema.ts, fonctions, utils/, _generated/
+├── package.json              # Racine workspaces
+├── turbo.json                # Pipelines Turborepo
+└── tsconfig.base.json        # Options TS partagées
 ```
 
 ## Stack Technique
@@ -228,13 +232,20 @@ remember-web/
 - **Vite 7** - Bundler et dev server
 - **TanStack Router 1.144** - Routing avec auto code-splitting
 - **Tailwind CSS v4** - Framework CSS avec plugin Vite
-- **Yarn 4** - Gestionnaire de packages
+- **Yarn Classic (1.x)** - Gestionnaire de packages (workspaces)
 
 ### Backend
 
 - **Convex** - Backend as a Service (BaaS)
 - **@convex-dev/auth** - Authentification
 - **convex-helpers** - Utilitaires Convex
+
+### Mobile
+
+- **Expo (SDK 53)** - React Native managé (Expo Router, EAS, dev client)
+- **React Native 0.79 / React 19**
+- **NativeWind v4** - Tailwind CSS en React Native
+- **expo-secure-store** - Stockage sécurisé du token d'auth Convex
 
 ### Déploiement
 
@@ -244,28 +255,35 @@ remember-web/
 ## Commandes Principales
 
 ```bash
-# Installation
-yarn install
+# Installation (à la racine)
+yarn install                            # installe tous les workspaces (Yarn Classic 1.x)
 
 # Développement
-yarn dev                    # Lance Vite dev server sur http://localhost:3000
-npx convex dev             # Lance Convex en mode développement
+yarn workspace @remember/backend dev    # Convex (codegen + watch) — à lancer en premier
+yarn workspace @remember/web dev        # Web sur http://localhost:3000
+yarn workspace @remember/mobile start   # Expo dev server (mobile)
+# Raccourcis racine : yarn backend:dev / yarn web:dev / yarn mobile:start
+# Tout en parallèle : yarn dev (Turborepo)
 
-# Build
-yarn build                 # Compile TypeScript + build Vite de production
-tsc -b                     # Type checking uniquement
-
-# Qualité de code
-yarn lint                  # Lint avec ESLint
-yarn preview              # Preview du build de production
+# Build / qualité
+yarn workspace @remember/web build      # tsc -b + build Vite de production
+yarn type-check                         # type-check de tous les workspaces (Turborepo)
+yarn lint                               # lint (Turborepo)
 ```
 
 ## Configuration Environnement
 
-Variables d'environnement requises (`.env.local`) :
+Les trois fichiers pointent vers le **même** déploiement Convex :
 
 ```
+# packages/backend (.env.local, géré par `convex dev`)
+CONVEX_DEPLOYMENT=<...>
+
+# apps/web/.env.local
 VITE_CONVEX_URL=<your-convex-deployment-url>
+
+# apps/mobile/.env  (cf. apps/mobile/.env.example)
+EXPO_PUBLIC_CONVEX_URL=<your-convex-deployment-url>
 ```
 
 ## Conventions de Code
@@ -287,7 +305,7 @@ VITE_CONVEX_URL=<your-convex-deployment-url>
 
 ### Routing (TanStack Router)
 
-- Routes basées sur les fichiers dans `src/routes/`
+- Routes basées sur les fichiers dans `apps/web/src/routes/`
 - `__root.tsx` : Layout racine
 - Auto-génération du routeTree dans `src/routeTree.gen.ts` (ne pas modifier manuellement)
 - Auto code-splitting activé
@@ -303,7 +321,8 @@ VITE_CONVEX_URL=<your-convex-deployment-url>
 - **Queries** : Lecture de données (cache automatique)
 - **Mutations** : Modification de données
 - **Actions** : Opérations side-effect (API externes, etc.)
-- **Schéma** : Définir dans `convex/schema.ts`
+- **Schéma** : Définir dans `packages/backend/convex/schema.ts`
+- **Imports partagés** : Web et mobile importent l'API et les types via le package `@remember/backend` (`import { api } from "@remember/backend/api"`, `import type { Doc, Id } from "@remember/backend/dataModel"`) — jamais via un chemin relatif vers `convex/_generated`
 - **Auth** : Utiliser `requireAuth` helper pour les endpoints protégés
 - **Nommage des IDs** : Toujours utiliser `_id` (et non `id`) pour manipuler les identifiants Convex. Les arguments de queries/mutations doivent utiliser `_id`, et les appels frontend doivent passer `{ _id: ... }`
 
