@@ -232,7 +232,7 @@ remember-web/                 # Racine monorepo (Yarn workspaces + Turborepo)
 - **Vite 7** - Bundler et dev server
 - **TanStack Router 1.144** - Routing avec auto code-splitting
 - **Tailwind CSS v4** - Framework CSS avec plugin Vite
-- **Yarn 4** - Gestionnaire de packages
+- **Yarn Classic (1.x)** - Gestionnaire de packages (workspaces)
 
 ### Backend
 
@@ -256,8 +256,7 @@ remember-web/                 # Racine monorepo (Yarn workspaces + Turborepo)
 
 ```bash
 # Installation (à la racine)
-corepack enable                         # active Yarn 4 (champ packageManager)
-yarn install                            # installe tous les workspaces
+yarn install                            # installe tous les workspaces (Yarn Classic 1.x)
 
 # Développement
 yarn workspace @remember/backend dev    # Convex (codegen + watch) — à lancer en premier

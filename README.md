@@ -16,7 +16,7 @@ remember-web/
 ## Prérequis
 
 - Node 18+ (testé sur Node 22)
-- **Yarn 4** via Corepack : `corepack enable` (Corepack récupère la version définie par le champ `packageManager`)
+- **Yarn Classic (1.x)** : `npm install -g yarn` si tu ne l'as pas
 
 ## Installation
 
