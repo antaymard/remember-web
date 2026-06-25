@@ -1,0 +1,38 @@
+{
+  "name": "@remember/backend",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./api": {
+      "types": "./convex/_generated/api.d.ts",
+      "default": "./convex/_generated/api.js"
+    },
+    "./dataModel": {
+      "types": "./convex/_generated/dataModel.d.ts"
+    },
+    "./server": {
+      "types": "./convex/_generated/server.d.ts",
+      "default": "./convex/_generated/server.js"
+    }
+  },
+  "scripts": {
+    "dev": "convex dev",
+    "deploy": "convex deploy",
+    "type-check": "tsc -p convex/tsconfig.json"
+  },
+  "dependencies": {
+    "@auth/core": "0.37.0",
+    "@aws-sdk/client-s3": "^3.958.0",
+    "@aws-sdk/s3-request-presigner": "^3.958.0",
+    "@convex-dev/auth": "^0.0.90",
+    "convex": "^1.31.2"
+  },
+  "optionalDependencies": {
+    "@img/sharp-libvips-linux-arm64": "^1.2.4",
+    "@img/sharp-libvips-linux-x64": "^1.2.4",
+    "@img/sharp-linux-arm64": "^0.34.5",
+    "@img/sharp-linux-x64": "^0.34.5",
+    "sharp": "^0.34.5"
+  }
+}
