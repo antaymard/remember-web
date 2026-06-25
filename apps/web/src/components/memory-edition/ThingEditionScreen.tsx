@@ -12,7 +12,7 @@ import SelectInput from "../form/SelectInput";
 import { useCreationForm } from "@/hooks/useCreationForm";
 import CreationScreenLayout from "./CreationScreenLayout";
 import { defaultFlexibleDateTime, statusEnum } from "@/utils/creationConstants";
-import type { Id } from "node_modules/convex/dist/esm-types/values/value";
+import type { Id } from "@remember/backend/dataModel";
 
 const thingSchema = z.object({
   title: z.string().min(1, "Le titre est requis"),
