@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Use Yarn Classic, not npm — never commit an npm lockfile
+package-lock.json
+
 # Build / generated output
 **/dist
 **/.output

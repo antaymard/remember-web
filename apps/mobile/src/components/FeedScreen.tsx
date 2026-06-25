@@ -8,14 +8,16 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery } from "convex/react";
+import type { FunctionReturnType } from "convex/server";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { api } from "@remember/backend/api";
-import type { Doc } from "@remember/backend/dataModel";
 
-// `Doc<"moments">` comes from the shared @remember/backend package — the very
-// same generated types the web app and the Convex functions use. One source of
-// truth for the data model across web + native is the whole point of the monorepo.
-type Moment = Doc<"moments">;
+// The exact return type of the shared Convex query, pulled through the
+// @remember/backend package — the same `api` the web app and the Convex
+// functions use. One source of truth across web + native is the whole point of
+// the monorepo. (moments.list augments each moment with `creator` and resolved
+// `present_persons`, so we derive the type from the query rather than Doc.)
+type Moment = FunctionReturnType<typeof api.moments.list>[number];
 
 function MomentRow({ moment }: { moment: Moment }) {
   const cover = moment.medias?.[0]?.url;
