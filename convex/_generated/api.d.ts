@@ -23,6 +23,7 @@ import type * as utils_images from "../utils/images.js";
 import type * as utils_r2 from "../utils/r2.js";
 import type * as utils_requireAuth from "../utils/requireAuth.js";
 import type * as validators from "../validators.js";
+import type * as voiceServer from "../voiceServer.js";
 
 import type {
   ApiFromModules,
@@ -46,6 +47,7 @@ declare const fullApi: ApiFromModules<{
   "utils/r2": typeof utils_r2;
   "utils/requireAuth": typeof utils_requireAuth;
   validators: typeof validators;
+  voiceServer: typeof voiceServer;
 }>;
 
 /**
