@@ -100,7 +100,7 @@ export interface FileRoutesByFullPath {
   '/me/edit': typeof MeEditRoute
   '/me/friends': typeof MeFriendsRoute
   '/me/unfinished-memories': typeof MeUnfinishedMemoriesRoute
-  '/me': typeof MeIndexRoute
+  '/me/': typeof MeIndexRoute
   '/edit-memory/$type/$_id': typeof EditMemoryType_idRoute
   '/view/$type/$_id': typeof ViewType_idRoute
 }
@@ -148,7 +148,7 @@ export interface FileRouteTypes {
     | '/me/edit'
     | '/me/friends'
     | '/me/unfinished-memories'
-    | '/me'
+    | '/me/'
     | '/edit-memory/$type/$_id'
     | '/view/$type/$_id'
   fileRoutesByTo: FileRoutesByTo
@@ -253,7 +253,7 @@ declare module '@tanstack/react-router' {
     '/me/': {
       id: '/me/'
       path: '/me'
-      fullPath: '/me'
+      fullPath: '/me/'
       preLoaderRoute: typeof MeIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
