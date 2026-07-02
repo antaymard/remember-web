@@ -4,9 +4,11 @@
  * voice-server wire protocol or this hook changes upstream.
  *
  * Locally patched (not upstream yet): the WebSocket is opened in parallel
- * with the getUserMedia prompt instead of after it, and outgoing frames are
- * dropped under backpressure — mirrors the setup-latency fix landed in
- * antaymard/nolenor's useLiveTranscription.
+ * with the getUserMedia prompt instead of after it, outgoing frames are
+ * dropped under backpressure, and audio is no longer resampled client-side
+ * (the actual AudioContext rate is reported to the server instead) — mirrors
+ * the setup-latency and CPU fixes landed in antaymard/nolenor's
+ * useLiveTranscription.
  */
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -267,10 +269,14 @@ export function useRealtimeTranscription(
     session.ready = false;
     ws.onopen = () => {
       if (isStale(session) || session.ws !== ws) return;
+      // The worklet no longer resamples: report whatever rate the
+      // AudioContext actually granted (falls back to the requested hint if
+      // the context isn't set up yet, e.g. WS opened before audio setup).
+      const sampleRate = Math.round(session.ctx?.sampleRate ?? SAMPLE_RATE);
       ws.send(
         JSON.stringify({
           type: "start",
-          sampleRate: SAMPLE_RATE,
+          sampleRate,
           ...(opts.targetDelayMs !== undefined ? { targetDelayMs: opts.targetDelayMs } : {}),
         }),
       );
@@ -319,7 +325,9 @@ export function useRealtimeTranscription(
     try {
       // Audio graph setup needs no permission, so it runs before (and
       // overlaps with) the getUserMedia prompt below instead of after it.
-      // 16 kHz hint; if the browser ignores it, the worklet resamples.
+      // 16 kHz hint, handled by the browser's audio engine; if it's ignored
+      // we just capture at whatever rate we got (see openSocket) instead of
+      // resampling ourselves.
       let ctx: AudioContext;
       try {
         ctx = new AudioContext({ sampleRate: SAMPLE_RATE });
@@ -335,7 +343,6 @@ export function useRealtimeTranscription(
 
       const node = new AudioWorkletNode(ctx, "pcm-processor", {
         processorOptions: {
-          targetSampleRate: SAMPLE_RATE,
           chunkMs: optionsRef.current.chunkMs ?? 100,
         },
       });

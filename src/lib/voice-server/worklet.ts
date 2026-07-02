@@ -3,6 +3,13 @@
  * 1fcca23c4209ee7f9db9bbd8e6cdd84589abbdb0. Re-sync manually if upstream
  * changes the worklet processor.
  *
+ * Locally patched (not upstream yet): no client-side resampling. The
+ * AudioContext is still asked for 16 kHz (cheap, handled by the browser's
+ * audio engine), but if it's ignored we send the PCM as captured instead of
+ * running a per-sample interpolation loop on the audio thread — mirrors
+ * antaymard/nolenor's useLiveTranscription worklet. The actual rate is
+ * reported to the server in the `start` message (see useRealtimeTranscription).
+ *
  * Inline AudioWorklet processor source, loaded via a Blob URL so consuming
  * apps need no extra static asset.
  */
@@ -11,12 +18,10 @@ class PcmProcessor extends AudioWorkletProcessor {
   constructor(options) {
     super();
     const opts = (options && options.processorOptions) || {};
-    this.targetRate = opts.targetSampleRate || 16000;
-    this.chunkSamples = Math.max(1, Math.round((this.targetRate * (opts.chunkMs || 100)) / 1000));
+    // sampleRate is the AudioWorkletGlobalScope rate (the context's actual rate).
+    this.chunkSamples = Math.max(1, Math.round((sampleRate * (opts.chunkMs || 100)) / 1000));
     this.out = new Int16Array(this.chunkSamples);
     this.outOffset = 0;
-    this.carry = new Float32Array(0); // unconsumed source samples
-    this.srcPos = 0; // fractional read position into carry+block
     this.stopped = false;
     this.port.onmessage = (e) => {
       if (e.data && e.data.type === "flush") {
@@ -52,38 +57,17 @@ class PcmProcessor extends AudioWorkletProcessor {
     if (!input || input.length === 0 || !input[0] || input[0].length === 0) return true;
 
     const frames = input[0].length;
-    let mono;
     if (input.length === 1) {
-      mono = input[0];
-    } else {
-      mono = new Float32Array(frames);
-      for (let ch = 0; ch < input.length; ch++) {
-        const data = input[ch];
-        for (let i = 0; i < frames; i++) mono[i] += data[i];
-      }
-      for (let i = 0; i < frames; i++) mono[i] /= input.length;
-    }
-
-    // sampleRate is the AudioWorkletGlobalScope rate (the context rate).
-    if (sampleRate === this.targetRate) {
+      const mono = input[0];
       for (let i = 0; i < frames; i++) this.pushSample(mono[i]);
       return true;
     }
 
-    const buf = new Float32Array(this.carry.length + frames);
-    buf.set(this.carry, 0);
-    buf.set(mono, this.carry.length);
-    const ratio = sampleRate / this.targetRate;
-    let pos = this.srcPos;
-    while (pos + 1 < buf.length) {
-      const i = Math.floor(pos);
-      const frac = pos - i;
-      this.pushSample(buf[i] * (1 - frac) + buf[i + 1] * frac);
-      pos += ratio;
+    for (let i = 0; i < frames; i++) {
+      let sum = 0;
+      for (let ch = 0; ch < input.length; ch++) sum += input[ch][i];
+      this.pushSample(sum / input.length);
     }
-    const consumed = Math.floor(pos);
-    this.srcPos = pos - consumed;
-    this.carry = buf.slice(consumed);
     return true;
   }
 }
