@@ -2672,7 +2672,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@img/sharp-libvips-linux-arm64@npm:1.2.4, @img/sharp-libvips-linux-arm64@npm:^1.2.4":
+"@img/sharp-libvips-linux-arm64@npm:1.2.4":
   version: 1.2.4
   resolution: "@img/sharp-libvips-linux-arm64@npm:1.2.4"
   checksum: 10c0/ba975b5a40574829c7216fa788f8eb0f452d7d24477833363dd6208beffba7224d248d11d233a2264046259c65155c6194134918f490dc646de50197d34564d6
@@ -2708,7 +2708,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@img/sharp-libvips-linux-x64@npm:1.2.4, @img/sharp-libvips-linux-x64@npm:^1.2.4":
+"@img/sharp-libvips-linux-x64@npm:1.2.4":
   version: 1.2.4
   resolution: "@img/sharp-libvips-linux-x64@npm:1.2.4"
   checksum: 10c0/ad9cbec6158b308893cd0fb38f6b5a7c74b8110c7e52ee7bf0f4442ffb05b9eb9c7e54e0f8ef1ee301b0b039a8937519845d2874b72916062309f15137b47d9a
@@ -2730,7 +2730,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@img/sharp-linux-arm64@npm:0.34.5, @img/sharp-linux-arm64@npm:^0.34.5":
+"@img/sharp-linux-arm64@npm:0.34.5":
   version: 0.34.5
   resolution: "@img/sharp-linux-arm64@npm:0.34.5"
   dependencies:
@@ -2791,7 +2791,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@img/sharp-linux-x64@npm:0.34.5, @img/sharp-linux-x64@npm:^0.34.5":
+"@img/sharp-linux-x64@npm:0.34.5":
   version: 0.34.5
   resolution: "@img/sharp-linux-x64@npm:0.34.5"
   dependencies:
@@ -8850,10 +8850,6 @@ __metadata:
     "@emotion/react": "npm:^11.14.0"
     "@emotion/styled": "npm:^11.14.1"
     "@eslint/js": "npm:^9.39.1"
-    "@img/sharp-libvips-linux-arm64": "npm:^1.2.4"
-    "@img/sharp-libvips-linux-x64": "npm:^1.2.4"
-    "@img/sharp-linux-arm64": "npm:^0.34.5"
-    "@img/sharp-linux-x64": "npm:^0.34.5"
     "@mui/material": "npm:^7.3.6"
     "@mui/x-date-pickers": "npm:^8.23.0"
     "@radix-ui/react-dialog": "npm:^1.1.15"
