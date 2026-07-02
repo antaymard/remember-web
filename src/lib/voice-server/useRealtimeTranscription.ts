@@ -2,6 +2,11 @@
  * Vendored from antaymard/voice-server (client/src/useRealtimeTranscription.ts)
  * at commit 1fcca23c4209ee7f9db9bbd8e6cdd84589abbdb0. Re-sync manually if the
  * voice-server wire protocol or this hook changes upstream.
+ *
+ * Locally patched (not upstream yet): the WebSocket is opened in parallel
+ * with the getUserMedia prompt instead of after it, and outgoing frames are
+ * dropped under backpressure — mirrors the setup-latency fix landed in
+ * antaymard/nolenor's useLiveTranscription.
  */
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -19,6 +24,7 @@ const MAX_RECONNECT_ATTEMPTS = 3;
 const RECONNECT_BACKOFF_MS = [500, 1000, 2000];
 const MAX_PENDING_CHUNKS = 50; // ~5s of audio buffered until the session is ready
 const STOP_TIMEOUT_MS = 10_000;
+const PREWARM_THROTTLE_MS = 30_000;
 
 export type TranscriptionStatus = "idle" | "connecting" | "listening" | "stopping" | "error";
 
@@ -53,6 +59,12 @@ export type UseRealtimeTranscriptionResult = {
   stop: () => Promise<string>;
   /** Clears text/segments/error while idle. */
   reset: () => void;
+  /**
+   * Pings the server to wake it up from a cold start without opening a
+   * session. Cheap and throttled (30s) — call it on an intent signal (mic
+   * button hover/focus) so the server is warm by the time `start` runs.
+   */
+  prewarm: () => void;
 };
 
 type Session = {
@@ -289,20 +301,8 @@ export function useRealtimeTranscription(
     };
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          channelCount: 1,
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true,
-        },
-      });
-      session.stream = stream;
-      if (isStale(session)) {
-        releaseMedia();
-        return;
-      }
-
+      // Audio graph setup needs no permission, so it runs before (and
+      // overlaps with) the getUserMedia prompt below instead of after it.
       // 16 kHz hint; if the browser ignores it, the worklet resamples.
       let ctx: AudioContext;
       try {
@@ -317,7 +317,6 @@ export function useRealtimeTranscription(
         return;
       }
 
-      const source = ctx.createMediaStreamSource(stream);
       const node = new AudioWorkletNode(ctx, "pcm-processor", {
         processorOptions: {
           targetSampleRate: SAMPLE_RATE,
@@ -327,7 +326,6 @@ export function useRealtimeTranscription(
       session.node = node;
       const muted = ctx.createGain();
       muted.gain.value = 0;
-      source.connect(node);
       node.connect(muted);
       muted.connect(ctx.destination);
 
@@ -336,8 +334,13 @@ export function useRealtimeTranscription(
         const data: unknown = e.data;
         if (data instanceof ArrayBuffer) {
           const ws = session.ws;
-          if (session.ready && ws && ws.readyState === WebSocket.OPEN) ws.send(data);
-          else if (session.pending.length < MAX_PENDING_CHUNKS) session.pending.push(data);
+          // Basic backpressure: drop frames instead of piling them up on the
+          // socket's send buffer if the server can't keep up.
+          if (session.ready && ws && ws.readyState === WebSocket.OPEN) {
+            if (ws.bufferedAmount < 1_000_000) ws.send(data);
+          } else if (session.pending.length < MAX_PENDING_CHUNKS) {
+            session.pending.push(data);
+          }
           return;
         }
         if ((data as { type?: string } | null)?.type === "flushed") {
@@ -351,7 +354,27 @@ export function useRealtimeTranscription(
         }
       };
 
+      // Open the WebSocket (handshake + server warm-up) at the same time as
+      // the mic permission prompt below, rather than after it resolves.
+      // Frames captured before `ready` are buffered above and flushed then.
       openSocket(session);
+
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          channelCount: 1,
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+        },
+      });
+      session.stream = stream;
+      if (isStale(session)) {
+        releaseMedia();
+        return;
+      }
+
+      const source = ctx.createMediaStreamSource(stream);
+      source.connect(node);
     } catch (err) {
       if (isStale(session)) {
         releaseMedia();
@@ -411,6 +434,21 @@ export function useRealtimeTranscription(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const lastPrewarmRef = useRef(0);
+  const prewarm = useCallback((): void => {
+    const serverUrl = optionsRef.current.serverUrl;
+    if (!serverUrl) return;
+    const now = Date.now();
+    if (now - lastPrewarmRef.current < PREWARM_THROTTLE_MS) return;
+    lastPrewarmRef.current = now;
+    const base = serverUrl.replace(/\/+$/, "");
+    // no-cors: we don't read the response, just knock so a cold server (e.g.
+    // Railway) is warm by the time `start` opens the real session.
+    void fetch(`${base}/healthz`, { method: "GET", mode: "no-cors", cache: "no-store" }).catch(
+      () => {},
+    );
+  }, []);
+
   useEffect(
     () => () => {
       const session = sessionRef.current;
@@ -420,5 +458,5 @@ export function useRealtimeTranscription(
     [],
   );
 
-  return { status, text, segments, language, error, start, stop, reset };
+  return { status, text, segments, language, error, start, stop, reset, prewarm };
 }

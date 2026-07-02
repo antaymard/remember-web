@@ -16,7 +16,7 @@ export default function DictateButton({
   // update can be composed on top of it without re-reading stale closures.
   const baseRef = useRef("");
 
-  const { isAvailable, status, error, toggle } = useVoiceDictation((sessionText) => {
+  const { isAvailable, status, error, toggle, prewarm } = useVoiceDictation((sessionText) => {
     const base = baseRef.current;
     onChange(base ? `${base} ${sessionText}` : sessionText);
   });
@@ -34,6 +34,8 @@ export default function DictateButton({
     <button
       type="button"
       onClick={handleClick}
+      onMouseEnter={prewarm}
+      onFocus={prewarm}
       title={error ?? undefined}
       aria-label={status === "listening" ? "Arrêter la dictée" : "Dicter"}
       className={cn(

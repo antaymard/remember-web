@@ -13,6 +13,8 @@ export type UseVoiceDictationResult = {
   error: string | null;
   /** Starts dictation if idle/error, stops it if listening. */
   toggle: () => void;
+  /** Wakes up a cold voice-server ahead of time (e.g. on hover/focus). */
+  prewarm: () => void;
 };
 
 /**
@@ -27,7 +29,7 @@ export function useVoiceDictation(
   const serverUrl = config.data?.url ?? "";
   const token = config.data?.token ?? "";
 
-  const { status, text, error, start, stop } = useRealtimeTranscription({
+  const { status, text, error, start, stop, prewarm } = useRealtimeTranscription({
     serverUrl,
     token,
   });
@@ -62,5 +64,6 @@ export function useVoiceDictation(
     status,
     error: error?.message ?? null,
     toggle,
+    prewarm,
   };
 }
