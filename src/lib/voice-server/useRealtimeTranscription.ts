@@ -2,6 +2,13 @@
  * Vendored from antaymard/voice-server (client/src/useRealtimeTranscription.ts)
  * at commit 1fcca23c4209ee7f9db9bbd8e6cdd84589abbdb0. Re-sync manually if the
  * voice-server wire protocol or this hook changes upstream.
+ *
+ * Locally patched (not upstream yet): the WebSocket is opened in parallel
+ * with the getUserMedia prompt instead of after it, outgoing frames are
+ * dropped under backpressure, and audio is no longer resampled client-side
+ * (the actual AudioContext rate is reported to the server instead) — mirrors
+ * the setup-latency and CPU fixes landed in antaymard/nolenor's
+ * useLiveTranscription.
  */
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -17,8 +24,9 @@ import { createPcmWorkletUrl } from "./worklet";
 const SAMPLE_RATE = 16000;
 const MAX_RECONNECT_ATTEMPTS = 3;
 const RECONNECT_BACKOFF_MS = [500, 1000, 2000];
-const MAX_PENDING_CHUNKS = 50; // ~5s of audio buffered until the session is ready
+const MAX_PENDING_CHUNKS = 200; // ~20s of audio buffered until the session is ready (cold starts)
 const STOP_TIMEOUT_MS = 10_000;
+const PREWARM_THROTTLE_MS = 30_000;
 
 export type TranscriptionStatus = "idle" | "connecting" | "listening" | "stopping" | "error";
 
@@ -53,6 +61,12 @@ export type UseRealtimeTranscriptionResult = {
   stop: () => Promise<string>;
   /** Clears text/segments/error while idle. */
   reset: () => void;
+  /**
+   * Pings the server to wake it up from a cold start without opening a
+   * session. Cheap and throttled (30s) — call it on an intent signal (mic
+   * button hover/focus) so the server is warm by the time `start` runs.
+   */
+  prewarm: () => void;
 };
 
 type Session = {
@@ -69,6 +83,8 @@ type Session = {
   stopTimer: ReturnType<typeof setTimeout> | null;
   stopResolve: ((text: string) => void) | null;
   stopPromise: Promise<string> | null;
+  /** stop() was called before `ready`; finalize as soon as it arrives instead of discarding the session. */
+  stopRequested: boolean;
 };
 
 function toWsUrl(serverUrl: string, token: string): string {
@@ -149,7 +165,20 @@ export function useRealtimeTranscription(
           for (const chunk of session.pending) ws.send(chunk);
         }
         session.pending = [];
-        if (statusRef.current === "connecting") setStatusBoth("listening");
+        if (session.stopRequested) {
+          // stop() was called during warm-up; the buffer above is flushed,
+          // now finalize instead of dropping into "listening".
+          session.stopRequested = false;
+          if (session.node) {
+            session.node.port.postMessage({ type: "flush" });
+          } else if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({ type: "stop" }));
+          } else {
+            finishStop(session);
+          }
+        } else if (statusRef.current === "connecting") {
+          setStatusBoth("listening");
+        }
         break;
       }
       case "delta": {
@@ -240,10 +269,14 @@ export function useRealtimeTranscription(
     session.ready = false;
     ws.onopen = () => {
       if (isStale(session) || session.ws !== ws) return;
+      // The worklet no longer resamples: report whatever rate the
+      // AudioContext actually granted (falls back to the requested hint if
+      // the context isn't set up yet, e.g. WS opened before audio setup).
+      const sampleRate = Math.round(session.ctx?.sampleRate ?? SAMPLE_RATE);
       ws.send(
         JSON.stringify({
           type: "start",
-          sampleRate: SAMPLE_RATE,
+          sampleRate,
           ...(opts.targetDelayMs !== undefined ? { targetDelayMs: opts.targetDelayMs } : {}),
         }),
       );
@@ -278,6 +311,7 @@ export function useRealtimeTranscription(
       stopTimer: null,
       stopResolve: null,
       stopPromise: null,
+      stopRequested: false,
     };
     sessionRef.current = session;
 
@@ -289,6 +323,65 @@ export function useRealtimeTranscription(
     };
 
     try {
+      // Audio graph setup needs no permission, so it runs before (and
+      // overlaps with) the getUserMedia prompt below instead of after it.
+      // 16 kHz hint, handled by the browser's audio engine; if it's ignored
+      // we just capture at whatever rate we got (see openSocket) instead of
+      // resampling ourselves.
+      let ctx: AudioContext;
+      try {
+        ctx = new AudioContext({ sampleRate: SAMPLE_RATE });
+      } catch {
+        ctx = new AudioContext();
+      }
+      session.ctx = ctx;
+      await ctx.audioWorklet.addModule(optionsRef.current.workletUrl ?? createPcmWorkletUrl());
+      if (isStale(session)) {
+        releaseMedia();
+        return;
+      }
+
+      const node = new AudioWorkletNode(ctx, "pcm-processor", {
+        processorOptions: {
+          chunkMs: optionsRef.current.chunkMs ?? 100,
+        },
+      });
+      session.node = node;
+      const muted = ctx.createGain();
+      muted.gain.value = 0;
+      node.connect(muted);
+      muted.connect(ctx.destination);
+
+      node.port.onmessage = (e: MessageEvent) => {
+        if (isStale(session)) return;
+        const data: unknown = e.data;
+        if (data instanceof ArrayBuffer) {
+          const ws = session.ws;
+          // Basic backpressure: drop frames instead of piling them up on the
+          // socket's send buffer if the server can't keep up.
+          if (session.ready && ws && ws.readyState === WebSocket.OPEN) {
+            if (ws.bufferedAmount < 1_000_000) ws.send(data);
+          } else if (session.pending.length < MAX_PENDING_CHUNKS) {
+            session.pending.push(data);
+          }
+          return;
+        }
+        if ((data as { type?: string } | null)?.type === "flushed") {
+          // Tail audio has been posted; now ask the server to finalize.
+          const ws = session.ws;
+          if (session.ready && ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({ type: "stop" }));
+          } else {
+            finishStop(session);
+          }
+        }
+      };
+
+      // Open the WebSocket (handshake + server warm-up) at the same time as
+      // the mic permission prompt below, rather than after it resolves.
+      // Frames captured before `ready` are buffered above and flushed then.
+      openSocket(session);
+
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
           channelCount: 1,
@@ -303,55 +396,8 @@ export function useRealtimeTranscription(
         return;
       }
 
-      // 16 kHz hint; if the browser ignores it, the worklet resamples.
-      let ctx: AudioContext;
-      try {
-        ctx = new AudioContext({ sampleRate: SAMPLE_RATE });
-      } catch {
-        ctx = new AudioContext();
-      }
-      session.ctx = ctx;
-      await ctx.audioWorklet.addModule(optionsRef.current.workletUrl ?? createPcmWorkletUrl());
-      if (isStale(session)) {
-        releaseMedia();
-        return;
-      }
-
       const source = ctx.createMediaStreamSource(stream);
-      const node = new AudioWorkletNode(ctx, "pcm-processor", {
-        processorOptions: {
-          targetSampleRate: SAMPLE_RATE,
-          chunkMs: optionsRef.current.chunkMs ?? 100,
-        },
-      });
-      session.node = node;
-      const muted = ctx.createGain();
-      muted.gain.value = 0;
       source.connect(node);
-      node.connect(muted);
-      muted.connect(ctx.destination);
-
-      node.port.onmessage = (e: MessageEvent) => {
-        if (isStale(session)) return;
-        const data: unknown = e.data;
-        if (data instanceof ArrayBuffer) {
-          const ws = session.ws;
-          if (session.ready && ws && ws.readyState === WebSocket.OPEN) ws.send(data);
-          else if (session.pending.length < MAX_PENDING_CHUNKS) session.pending.push(data);
-          return;
-        }
-        if ((data as { type?: string } | null)?.type === "flushed") {
-          // Tail audio has been posted; now ask the server to finalize.
-          const ws = session.ws;
-          if (session.ready && ws && ws.readyState === WebSocket.OPEN) {
-            ws.send(JSON.stringify({ type: "stop" }));
-          } else {
-            finishStop(session);
-          }
-        }
-      };
-
-      openSocket(session);
     } catch (err) {
       if (isStale(session)) {
         releaseMedia();
@@ -389,9 +435,14 @@ export function useRealtimeTranscription(
     // Cut the mic right away; the worklet flushes its tail then reports
     // "flushed", which triggers the protocol `stop` (see port.onmessage).
     if (session.stream) for (const track of session.stream.getTracks()) track.stop();
-    if (session.node && session.ready) {
+    if (!session.ready) {
+      // Still warming up (server not `ready` yet): don't discard whatever
+      // audio is already buffered — finalize as soon as `ready` arrives
+      // (see handleEvent). stopTimer above is the safety net if it never does.
+      session.stopRequested = true;
+    } else if (session.node) {
       session.node.port.postMessage({ type: "flush" });
-    } else if (session.ws && session.ws.readyState === WebSocket.OPEN && session.ready) {
+    } else if (session.ws && session.ws.readyState === WebSocket.OPEN) {
       session.ws.send(JSON.stringify({ type: "stop" }));
     } else {
       finishStop(session);
@@ -411,6 +462,21 @@ export function useRealtimeTranscription(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const lastPrewarmRef = useRef(0);
+  const prewarm = useCallback((): void => {
+    const serverUrl = optionsRef.current.serverUrl;
+    if (!serverUrl) return;
+    const now = Date.now();
+    if (now - lastPrewarmRef.current < PREWARM_THROTTLE_MS) return;
+    lastPrewarmRef.current = now;
+    const base = serverUrl.replace(/\/+$/, "");
+    // no-cors: we don't read the response, just knock so a cold server (e.g.
+    // Railway) is warm by the time `start` opens the real session.
+    void fetch(`${base}/healthz`, { method: "GET", mode: "no-cors", cache: "no-store" }).catch(
+      () => {},
+    );
+  }, []);
+
   useEffect(
     () => () => {
       const session = sessionRef.current;
@@ -420,5 +486,5 @@ export function useRealtimeTranscription(
     [],
   );
 
-  return { status, text, segments, language, error, start, stop, reset };
+  return { status, text, segments, language, error, start, stop, reset, prewarm };
 }
