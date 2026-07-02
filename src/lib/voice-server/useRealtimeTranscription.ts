@@ -22,7 +22,7 @@ import { createPcmWorkletUrl } from "./worklet";
 const SAMPLE_RATE = 16000;
 const MAX_RECONNECT_ATTEMPTS = 3;
 const RECONNECT_BACKOFF_MS = [500, 1000, 2000];
-const MAX_PENDING_CHUNKS = 50; // ~5s of audio buffered until the session is ready
+const MAX_PENDING_CHUNKS = 200; // ~20s of audio buffered until the session is ready (cold starts)
 const STOP_TIMEOUT_MS = 10_000;
 const PREWARM_THROTTLE_MS = 30_000;
 
@@ -81,6 +81,8 @@ type Session = {
   stopTimer: ReturnType<typeof setTimeout> | null;
   stopResolve: ((text: string) => void) | null;
   stopPromise: Promise<string> | null;
+  /** stop() was called before `ready`; finalize as soon as it arrives instead of discarding the session. */
+  stopRequested: boolean;
 };
 
 function toWsUrl(serverUrl: string, token: string): string {
@@ -161,7 +163,20 @@ export function useRealtimeTranscription(
           for (const chunk of session.pending) ws.send(chunk);
         }
         session.pending = [];
-        if (statusRef.current === "connecting") setStatusBoth("listening");
+        if (session.stopRequested) {
+          // stop() was called during warm-up; the buffer above is flushed,
+          // now finalize instead of dropping into "listening".
+          session.stopRequested = false;
+          if (session.node) {
+            session.node.port.postMessage({ type: "flush" });
+          } else if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({ type: "stop" }));
+          } else {
+            finishStop(session);
+          }
+        } else if (statusRef.current === "connecting") {
+          setStatusBoth("listening");
+        }
         break;
       }
       case "delta": {
@@ -290,6 +305,7 @@ export function useRealtimeTranscription(
       stopTimer: null,
       stopResolve: null,
       stopPromise: null,
+      stopRequested: false,
     };
     sessionRef.current = session;
 
@@ -412,9 +428,14 @@ export function useRealtimeTranscription(
     // Cut the mic right away; the worklet flushes its tail then reports
     // "flushed", which triggers the protocol `stop` (see port.onmessage).
     if (session.stream) for (const track of session.stream.getTracks()) track.stop();
-    if (session.node && session.ready) {
+    if (!session.ready) {
+      // Still warming up (server not `ready` yet): don't discard whatever
+      // audio is already buffered — finalize as soon as `ready` arrives
+      // (see handleEvent). stopTimer above is the safety net if it never does.
+      session.stopRequested = true;
+    } else if (session.node) {
       session.node.port.postMessage({ type: "flush" });
-    } else if (session.ws && session.ws.readyState === WebSocket.OPEN && session.ready) {
+    } else if (session.ws && session.ws.readyState === WebSocket.OPEN) {
       session.ws.send(JSON.stringify({ type: "stop" }));
     } else {
       finishStop(session);
