@@ -5,8 +5,8 @@ import PersonCreationScreen from "@/components/memory-edition/PersonEditionScree
 import PlaceCreationScreen from "@/components/memory-edition/PlaceEditionScreen";
 import ThingCreationScreen from "@/components/memory-edition/ThingEditionScreen";
 import { useQuery } from "convex/react";
-import { api } from "@/../convex/_generated/api";
-import type { Id } from "@/../convex/_generated/dataModel";
+import { api } from "@convex/_generated/api";
+import type { Id } from "@convex/_generated/dataModel";
 import type {
   MomentType,
   PersonType,

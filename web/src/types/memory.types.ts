@@ -1,5 +1,5 @@
 import type { FlexibleDateTime, MediaData } from "./shared.types";
-import type { Doc, Id } from "@/../convex/_generated/dataModel";
+import type { Doc, Id } from "@convex/_generated/dataModel";
 
 type status = "unfinished" | "completed" | "archived";
 

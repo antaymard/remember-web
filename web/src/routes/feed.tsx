@@ -2,7 +2,7 @@ import Header from "@/components/nav/Header";
 import Navbar from "@/components/nav/Navbar";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "convex-helpers/react/cache/hooks";
-import { api } from "../../convex/_generated/api";
+import { api } from "@convex/_generated/api";
 import MomentMemoryCard from "@/components/cards/MomentMemoryCard";
 import type {
   MomentWithCreator,

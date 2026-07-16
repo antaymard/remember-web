@@ -1,6 +1,6 @@
 import { useQuery } from "convex-helpers/react/cache/hooks";
-import { api } from "../../convex/_generated/api";
-import type { Doc } from "../../convex/_generated/dataModel";
+import { api } from "@convex/_generated/api";
+import type { Doc } from "@convex/_generated/dataModel";
 
 interface UserContextValue {
   user: Doc<"users"> | null | undefined;

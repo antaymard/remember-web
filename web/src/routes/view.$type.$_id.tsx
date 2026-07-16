@@ -1,6 +1,6 @@
 import MomentViewScreen from "@/components/memory-view/MomentViewScreen";
 import { createFileRoute, useRouterState } from "@tanstack/react-router";
-import { api } from "@/../convex/_generated/api";
+import { api } from "@convex/_generated/api";
 import { useQuery } from "convex/react";
 import type {
   MomentWithCreator,
@@ -8,7 +8,7 @@ import type {
   PlaceWithCreator,
   ThingWithCreator,
 } from "@/types/memory.types";
-import type { Id } from "@/../convex/_generated/dataModel";
+import type { Id } from "@convex/_generated/dataModel";
 import PersonViewScreen from "@/components/memory-view/PersonViewScreen";
 import PlaceViewScreen from "@/components/memory-view/PlaceViewScreen";
 import ThingViewScreen from "@/components/memory-view/ThingViewScreen";

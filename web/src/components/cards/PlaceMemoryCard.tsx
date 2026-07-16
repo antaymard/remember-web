@@ -3,7 +3,7 @@ import OptimizedImage from "@/components/ui/OptimizedImage";
 import MemoryTypeIndicator from "./MemoryTypeIndicator";
 import MediasCarousel from "../ui/MediasCarousel";
 import { Link } from "@tanstack/react-router";
-import type { Id } from "@/../convex/_generated/dataModel";
+import type { Id } from "@convex/_generated/dataModel";
 
 export default function PlaceMemoryCard({
   place,

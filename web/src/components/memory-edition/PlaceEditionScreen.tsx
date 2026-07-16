@@ -1,5 +1,5 @@
 import { useMutation } from "convex/react";
-import { api } from "@/../convex/_generated/api";
+import { api } from "@convex/_generated/api";
 import type { PlaceType } from "@/types/memory.types";
 import CreationSection from "@/components/ui/CreationSection";
 import TextInput from "@/components/form/TextInput";
@@ -9,7 +9,7 @@ import * as z from "zod";
 import { useCreationForm } from "@/hooks/useCreationForm";
 import CreationScreenLayout from "./CreationScreenLayout";
 import { statusEnum } from "@/utils/creationConstants";
-import type { Id } from "@/../convex/_generated/dataModel";
+import type { Id } from "@convex/_generated/dataModel";
 
 const placeSchema = z.object({
   title: z.string().min(1, "Le titre est requis"),

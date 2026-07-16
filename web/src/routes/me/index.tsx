@@ -3,7 +3,7 @@ import Navbar from "@/components/nav/Navbar";
 import { ButtonPastel } from "@/components/ui/Button";
 import { useUser } from "@/contexts/userContext";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { api } from "@/../convex/_generated/api";
+import { api } from "@convex/_generated/api";
 import { useQuery } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import {

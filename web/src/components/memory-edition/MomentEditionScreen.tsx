@@ -1,7 +1,7 @@
 import Switcher from "@/components/form/Swticher";
 import DatePicker from "@/components/form/DatePicker";
 import { useMutation } from "convex/react";
-import { api } from "@/../convex/_generated/api";
+import { api } from "@convex/_generated/api";
 import type { MomentType } from "@/types/memory.types";
 import CreationSection from "@/components/ui/CreationSection";
 import TextInput from "@/components/form/TextInput";
@@ -14,7 +14,7 @@ import UserPicker from "../form/UserPicker";
 import { useCreationForm } from "@/hooks/useCreationForm";
 import CreationScreenLayout from "./CreationScreenLayout";
 import { defaultFlexibleDateTime, statusEnum } from "@/utils/creationConstants";
-import type { Id } from "@/../convex/_generated/dataModel";
+import type { Id } from "@convex/_generated/dataModel";
 
 const memorySchema = z.object({
   title: z.string().min(1, "Le titre est requis"),

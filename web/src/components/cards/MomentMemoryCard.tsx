@@ -1,7 +1,7 @@
 import type { MomentWithCreator, PersonType } from "@/types/memory.types";
 import { TbCalendar } from "react-icons/tb";
 import { Link } from "@tanstack/react-router";
-import type { Id } from "@/../convex/_generated/dataModel";
+import type { Id } from "@convex/_generated/dataModel";
 import MediasCarousel from "@/components/ui/MediasCarousel";
 import MemoryTypeIndicator from "./MemoryTypeIndicator";
 import OptimizedImage from "@/components/ui/OptimizedImage";

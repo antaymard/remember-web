@@ -7,7 +7,7 @@ import CreationSection from "@/components/ui/CreationSection";
 import { useUser } from "@/contexts/userContext";
 import { useForm } from "@tanstack/react-form";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { api } from "@/../convex/_generated/api";
+import { api } from "@convex/_generated/api";
 import { useMutation } from "convex/react";
 import toast from "react-hot-toast";
 

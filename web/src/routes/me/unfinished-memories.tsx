@@ -1,6 +1,6 @@
 import Header from "@/components/nav/Header";
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
-import { api } from "@/../convex/_generated/api";
+import { api } from "@convex/_generated/api";
 import { useQuery } from "convex/react";
 import { TbChevronRight } from "react-icons/tb";
 import MemoryTypeIndicator from "@/components/cards/MemoryTypeIndicator";

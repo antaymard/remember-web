@@ -206,19 +206,44 @@ C'est le journal intime du 21ème siècle : visuel, intelligent, et profondémen
 
 ## Architecture
 
+Monorepo Yarn avec deux apps (web + native) partageant un backend Convex unique.
+
 ```
 remember-web/
-├── src/              # Frontend React + TypeScript
-│   ├── routes/       # Routes TanStack Router
-│   ├── hooks/        # Custom React hooks
-│   └── assets/       # Assets statiques
-├── convex/           # Backend Convex
-│   ├── auth.ts       # Configuration authentification
-│   ├── schema.ts     # Schéma de base de données
-│   ├── persons.ts    # API persons
-│   └── utils/        # Utilitaires backend
-└── public/           # Fichiers statiques publics
+├── convex/             # Backend Convex partagé (web + app native)
+│   ├── _generated/      # Code généré (api, dataModel, server) - NE PAS ÉDITER
+│   ├── auth.ts          # Configuration authentification
+│   ├── schema.ts        # Schéma de base de données
+│   ├── persons.ts       # API persons
+│   └── utils/           # Utilitaires backend
+├── web/                 # App web React + TypeScript (Vite)
+│   ├── src/             # Frontend React
+│   │   ├── routes/      # Routes TanStack Router
+│   │   ├── hooks/       # Custom React hooks
+│   │   └── assets/      # Assets statiques
+│   ├── public/          # Fichiers statiques publics
+│   ├── vite.config.ts
+│   ├── tsconfig.json    # Alias: @/* → ./src/*, @convex/* → ../convex/*
+│   ├── .env.local       # VITE_CONVEX_URL (client web)
+│   └── package.json
+├── app/                 # App native Expo (React Native)
+│   ├── src/
+│   └── package.json
+├── package.json         # Root workspace Yarn (workspaces: web, app) + deps backend Convex
+├── convex.json          # Config Convex (lancé depuis la racine)
+└── .env.local           # CONVEX_DEPLOYMENT (npx convex dev)
 ```
+
+### Imports Convex (partage du typing)
+
+Le dossier `convex/` est partagé entre `web/` et `app/`. Les imports du code généré se font via l'alias `@convex/*` :
+
+```ts
+import { api } from "@convex/_generated/api";
+import type { Id, Doc } from "@convex/_generated/dataModel";
+```
+
+L'alias est configuré dans `web/tsconfig.json` (`"@convex/*": ["../convex/*"]`) et `web/vite.config.ts` (`resolve.alias`). Côté app native, à configurer de la même façon dans `app/tsconfig.json`.
 
 ## Stack Technique
 
@@ -244,28 +269,35 @@ remember-web/
 ## Commandes Principales
 
 ```bash
-# Installation
+# Installation (depuis la racine du monorepo)
 yarn install
 
 # Développement
-yarn dev                    # Lance Vite dev server sur http://localhost:3000
-npx convex dev             # Lance Convex en mode développement
+yarn dev:web               # Lance Vite dev server sur http://localhost:3000
+yarn dev:convex            # Lance Convex en mode développement (depuis la racine)
 
 # Build
-yarn build                 # Compile TypeScript + build Vite de production
-tsc -b                     # Type checking uniquement
+yarn build:web             # Compile TypeScript + build Vite de production (workspace web)
+yarn workspace web exec tsc -b  # Type checking uniquement
 
 # Qualité de code
-yarn lint                  # Lint avec ESLint
-yarn preview              # Preview du build de production
+yarn lint:web              # Lint avec ESLint (workspace web)
+yarn preview:web           # Preview du build de production
+
+# Icons PWA
+yarn generate:icons        # Génère les icônes PWA dans web/public/icons
 ```
 
 ## Configuration Environnement
 
-Variables d'environnement requises (`.env.local`) :
+Variables d'environnement réparties dans le monorepo :
+
+- `.env.local` (racine) : `CONVEX_DEPLOYMENT` (utilisé par `npx convex dev`)
+- `web/.env.local` : `VITE_CONVEX_URL` (URL du deployment Convex pour le client Vite)
 
 ```
-VITE_CONVEX_URL=<your-convex-deployment-url>
+CONVEX_DEPLOYMENT=dev:your-deployment
+VITE_CONVEX_URL=https://your-deployment.convex.cloud
 ```
 
 ## Conventions de Code
@@ -279,7 +311,7 @@ VITE_CONVEX_URL=<your-convex-deployment-url>
 ### React
 
 - **Composants fonctionnels uniquement** (pas de class components)
-- **Hooks customs** dans `src/hooks/`
+- **Hooks customs** dans `web/src/hooks/`
 - **Nommage** :
   - Composants : PascalCase (`UserProfile.tsx`)
   - Hooks : camelCase avec préfixe `use` (`useQueryWithStatus.ts`)
@@ -287,9 +319,9 @@ VITE_CONVEX_URL=<your-convex-deployment-url>
 
 ### Routing (TanStack Router)
 
-- Routes basées sur les fichiers dans `src/routes/`
+- Routes basées sur les fichiers dans `web/src/routes/`
 - `__root.tsx` : Layout racine
-- Auto-génération du routeTree dans `src/routeTree.gen.ts` (ne pas modifier manuellement)
+- Auto-génération du routeTree dans `web/src/routeTree.gen.ts` (ne pas modifier manuellement)
 - Auto code-splitting activé
 
 ### Styling
@@ -309,15 +341,16 @@ VITE_CONVEX_URL=<your-convex-deployment-url>
 
 ## Fichiers Importants
 
-| Fichier                 | Description                                  |
-| ----------------------- | -------------------------------------------- |
-| `package.json`          | Dépendances et scripts npm                   |
-| `vite.config.ts`        | Configuration Vite, plugins, port dev server |
-| `tsconfig.json`         | Configuration TypeScript racine              |
-| `convex/schema.ts`      | Schéma de base de données Convex             |
-| `convex/auth.config.ts` | Configuration authentification               |
-| `src/routeTree.gen.ts`  | Arbre de routes auto-généré (ne pas éditer)  |
-| `src/main.tsx`          | Point d'entrée React avec providers          |
+| Fichier                    | Description                                        |
+| -------------------------- | -------------------------------------------------- |
+| `package.json` (racine)    | Workspaces Yarn + dépendances backend Convex       |
+| `web/package.json`         | Dépendances app web (React, Vite, TanStack...)     |
+| `web/vite.config.ts`       | Configuration Vite, plugins, alias `@` et `@convex`|
+| `web/tsconfig.json`         | Configuration TypeScript (alias `@/*`, `@convex/*`)|
+| `convex/schema.ts`          | Schéma de base de données Convex                   |
+| `convex/auth.config.ts`    | Configuration authentification                     |
+| `web/src/routeTree.gen.ts` | Arbre de routes auto-généré (ne pas éditer)        |
+| `web/src/main.tsx`          | Point d'entrée React avec providers                |
 
 ## Patterns et Best Practices
 
@@ -347,7 +380,7 @@ import { useQueryWithStatus } from "./hooks/useQueryWithStatus";
 ### Structure des Routes
 
 ```
-src/routes/
+web/src/routes/
 ├── __root.tsx           # Layout principal avec Outlet
 ├── index.tsx            # Route racine "/"
 └── signin.tsx           # Route "/signin"
@@ -374,7 +407,8 @@ src/routes/
 
 ## Notes Spécifiques au Projet
 
-- Le dev server tourne sur le port **3000** (configuré dans `vite.config.ts`)
+- Le dev server tourne sur le port **3000** (configuré dans `web/vite.config.ts`)
 - Auto code-splitting activé pour les routes TanStack
 - Authentification via Convex Auth (pas de Firebase/Auth0)
-- Ne pas commiter `.env.local` (déjà dans .gitignore)
+- Monorepo Yarn : `web/` (app web) + `app/` (app native Expo) + `convex/` (backend partagé)
+- Ne pas commiter `.env.local` (déjà dans .gitignore) — présents à la racine et dans `web/`

@@ -1,4 +1,4 @@
-import type { Id } from "@/../convex/_generated/dataModel";
+import type { Id } from "@convex/_generated/dataModel";
 import type { MediaData } from "./shared.types";
 
 export interface UserType {

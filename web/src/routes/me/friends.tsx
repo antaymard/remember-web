@@ -1,4 +1,4 @@
-import { api } from "@/../convex/_generated/api";
+import { api } from "@convex/_generated/api";
 import { cn } from "@/lib/utils";
 import { useQuery, useMutation } from "convex/react";
 import { useState, useEffect } from "react";
@@ -7,7 +7,7 @@ import Header from "@/components/nav/Header";
 import Navbar from "@/components/nav/Navbar";
 import { ButtonPastel } from "@/components/ui/Button";
 import { createFileRoute } from "@tanstack/react-router";
-import type { Id } from "@/../convex/_generated/dataModel";
+import type { Id } from "@convex/_generated/dataModel";
 import type { UserType } from "@/types/user.types";
 
 export const Route = createFileRoute("/me/friends")({

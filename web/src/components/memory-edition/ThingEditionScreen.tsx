@@ -1,6 +1,6 @@
 import DatePicker from "@/components/form/DatePicker";
 import { useMutation } from "convex/react";
-import { api } from "@/../convex/_generated/api";
+import { api } from "@convex/_generated/api";
 import type { ThingType } from "@/types/memory.types";
 import { thingTypes } from "@/types/memory.types";
 import CreationSection from "@/components/ui/CreationSection";
@@ -12,7 +12,7 @@ import SelectInput from "../form/SelectInput";
 import { useCreationForm } from "@/hooks/useCreationForm";
 import CreationScreenLayout from "./CreationScreenLayout";
 import { defaultFlexibleDateTime, statusEnum } from "@/utils/creationConstants";
-import type { Id } from "node_modules/convex/dist/esm-types/values/value";
+import type { Id } from "@convex/_generated/dataModel";
 
 const thingSchema = z.object({
   title: z.string().min(1, "Le titre est requis"),

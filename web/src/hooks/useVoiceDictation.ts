@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
-import { api } from "../../convex/_generated/api";
+import { api } from "@convex/_generated/api";
 import { useAuthenticatedQueryWithStatus } from "./useQueryWithStatus";
 import {
   useRealtimeTranscription,
