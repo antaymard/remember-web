@@ -1,10 +1,54 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useState } from "react";
+import { TbEye, TbEyeOff } from "react-icons/tb";
+import toast from "react-hot-toast";
 
 export const Route = createFileRoute("/signin")({
   component: RouteComponent,
 });
+
+function PasswordInput({
+  id,
+  name,
+  placeholder,
+  disabled,
+  showPassword,
+  onToggleVisibility,
+}: {
+  id: string;
+  name: string;
+  placeholder: string;
+  disabled: boolean;
+  showPassword: boolean;
+  onToggleVisibility: () => void;
+}) {
+  return (
+    <div className="relative">
+      <label htmlFor={id} className="sr-only">
+        {placeholder}
+      </label>
+      <input
+        id={id}
+        name={name}
+        type={showPassword ? "text" : "password"}
+        autoComplete="off"
+        required
+        className="appearance-none rounded-md relative block w-full px-3 py-2 pr-10 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+        placeholder={placeholder}
+        disabled={disabled}
+      />
+      <button
+        type="button"
+        onClick={onToggleVisibility}
+        className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+        tabIndex={-1}
+      >
+        {showPassword ? <TbEyeOff size={18} /> : <TbEye size={18} />}
+      </button>
+    </div>
+  );
+}
 
 function RouteComponent() {
   const { signIn } = useAuthActions();
@@ -12,14 +56,28 @@ function RouteComponent() {
   const [step, setStep] = useState<"signUp" | "signIn">("signIn");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
     setError(null);
 
+    const formData = new FormData(event.currentTarget);
+
+    if (step === "signUp") {
+      const password = formData.get("password") as string;
+      const confirmPassword = formData.get("confirmPassword") as string;
+      if (password !== confirmPassword) {
+        toast.error("Les mots de passe ne correspondent pas.");
+        setIsLoading(false);
+        return;
+      }
+      formData.delete("confirmPassword");
+    }
+
     try {
-      const formData = new FormData(event.currentTarget);
       await signIn("password", formData);
       navigate({ to: "/" });
     } catch (err) {
@@ -66,21 +124,24 @@ function RouteComponent() {
                 disabled={isLoading}
               />
             </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Mot de passe
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="off"
-                required
-                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Mot de passe"
+            <PasswordInput
+              id="password"
+              name="password"
+              placeholder="Mot de passe"
+              disabled={isLoading}
+              showPassword={showPassword}
+              onToggleVisibility={() => setShowPassword((v) => !v)}
+            />
+            {step === "signUp" && (
+              <PasswordInput
+                id="confirmPassword"
+                name="confirmPassword"
+                placeholder="Confirmer le mot de passe"
                 disabled={isLoading}
+                showPassword={showConfirmPassword}
+                onToggleVisibility={() => setShowConfirmPassword((v) => !v)}
               />
-            </div>
+            )}
           </div>
 
           <input name="flow" type="hidden" value={step} />
@@ -111,6 +172,8 @@ function RouteComponent() {
               onClick={() => {
                 setStep(step === "signIn" ? "signUp" : "signIn");
                 setError(null);
+                setShowPassword(false);
+                setShowConfirmPassword(false);
               }}
               disabled={isLoading}
               className="text-sm text-blue-600 hover:text-blue-500 disabled:opacity-50"

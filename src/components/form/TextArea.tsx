@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { TbTextCaption } from "react-icons/tb";
+import DictateButton from "./DictateButton";
 
 export default function TextArea({
   form,
@@ -42,6 +43,11 @@ export default function TextArea({
               onBlur={field.handleBlur}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
+            />
+            <DictateButton
+              value={field.state.value ?? ""}
+              onChange={field.handleChange}
+              className="absolute right-2 top-2"
             />
           </div>
         );

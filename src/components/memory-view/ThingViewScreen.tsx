@@ -4,13 +4,7 @@ import type { ThingWithCreator } from "@/types/memory.types";
 import { useNavigate } from "@tanstack/react-router";
 import { ButtonPastel } from "../ui/Button";
 import MediasCarousel from "../ui/MediasCarousel";
-import type { FlexibleDateTime } from "@/types/shared.types";
-
-function renderDate(date: FlexibleDateTime | undefined) {
-  if (!date) return null;
-  if (!date.day || !date.month || !date.year) return null;
-  return `${date.day}/${date.month}/${date.year}`;
-}
+import { formatFlexibleDate } from "@/utils/formatDate";
 
 function getTypeLabel(type: string | undefined) {
   const labels: Record<string, string> = {
@@ -75,16 +69,16 @@ export default function ThingViewScreen({
 
         <Section title="Temporel">
           <div className="space-y-1">
-            {renderDate(thing.first_met) && (
+            {formatFlexibleDate(thing.first_met) && (
               <p>
                 <strong>Premier contact / Acquisition :</strong>{" "}
-                {renderDate(thing.first_met)}
+                {formatFlexibleDate(thing.first_met)}
               </p>
             )}
-            {renderDate(thing.last_seen) && (
+            {formatFlexibleDate(thing.last_seen) && (
               <p>
                 <strong>Dernier contact :</strong>{" "}
-                {renderDate(thing.last_seen)}
+                {formatFlexibleDate(thing.last_seen)}
               </p>
             )}
           </div>

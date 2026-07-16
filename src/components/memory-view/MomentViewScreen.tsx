@@ -5,20 +5,8 @@ import { ButtonPastel } from "../ui/Button";
 import { useUser } from "@/contexts/userContext";
 import MediasCarousel from "../ui/MediasCarousel";
 import PersonItemCard from "../cards/PersonItemCard";
-import type { FlexibleDateTime } from "@/types/shared.types";
 import { TbCalendar } from "react-icons/tb";
-
-function renderDate(date: FlexibleDateTime | undefined) {
-  if (!date) return null;
-  if (!date.day || !date.month || !date.year) return null;
-  const time = date.hour && date.min ? `${date.hour}:${date.min}` : "";
-  return (
-    <div className="flex gap-2 items-center">
-      <TbCalendar size={20} />
-      {date.day}/{date.month}/{date.year} {time}
-    </div>
-  );
-}
+import { formatFlexibleDate } from "@/utils/formatDate";
 
 export default function MomentViewScreen({
   moment,
@@ -61,7 +49,12 @@ export default function MomentViewScreen({
           )}
         </Section>
         <Section title="Date et lieu">
-          {renderDate(moment.date_time_in)}
+          {formatFlexibleDate(moment.date_time_in) && (
+            <div className="flex gap-2 items-center">
+              <TbCalendar size={20} />
+              {formatFlexibleDate(moment.date_time_in)}
+            </div>
+          )}
         </Section>
         <Section title="Personnes présentes">
           {moment.present_persons && moment?.present_persons?.length > 0 ? (
